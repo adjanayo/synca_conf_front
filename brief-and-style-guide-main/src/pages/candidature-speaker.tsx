@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "../components/site/PageHeader";
@@ -9,19 +8,9 @@ import {
   SPEAKER_LANGUES, SPEAKER_DISPO, SPEAKER_DIFFUSION,
 } from "../lib/forms/constants";
 
-export const Route = createFileRoute("/candidature-speaker")({
-  head: () => ({
-    meta: [
-      { title: "Candidature speaker · Synca Conf 2027" },
-      { name: "description", content: "Postulez pour intervenir à la Synca Conf 2027 à Dakar. Keynote, panel, workshop, lightning talk ou fireside chat." },
-    ],
-  }),
-  component: SpeakerPage,
-});
-
 const OPENS_AT = new Date("2027-03-01T09:00:00+00:00");
 
-function SpeakerPage() {
+export function SpeakerPage() {
   return (
     <>
       <PageHeader

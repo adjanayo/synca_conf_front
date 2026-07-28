@@ -1,20 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import { CONTACT_SUBJECTS } from "../lib/forms/constants";
-
-export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact · Synca Conf 2027" },
-      { name: "description", content: "Contactez l'équipe Synca Conf 2027 — questions générales, billetterie, partenariats, speakers, presse." },
-    ],
-  }),
-  component: ContactPage,
-});
 
 const TEAM = [
   { i: <Mail className="w-5 h-5" />, t: "Email général", v: "contact@sync-africa.com" },
@@ -27,7 +16,7 @@ const TEAM = [
 type Form = { nom: string; email: string; sujet: string; message: string; rgpd: boolean };
 const empty: Form = { nom: "", email: "", sujet: "", message: "", rgpd: false };
 
-function ContactPage() {
+export function ContactPage() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
