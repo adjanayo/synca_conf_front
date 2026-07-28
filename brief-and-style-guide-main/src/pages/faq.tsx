@@ -1,16 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "../components/site/PageHeader";
-
-export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "FAQ · Synca Conf 2027" },
-      { name: "description", content: "Questions fréquentes sur la Synca Conf 2027 — participants, sponsors, speakers." },
-    ],
-  }),
-  component: FAQPage,
-});
 
 type Item = { q: string; a: string };
 type Cat = { id: string; label: string; items: Item[] };
@@ -45,7 +34,7 @@ const CATS: Cat[] = [
   },
 ];
 
-function FAQPage() {
+export function FAQPage() {
   const [active, setActive] = useState(CATS[0].id);
   const cat = CATS.find((c) => c.id === active)!;
   return (

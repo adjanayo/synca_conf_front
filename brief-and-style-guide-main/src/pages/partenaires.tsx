@@ -1,20 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import { PARTNER_TIERS, PARTNER_SECTEURS, PARTNER_BUDGET, PARTNER_OBJECTIFS, SOURCES } from "../lib/forms/constants";
-
-export const Route = createFileRoute("/partenaires")({
-  head: () => ({
-    meta: [
-      { title: "Partenaires · Synca Conf 2027" },
-      { name: "description", content: "Six niveaux de partenariat pour la Synca Conf 2027 — Title, Platinum, Gold, Silver, Bronze, Média. Avantages détaillés." },
-    ],
-  }),
-  component: PartenairesPage,
-});
 
 const TIERS = [
   { name: "Title", price: "10 000 000 F CFA", color: "bg-ink text-white border-ink", featured: true,
@@ -31,7 +20,7 @@ const TIERS = [
     perks: ["Logo presse", "Accès interviews", "2 pass Presse", "Contenu co-produit"] },
 ];
 
-function PartenairesPage() {
+export function PartenairesPage() {
   return (
     <>
       <PageHeader

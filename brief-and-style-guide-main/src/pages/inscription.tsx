@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "../components/site/PageHeader";
@@ -8,19 +7,9 @@ import {
   COUNTRIES, SECTEURS, NIVEAUX, PROFILS, PASS, GENRES, SOURCES,
 } from "../lib/forms/constants";
 
-export const Route = createFileRoute("/inscription")({
-  head: () => ({
-    meta: [
-      { title: "Inscription · Synca Conf 2027" },
-      { name: "description", content: "Réservez votre place à la Synca Conf 2027 à Dakar — pass Étudiant, Pro, Startup, Diaspora, VIP ou Online." },
-    ],
-  }),
-  component: InscriptionPage,
-});
-
 const OPENS_AT = new Date("2026-07-01T00:00:00+00:00");
 
-function InscriptionPage() {
+export function InscriptionPage() {
   return (
     <>
       <PageHeader

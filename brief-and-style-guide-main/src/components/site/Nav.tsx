@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, NavLink } from "react-router-dom";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -21,16 +21,17 @@ export function Nav() {
           <span>Synca Conf <span className="text-primary">'27</span></span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7 text-sm text-white/70">
+        <nav className="hidden md:flex items-center gap-7 text-sm">
           {links.map((l) => (
-            <Link
+            <NavLink
               key={l.to}
               to={l.to}
-              className="hover:text-white transition"
-              activeProps={{ className: "text-primary" }}
+              className={({ isActive }: { isActive: boolean }) =>
+                `transition ${isActive ? "text-primary" : "text-white/70 hover:text-white"}`
+              }
             >
               {l.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
@@ -56,15 +57,16 @@ export function Nav() {
         <div className="md:hidden border-t border-white/10 bg-ink">
           <div className="px-6 py-4 flex flex-col gap-3 text-white/80">
             {links.map((l) => (
-              <Link
+              <NavLink
                 key={l.to}
                 to={l.to}
                 onClick={() => setOpen(false)}
-                className="py-1.5"
-                activeProps={{ className: "text-primary" }}
+                className={({ isActive }: { isActive: boolean }) =>
+                  `py-1.5 transition ${isActive ? "text-primary" : "text-white/80 hover:text-white"}`
+                }
               >
                 {l.label}
-              </Link>
+              </NavLink>
             ))}
             <Link
               to="/inscription"
