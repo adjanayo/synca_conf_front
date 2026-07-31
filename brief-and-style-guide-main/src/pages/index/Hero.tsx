@@ -44,21 +44,20 @@ function Hero() {
           La conférence tech panafricaine · Édition 2027
         </div>
         <h1 className="mt-6 font-display font-bold text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] tracking-tighter">
-          Synca Conf <span className="text-primary">2027</span><br />
-          <span className="text-white/90">Dakar · Africa builds.</span>
+          Synca Cyber <span className="text-primary">Challenge</span><br />
+          {/* <span className="text-white/90">Dakar · Africa builds.</span> */}
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-white/70">
-          3 jours pour réunir +2 000 builders, designers, fondateurs et décideurs autour de l'IA,
-          du produit, de la cybersécurité et de l'impact à travers l'Afrique.
+          Des équipes étudiantes panafricaines conçoivent, en 48h, des solutions de cybersécurité accessibles aux TPE, PME et startups africaines — sous la bannière de leur université partenaire.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        {/* <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/inscription" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3.5 hover:brightness-110 transition shadow-glow">
             Prendre mon ticket <ArrowRight className="w-4 h-4" />
           </Link>
           <Link to="/partenaires" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3.5 font-medium hover:bg-white/5 transition">
             Devenir partenaire
           </Link>
-        </div>
+        </div> */}
         <div className="mt-10 flex flex-wrap gap-6 text-sm text-white/70">
           <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> 18–20 Août 2027</span>
           <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Dakar, Sénégal</span>
