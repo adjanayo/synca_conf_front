@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Linkedin, Twitter } from "lucide-react";
+import { LINKS } from "@/data/parameter";
 
 export function Footer() {
   return (
@@ -7,20 +8,20 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-14 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <Link to="/" className="flex items-center gap-2 font-display font-bold text-white text-xl">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-ink">S</span>
+            <img src="/parameter/Logoicone orange blanc_CMJN.svg" alt="Logo CMJN" className="h-12 w-12"/>
             Synca Conf <span className="text-primary">2027</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm">
             La conférence tech panafricaine. Organisée par la communauté Synca à Dakar, Sénégal.
           </p>
           <div className="mt-5 flex gap-3">
-            {[Instagram, Linkedin, Twitter].map((I, i) => (
+            {LINKS.map((link, i) => (
               <a
                 key={i}
-                href="#"
+                href={link.to}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 hover:bg-primary hover:text-ink hover:border-primary transition"
               >
-                <I className="w-4 h-4" />
+                <link.icon className="w-4 h-4" aria-hidden="true" />
               </a>
             ))}
           </div>

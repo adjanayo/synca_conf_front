@@ -13,7 +13,7 @@ function FinalCTA() {
         <p className="mt-6 text-lg text-white/70 max-w-xl mx-auto">
           Trois jours pour rencontrer, apprendre, recruter, pitcher, et célébrer la tech africaine.
         </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        {/* <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link to="/inscription" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-4 hover:brightness-110 transition shadow-glow">
             Je prends mon ticket <ArrowRight className="w-4 h-4" />
           </Link>
@@ -23,7 +23,7 @@ function FinalCTA() {
           <Link to="/candidature-speaker" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-medium hover:bg-white/5 transition">
             <Mic className="w-4 h-4" /> Candidater speaker
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   );
