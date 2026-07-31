@@ -5,7 +5,7 @@ import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import { PARTNER_TIERS, PARTNER_SECTEURS, PARTNER_BUDGET, PARTNER_OBJECTIFS, SOURCES } from "../lib/forms/constants";
 
-const TIERS = [
+{/*const TIERS = [
   { name: "Title", price: "10 000 000 F CFA", color: "bg-ink text-white border-ink", featured: true,
     perks: ["Naming officiel de l'événement", "Logo sur tous les supports", "Keynote dédiée 30 min", "Stand premium 36 m²", "20 pass VIP", "Accès dîner gala", "Campagne presse dédiée", "Rapport d'impact post-event"] },
   { name: "Platinum", price: "7 000 000 F CFA", color: "bg-white text-ink border-primary",
@@ -18,6 +18,54 @@ const TIERS = [
     perks: ["Logo site & badges", "Stand 6 m²", "3 pass Pro"] },
   { name: "Partenaire média", price: "Échange visibilité", color: "bg-peach text-ink border-primary/30",
     perks: ["Logo presse", "Accès interviews", "2 pass Presse", "Contenu co-produit"] },
+];*/}
+const TIERS = [
+  {
+    name: "Title Sponsor",
+    price: "15 000 000 FCFA",
+    color: "bg-ink text-white border-ink",
+    featured: true,
+    perks: [
+      "Partenaire titre de l'événement",
+      "Visibilité maximale : branding premium",
+      "Prise de parole officielle",
+      "Présence institutionnelle",
+      "Accès VIP et forte exposition médiatique",
+    ],
+  },
+  {
+    name: "Diamond Sponsor",
+    price: "10 000 000 FCFA",
+    color: "bg-white text-ink border-primary",
+    perks: [
+      "Partenaire stratégique majeur",
+      "Visibilité premium",
+      "Espace d’exposition",
+      "Présence dans les communications",
+      "Opportunités d’activation",
+    ],
+  },
+  {
+    name: "Gold Sponsor",
+    price: "5 000 000 FCFA",
+    color: "bg-white text-ink border-border",
+    perks: [
+      "Partenaire avec bonne visibilité",
+      "Espace d’exposition",
+      "Présence dans les activités du Synca Conf",
+    ],
+  },
+  {
+    name: "Bronze Sponsor",
+    price: "2 000 000 FCFA",
+    color: "bg-white text-ink border-border",
+    perks: [
+      "Partenaire associé",
+      "Contribution au développement de l’écosystème tech africain",
+      "Visibilité de base",
+      "Accès aux participants",
+    ],
+  },
 ];
 
 export function PartenairesPage() {
@@ -50,7 +98,7 @@ export function PartenairesPage() {
         </div>
       </section>
 
-      <PartnerForm />
+      {/*<PartnerForm />*/}
     </>
   );
 }
@@ -110,7 +158,7 @@ function PartnerForm() {
   };
 
   return (
-    <div id="form" className="bg-background py-4">
+   {/* <div id="form" className="bg-background py-4">
       <div className="mx-auto max-w-3xl px-6 pt-10">
         <div className="text-center mb-6">
           <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">Devenir partenaire</div>
@@ -218,7 +266,7 @@ function PartnerForm() {
           </div>
         </form>
       </FormShell>
-    </div>
+    </div>*/}
   );
 }
 
