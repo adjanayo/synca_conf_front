@@ -1,16 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "../components/site/PageHeader";
-
-export const Route = createFileRoute("/programme")({
-  head: () => ({
-    meta: [
-      { title: "Programme · Synca Conf 2027" },
-      { name: "description", content: "Planning détaillé des 3 jours de la Synca Conf 2027 à Dakar : 18, 19 et 20 août 2027." },
-    ],
-  }),
-  component: ProgrammePage,
-});
 
 type Slot = { h: string; t: string; cat: "Keynote" | "Panel" | "Workshop" | "Networking" | "Side"; lieu?: string };
 type Day = { id: string; date: string; theme: string; slots: Slot[] };
@@ -66,7 +55,7 @@ const CAT_COLORS: Record<Slot["cat"], string> = {
   Side: "bg-purple-100 text-purple-700 border-purple-200",
 };
 
-function ProgrammePage() {
+export function ProgrammePage() {
   const [active, setActive] = useState<string | "all">("j1");
   const visible = active === "all" ? DAYS : DAYS.filter((d) => d.id === active);
 

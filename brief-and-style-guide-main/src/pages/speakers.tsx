@@ -1,16 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { Mic } from "lucide-react";
 import { PageHeader } from "../components/site/PageHeader";
-
-export const Route = createFileRoute("/speakers")({
-  head: () => ({
-    meta: [
-      { title: "Speakers · Synca Conf 2027" },
-      { name: "description", content: "Découvrez les speakers de la Synca Conf 2027 — fondateurs, ingénieurs, chercheurs et opérateurs qui font bouger la tech africaine." },
-    ],
-  }),
-  component: SpeakersPage,
-});
 
 const SPEAKERS = Array.from({ length: 10 }).map((_, i) => ({
   n: "À annoncer",
@@ -18,7 +8,7 @@ const SPEAKERS = Array.from({ length: 10 }).map((_, i) => ({
   c: ["from-orange-200 to-orange-400", "from-amber-100 to-orange-300", "from-orange-100 to-rose-300", "from-yellow-100 to-orange-300", "from-pink-100 to-orange-300", "from-orange-200 to-amber-300", "from-rose-200 to-orange-300", "from-amber-200 to-orange-400", "from-orange-100 to-amber-200", "from-orange-200 to-rose-300"][i],
 }));
 
-function SpeakersPage() {
+export function SpeakersPage() {
   return (
     <>
       <PageHeader

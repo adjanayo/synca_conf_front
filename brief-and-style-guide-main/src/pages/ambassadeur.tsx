@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Megaphone, Users, Gift } from "lucide-react";
@@ -13,16 +12,6 @@ import {
   AMBASSADEUR_DISPO,
 } from "../lib/forms/constants";
 
-export const Route = createFileRoute("/ambassadeur")({
-  head: () => ({
-    meta: [
-      { title: "Programme ambassadeur · Synca Conf 2027" },
-      { name: "description", content: "Deviens ambassadeur Synca dans ta ville ou ton université — code promo personnel, badge officiel, accès VIP." },
-    ],
-  }),
-  component: AmbassadeurPage,
-});
-
 const OPENS_AT = new Date("2027-03-01T09:00:00+00:00");
 
 const PERKS = [
@@ -31,7 +20,7 @@ const PERKS = [
   { i: <Megaphone className="w-5 h-5" />, t: "Kit de communication", d: "Visuels, templates, contenus prêts à partager." },
 ];
 
-function AmbassadeurPage() {
+export function AmbassadeurPage() {
   return (
     <>
       <PageHeader
