@@ -48,10 +48,10 @@ export function Footer() {
       <div className="border-t border-white/5">
         <div className="mx-auto max-w-7xl px-6 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
           <span>© 2027 Synca · Tous droits réservés</span>
-          <div className="flex gap-5">
+          {/* <div className="flex gap-5">
             <a href="#" className="hover:text-white">Mentions légales</a>
             <a href="#" className="hover:text-white">Confidentialité</a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>
