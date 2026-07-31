@@ -29,7 +29,7 @@ export function AmbassadeurPage() {
         description="Étudiants, devs, leaders communauté : aide-nous à faire rayonner la conférence dans ta région et dans ton université."
       />
 
-      <section className="py-20 bg-cream">
+      {/*<section className="py-20 bg-cream">
         <div className="mx-auto max-w-6xl px-6 grid md:grid-cols-3 gap-5">
           {PERKS.map((p) => (
             <div key={p.t} className="rounded-3xl bg-white border border-border p-7 shadow-card">
@@ -39,11 +39,52 @@ export function AmbassadeurPage() {
             </div>
           ))}
         </div>
+      </section>*/}
+      <section className="py-20 bg-white">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
+          <h2 className="text-3xl font-bold mb-10">Ce que fait un ambassadeur</h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { id: "01", t: "Relayer", d: "Promouvoir l'événement." },
+              { id: "02", t: "Mobiliser", d: "Activer ton réseau local." },
+              { id: "03", t: "Recruter", d: "Attirer des participants." },
+              { id: "04", t: "Représenter", d: "Présence sur place." },
+            ].map((item) => (
+              <div key={item.id} className="border rounded-2xl p-6 bg-cream">
+                <span className="text-primary font-bold">{item.id}</span>
+                <h4 className="mt-2 font-semibold">{item.t}</h4>
+                <p className="text-sm text-muted-foreground mt-2">{item.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="py-20 bg-cream">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-sm uppercase text-primary mb-2">Pourquoi candidater</div>
+          <h2 className="text-3xl font-bold mb-10">Les avantages</h2>
+
+          <div className="space-y-4">
+            {[
+              "Badge Synca Conf 2027",
+              "Certificat officiel",
+              "Accès réseau & coulisses",
+              "Kit ambassadeur",
+            ].map((adv, i) => (
+              <div key={i} className="flex gap-3">
+                <span className="text-primary">＋</span>
+                <p>{adv}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
+     {/*} <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
         <AmbassadeurForm />
-      </DateGate>
+      </DateGate>*/}
     </>
   );
 }
