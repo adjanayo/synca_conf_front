@@ -2,12 +2,12 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "./components/site/Footer";
 import { Nav } from "./components/site/Nav";
 import { AmbassadeurPage } from "./pages/ambassadeur";
-import { ContactPage } from "./pages/contact";
-import { FAQPage } from "./pages/faq";
-import { InscriptionPage } from "./pages/inscription";
+import { ContactView } from "./pages/contacts/ContactView";
+import { FAQView } from "./pages/Faq/FAQView";
+import { InscriptionPage } from "./pages/inscriptions/inscription";
 import { PartenairesPage } from "./pages/partenaires";
-import { ProgrammePage } from "./pages/programme";
-import { SpeakersPage } from "./pages/speakers";
+import { ProgrammeView } from "./pages/programmes/ProgrammeView";
+import { SpeakersView } from "./pages/speakers/SpeakersView";
 import { SpeakerPage } from "./pages/candidature-speaker";
 import { IndexView } from "./pages/index/IndexView";
 
@@ -50,12 +50,12 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<AppLayout />}>
         <Route index element={<IndexView />} />
-        <Route path="programme" element={<ProgrammePage />} />
-        <Route path="speakers" element={<SpeakersPage />} />
+        <Route path="programme" element={<ProgrammeView />} />
+        <Route path="speakers" element={<SpeakersView />} />
         <Route path="partenaires" element={<PartenairesPage />} />
         <Route path="ambassadeur" element={<AmbassadeurPage />} />
-        <Route path="faq" element={<FAQPage />} />
-        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FAQView />} />
+        <Route path="contact" element={<ContactView />} />
         <Route path="inscription" element={<InscriptionPage />} />
         <Route path="candidature-speaker" element={<SpeakerPage />} />
         <Route path="*" element={<NotFoundPage />} />
