@@ -1,26 +1,44 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { PageHeader } from "../components/site/PageHeader";
-import { DateGate } from "../components/site/DateGate";
-import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
+import { AlertCircle } from "lucide-react";
+import { PageHeader } from "../../components/site/PageHeader";
+import { DateGate } from "../../components/site/DateGate";
+import { FormShell, FormSection, Field, inputCls, textareaCls } from "../../components/site/FormShell";
 import {
   COUNTRIES, SECTEURS, NIVEAUX, PROFILS, PASS, GENRES, SOURCES,
-} from "../lib/forms/constants";
+} from "../../lib/forms/constants";
 
 const OPENS_AT = new Date("2026-07-01T00:00:00+00:00");
 
 export function InscriptionPage() {
   return (
-    <>
+    <section className="bg-cream">
       <PageHeader
         eyebrow="Inscription participant"
         title={<>Rejoins la Synca Conf <span className="text-primary">2027</span>.</>}
         description="Remplis le formulaire d'inscription pour réserver ton pass. Tu recevras un email de confirmation avec ton billet."
       />
+
+      <div className="mx-auto max-w-3xl px-6 pt-10 bg-cream">
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 md:p-6 flex items-start gap-4 shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-destructive text-white shadow-sm">
+            <AlertCircle className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-destructive text-base md:text-lg">
+              Service d'inscription actuellement indisponible
+            </h3>
+            <p className="mt-1 text-sm text-foreground/80 leading-relaxed">
+              Le service d'inscription est momentanément indisponible. Nos équipes s'efforcent de rétablir le service au plus vite. Merci de réessayer ultérieurement.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <DateGate opensAt={OPENS_AT} label="Les inscriptions participants ouvrent en mars 2027.">
         <InscriptionForm />
       </DateGate>
-    </>
+    </section>
   );
 }
 
@@ -195,7 +213,7 @@ function InscriptionForm() {
         </FormSection>
 
         <div className="mt-10 flex justify-end">
-          <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow">
+          <button type="submit" disabled className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow">
             Valider mon inscription
           </button>
         </div>
