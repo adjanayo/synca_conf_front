@@ -1,8 +1,7 @@
 
 import { Mail, MapPin, Phone } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
-import { ContactForm } from "./contactForm";
-
+import { ContactForm } from "./ContactForm";
 
 const TEAM = [
   { i: <Mail className="w-5 h-5" />, t: "Email général", v: "contact@sync-africa.com" },
