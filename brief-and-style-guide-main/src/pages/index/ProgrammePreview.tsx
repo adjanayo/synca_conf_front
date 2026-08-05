@@ -1,3 +1,4 @@
+import { DAYS } from "@/data/programme";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -35,15 +36,15 @@ function ProgrammePreview() {
           </Link>
         </div>
         <div className="mt-12 grid md:grid-cols-3 gap-6">
-          {days.map((day) => (
-            <article key={day.d} className="group rounded-3xl bg-white border border-border p-6 hover:-translate-y-1 transition-transform shadow-card">
+          {DAYS.map((day) => (
+            <article key={day.id} className="group rounded-3xl bg-white border border-border p-6 hover:-translate-y-1 transition-transform shadow-card">
               <div className="flex items-center justify-between">
-                <div className="text-xs font-semibold uppercase tracking-widest text-primary">{day.tag}</div>
+                <div className="text-xs font-semibold uppercase tracking-widest text-primary">{day.theme}</div>
                 <span className="text-xs text-muted-foreground">4 sessions clés</span>
               </div>
-              <h3 className="mt-3 font-display font-bold text-2xl">{day.d}</h3>
+              <h3 className="mt-3 font-display font-bold text-2xl">{day.date}</h3>
               <ul className="mt-6 space-y-4">
-                {day.items.map((it) => (
+                {day.slots.map((it) => (
                   <li key={it.h} className="flex gap-4">
                     <span className="text-sm font-semibold text-primary tabular-nums w-12 shrink-0">{it.h}</span>
                     <span className="text-sm text-foreground">{it.t}</span>

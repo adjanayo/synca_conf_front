@@ -56,7 +56,6 @@ const FEATURES = [
   { i: Code2, t: "Networking général" },
   { i: Code2, t: "Programme digital" },
   { i: Code2, t: "Job & Internship Board" },
-
   { i: Shield, t: "Hackathon interuniversitaire" },
   { i: Briefcase, t: "Expositions Tech" },
   { i: Users, t: "Job Fair & B2B" },
