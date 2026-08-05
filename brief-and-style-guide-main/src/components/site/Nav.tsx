@@ -3,6 +3,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
+  { to: "/", label: "Accueil" },
   { to: "/programme", label: "Programme" },
   { to: "/speakers", label: "Speakers" },
   { to: "/partenaires", label: "Partenaires" },

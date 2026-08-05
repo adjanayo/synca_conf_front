@@ -1,3 +1,4 @@
+import { TICKETS } from "@/data/parameter";
 import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -18,8 +19,8 @@ function TicketsPreview() {
             Paiement par carte, Wave, Orange Money ou virement. Codes promo Early Bird disponibles.
           </p>
         </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {tickets.map((t) => {
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TICKETS.map((t) => {
             const featured = t.badge === "Populaire";
             return (
               <article key={t.name} className={`relative rounded-3xl p-7 flex flex-col ${featured ? "bg-ink text-white shadow-glow" : "bg-white text-ink border border-border"}`}>
