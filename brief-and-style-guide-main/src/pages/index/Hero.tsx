@@ -48,7 +48,7 @@ function Hero() {
           La conférence tech panafricaine · Édition 2027
         </div>
         <h1 className="mt-6 font-display font-bold text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] tracking-tighter">
-          Synca Cyber <span className="text-primary">Challenge</span><br />
+          Conférence <span className="text-primary">Synca Conf</span><br />
           {/* <span className="text-white/90">Dakar · Africa builds.</span> */}
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-white/70">
