@@ -3,8 +3,9 @@ import {
   ArrowRight, Calendar, MapPin, Users
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PARAMETER } from "@/data/parameter";
 
-const TARGET = new Date("2027-08-18T09:00:00+00:00").getTime();
+const TARGET = new Date("2027-03-16T09:00:00+00:00").getTime();
 
 
 
@@ -30,7 +31,10 @@ function useCountdown() {
 function Hero() {
   const t = useCountdown();
   const cells = [
-    { v: t.d, l: "Jours" }, { v: t.h, l: "Heures" }, { v: t.m, l: "Min" }, { v: t.s, l: "Sec" },
+    { v: t.d, l: "Jours" },
+    { v: t.h, l: "Heures" },
+    { v: t.m, l: "Min" },
+    { v: t.s, l: "Sec" },
   ];
   return (
     <section className="relative overflow-hidden bg-ink text-white pt-32 pb-24">
@@ -44,25 +48,24 @@ function Hero() {
           La conférence tech panafricaine · Édition 2027
         </div>
         <h1 className="mt-6 font-display font-bold text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] tracking-tighter">
-          Synca Conf <span className="text-primary">2027</span><br />
-          <span className="text-white/90">Dakar · Africa builds.</span>
+          Conférence <span className="text-primary">Synca Conf</span><br />
+          {/* <span className="text-white/90">Dakar · Africa builds.</span> */}
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-white/70">
-          3 jours pour réunir +2 000 builders, designers, fondateurs et décideurs autour de l'IA,
-          du produit, de la cybersécurité et de l'impact à travers l'Afrique.
+          {PARAMETER.slogan}
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        {/* <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/inscription" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3.5 hover:brightness-110 transition shadow-glow">
             Prendre mon ticket <ArrowRight className="w-4 h-4" />
           </Link>
           <Link to="/partenaires" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3.5 font-medium hover:bg-white/5 transition">
             Devenir partenaire
           </Link>
-        </div>
+        </div> */}
         <div className="mt-10 flex flex-wrap gap-6 text-sm text-white/70">
-          <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> 18–20 Août 2027</span>
-          <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Dakar, Sénégal</span>
-          <span className="inline-flex items-center gap-2"><Users className="w-4 h-4 text-primary" /> +2 000 participants</span>
+          <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {PARAMETER.date}</span>
+          <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> {PARAMETER.lieu}</span>
+          <span className="inline-flex items-center gap-2"><Users className="w-4 h-4 text-primary" /> {PARAMETER.participants}</span>
         </div>
         <div className="mt-14 grid grid-cols-4 max-w-xl gap-3">
           {cells.map((c) => (

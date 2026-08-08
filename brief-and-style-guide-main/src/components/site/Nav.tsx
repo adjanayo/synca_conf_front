@@ -3,6 +3,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
+  { to: "/", label: "Accueil" },
   { to: "/programme", label: "Programme" },
   { to: "/speakers", label: "Speakers" },
   { to: "/partenaires", label: "Partenaires" },
@@ -17,7 +18,7 @@ export function Nav() {
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[oklch(0.18_0_0_/_0.75)] border-b border-white/5">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between text-white">
         <Link to="/" className="flex items-center gap-2 font-display font-bold tracking-tight">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-ink">S</span>
+          <img src="/parameter/Logoicone orange blanc_CMJN.svg" alt="Logo CMJN" className="h-12 w-12"/>
           <span>Synca Conf <span className="text-primary">'27</span></span>
         </Link>
 

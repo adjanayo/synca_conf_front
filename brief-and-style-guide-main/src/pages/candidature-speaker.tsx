@@ -18,9 +18,10 @@ export function SpeakerPage() {
         title={<>Partage ton expertise sur scène <span className="text-primary">à Dakar</span>.</>}
         description="Candidature ouverte dès mars 2027 — formats keynote, panel, workshop, lightning talk ou fireside chat. Sélection sur dossier."
       />
-      <DateGate opensAt={OPENS_AT} label="Les candidatures speakers ouvrent en mars 2027.">
-        <SpeakerForm />
-      </DateGate>
+      <SpeakerForm />
+      {/*<DateGate opensAt={OPENS_AT} label="Les candidatures speakers ouvrent en mars 2027.">
+        
+      </DateGate>*/}
     </>
   );
 }

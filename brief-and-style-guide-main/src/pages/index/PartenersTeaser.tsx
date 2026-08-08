@@ -12,9 +12,9 @@ function PartnersTeaser() {
             Six niveaux de partenariat — de 1,5M à 10M F CFA — pour aligner votre marque sur l'écosystème tech
             le plus dynamique du continent : recrutement, visibilité, B2B, impact.
           </p>
-          <Link to="/partenaires" className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink text-white px-6 py-3 font-semibold text-sm hover:bg-ink/90 transition">
+          {/* <Link to="/partenaires" className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink text-white px-6 py-3 font-semibold text-sm hover:bg-ink/90 transition">
             Voir les offres <ArrowRight className="w-4 h-4" />
-          </Link>
+          </Link> */}
         </div>
         <div className="md:col-span-5 grid grid-cols-3 gap-3">
           {["Title", "Platinum", "Gold", "Silver", "Bronze", "Média"].map((t) => (
