@@ -67,7 +67,6 @@ const TIERS = [
     ],
   },
 ];
-
 export function PartenairesPage() {
   return (
     <>
@@ -78,27 +77,54 @@ export function PartenairesPage() {
       />
 
       <section className="py-20 bg-cream">
-        <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {TIERS.map((t) => (
-            <article key={t.name} className={`relative rounded-3xl p-7 border-2 flex flex-col ${t.color} ${t.featured ? "shadow-glow" : "shadow-card"}`}>
-              {t.featured && <span className="absolute -top-3 left-7 text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-primary text-ink">Vedette</span>}
-              <div className="font-display font-bold text-2xl">{t.name}</div>
-              <div className={`mt-2 text-sm ${t.featured ? "text-white/70" : "text-muted-foreground"}`}>À partir de</div>
-              <div className="font-display font-bold text-3xl mt-1">{t.price}</div>
-              <ul className="mt-6 space-y-2.5 text-sm flex-1">
-                {t.perks.map((p) => (
-                  <li key={p} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
+        <div className="mx-auto max-w-7xl px-6 space-y-6">
+  {Array.from({ length: Math.ceil(TIERS.length / 2) }, (_, i) => {
+    const group = TIERS.slice(i * 2, i * 2 + 2);
+
+    return (
+      <div key={i} className="grid md:grid-cols-2 gap-6">
+        {group.map((t) => (
+          <article
+            key={t.name}
+            className={`relative rounded-3xl p-7 border-2 flex flex-col ${t.color} ${
+              t.featured ? "shadow-glow" : "shadow-card"
+            }`}
+          >
+            {t.featured && (
+              <span className="absolute -top-3 left-7 text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-primary text-ink">
+                Vedette
+              </span>
+            )}
+
+            <div className="font-display font-bold text-2xl">{t.name}</div>
+            <div
+              className={`mt-2 text-sm ${
+                t.featured ? "text-white/70" : "text-muted-foreground"
+              }`}
+            >
+              À partir de
+            </div>
+            <div className="font-display font-bold text-3xl mt-1">
+              {t.price}
+            </div>
+
+            <ul className="mt-6 space-y-2.5 text-sm flex-1">
+              {t.perks.map((p) => (
+                <li key={p} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    );
+  })}
+</div>
       </section>
 
-      {/*<PartnerForm />*/}
+      <PartnerForm />
     </>
   );
 }
@@ -158,7 +184,7 @@ function PartnerForm() {
   };
 
   return (
-   {/* <div id="form" className="bg-background py-4">
+    <div id="form" className="bg-background py-4">
       <div className="mx-auto max-w-3xl px-6 pt-10">
         <div className="text-center mb-6">
           <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">Devenir partenaire</div>
@@ -266,7 +292,7 @@ function PartnerForm() {
           </div>
         </form>
       </FormShell>
-    </div>*/}
+    </div>
   );
 }
 

@@ -41,49 +41,91 @@ export function AmbassadeurPage() {
         </div>
       </section>*/}
       <section className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
-          <h2 className="text-3xl font-bold mb-10">Ce que fait un ambassadeur</h2>
+  <div className="mx-auto max-w-6xl px-6">
+    <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
+    <h2 className="text-3xl font-bold mb-4">
+      Deviens un acteur clé de Synca Conf 2027
+    </h2>
+    <p className="text-muted-foreground mb-10 max-w-2xl">
+      En tant qu’ambassadeur, tu joues un rôle essentiel dans le succès de l’événement.
+      Tu es le lien entre ta communauté et Synca.
+    </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { id: "01", t: "Relayer", d: "Promouvoir l'événement." },
-              { id: "02", t: "Mobiliser", d: "Activer ton réseau local." },
-              { id: "03", t: "Recruter", d: "Attirer des participants." },
-              { id: "04", t: "Représenter", d: "Présence sur place." },
-            ].map((item) => (
-              <div key={item.id} className="border rounded-2xl p-6 bg-cream">
-                <span className="text-primary font-bold">{item.id}</span>
-                <h4 className="mt-2 font-semibold">{item.t}</h4>
-                <p className="text-sm text-muted-foreground mt-2">{item.d}</p>
-              </div>
-            ))}
-          </div>
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[
+        {
+          id: "01",
+          t: "Relayer",
+          d: "Fais connaître Synca Conf 2027 sur tes réseaux et dans ta communauté.",
+        },
+        {
+          id: "02",
+          t: "Mobiliser",
+          d: "Inspire et motive ton entourage à participer à un événement unique.",
+        },
+        {
+          id: "03",
+          t: "Recruter",
+          d: "Attire de nouveaux participants et développe l’impact du projet.",
+        },
+        {
+          id: "04",
+          t: "Représenter",
+          d: "Sois le visage de Synca dans ta ville et lors de l’événement.",
+        },
+      ].map((item) => (
+        <div
+          key={item.id}
+          className="group border rounded-2xl p-6 bg-cream hover:bg-primary hover:text-white transition duration-300 shadow-sm hover:shadow-lg"
+        >
+          <span className="text-primary group-hover:text-white font-bold text-lg">
+            {item.id}
+          </span>
+          <h4 className="mt-3 font-semibold text-lg">{item.t}</h4>
+          <p className="text-sm mt-2 opacity-80">{item.d}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
       <section className="py-20 bg-cream">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-sm uppercase text-primary mb-2">Pourquoi candidater</div>
-          <h2 className="text-3xl font-bold mb-10">Les avantages</h2>
+  <div className="mx-auto max-w-6xl px-6">
+    <div className="text-sm uppercase text-primary mb-2">
+      Pourquoi candidater
+    </div>
+    <h2 className="text-3xl font-bold mb-4">
+      Ce que tu gagnes en devenant ambassadeur
+    </h2>
+    <p className="text-muted-foreground mb-10 max-w-2xl">
+      Rejoins une communauté dynamique et bénéficie d’avantages exclusifs
+      pour booster ton réseau et ton expérience.
+    </p>
 
-          <div className="space-y-4">
-            {[
-              "Badge Synca Conf 2027",
-              "Certificat officiel",
-              "Accès réseau & coulisses",
-              "Kit ambassadeur",
-            ].map((adv, i) => (
-              <div key={i} className="flex gap-3">
-                <span className="text-primary">＋</span>
-                <p>{adv}</p>
-              </div>
-            ))}
+    <div className="grid md:grid-cols-2 gap-6">
+      {[
+        "Badge officiel Synca Conf 2027",
+        "Certificat valorisant pour ton CV",
+        "Accès privilégié aux coulisses",
+        "Opportunités de networking",
+        "Kit ambassadeur exclusif",
+        "Visibilité personnelle accrue",
+      ].map((adv, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition"
+        >
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white font-bold">
+            ✓
           </div>
+          <p className="font-medium">{adv}</p>
         </div>
-      </section>
-
+      ))}
+    </div>
+  </div>
+</section>
+<AmbassadeurForm />
      {/*} <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
-        <AmbassadeurForm />
+        
       </DateGate>*/}
     </>
   );
