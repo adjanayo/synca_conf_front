@@ -49,27 +49,30 @@ const PARAMETER = {
 
 const FEATURES = [
   { i: Sparkles, t: "Conférence principale" },
-  { i: Code2, t: "Keynotes" },
-  { i: Code2, t: "Panels" },
-  { i: Code2, t: "Village d'exposition" },
-  { i: Code2, t: "Démonstrations" },
-  { i: Code2, t: "Networking général" },
-  { i: Code2, t: "Programme digital" },
-  { i: Code2, t: "Job & Internship Board" },
+  { i: Code2, t: "Panels, Keynotes" },
+  { i: Code2, t: "Ateliers, Masterclass " },
+  { i: Code2, t: "Expositions, Job Fair" },
   { i: Shield, t: "Hackathon interuniversitaire" },
-  { i: Briefcase, t: "Expositions Tech" },
-  { i: Users, t: "Job Fair & B2B" },
-  { i: PartyPopper, t: "Side event" },
+  { i: Briefcase, t: "Side Event, Entreprises Tours" },
 ];
 
 
-const TICKETS = [
+{/*const TICKETS = [
   { name: "VIP", price: "40 000", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
   { name: "PRO", price: "25 000", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
   { name: "Executif", price: "35 000", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
   { name: "Premium", price: "100 000", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
   { name: "En ligne", price: "10 000", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
   { name: "Etudiant", price: "Gratuit(limité)", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
+
+];*/}
+const TICKETS = [
+  { name: "VIP", price: "** ***", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
+  { name: "PRO", price: "** ***", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
+  { name: "Executif", price: " ** ***", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
+  { name: "Premium", price: "** ***", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
+  { name: "En ligne", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
+  { name: "Etudiant", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
 
 ];
 
