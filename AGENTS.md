@@ -51,3 +51,6 @@ Avant de démarrer le travail dans une session déjà longue, vérifier s'il exi
 ## Documentation
 
 Voir `docs/` (skill `project-docs`) pour toute documentation à jour du projet.
+
+- `FRONTEND_INTEGRATION.md` — référence de l'API `synca_conf_back` (endpoints publics, formulaires, auth, sécurisation des tokens). À consulter avant tout appel API ou formulaire.
+- `USER_JOURNEYS.md` — parcours utilisateurs (visiteur, participant, speaker, admin…) avec transitions d'état et fenêtres de campagne.

@@ -27,6 +27,16 @@ Frontend pur (SPA React 19 + Vite + TypeScript, app dans `brief-and-style-guide-
 - **Traiter le backend comme hostile en erreur** : parser les erreurs sans supposer leur forme (voir `error-handling`), ne jamais afficher une `detail` brute qui pourrait fuiter des internes du serveur — l'afficher telle quelle seulement si le backend garantit des messages propres.
 - **URLs uniquement par config** (variables d'environnement ou fichier de conf), jamais de URL de prod encodée en dur dans plusieurs fichiers — pouvoir viser dev vs prod sans ré-écrire le code.
 
+## Tokens d'accès (participant, pas de login)
+
+Le backend (`synca_conf_back`, décrit dans `FRONTEND_INTEGRATION.md`) n'a pas de login participant : l'`access_token` est délivré **une seule fois** dans la réponse de `POST /api/register` (§5.2). Il sert à `GET/DELETE /api/user/me` et `GET /api/user/me/tickets`. C'est un secret comme un autre :
+
+- **Stockage** : ni cookie, ni `localStorage` (XSS = vol du token). Mémoire JS pour la session courante, ou `sessionStorage` si la session doit survivre à un refresh. Jamais dans une URL, un log, ou un outil d'analytics.
+- **Envoi** : header `Authorization: Bearer <token>` via un gestionnaire central (intercepteur/react-query), jamais collé dans chaque appel.
+- **Ne jamais construire une URL de billet à la main** — seul `GET /api/user/me/tickets` fournit `pdf_url` (`GET /api/tickets/:id` n'existe pas). Ne pas deviner/reconstruire un lien depuis un `ticket_number` ou un id.
+- **`401` vs `403`** : `401` = token manquant/invalide/révoqué → UI "session expirée"/"reconnectez-vous" ; `403` = token valide mais non autorisé OU **fenêtre de campagne fermée** → message métier ("les candidatures partenaires sont closes"). Ne jamais les traiter comme équivalents.
+- **Paiement** : les endpoints `POST /api/payments` et `POST /api/promo/validate` existent côté backend mais **ne doivent pas encore être consommés** en production (non testés en conditions réelles, §10 du guide).
+
 ## Versions et dépendances
 
 - Audit régulier des dépendances (`npm audit`, voir `current-versions-only`) — une dépendance frontend compromise (ex. package malveillant dans le graph de deps) est un vecteur d'exfiltration réel : scripts malveillants, fuites de tokens via le navigateur.
