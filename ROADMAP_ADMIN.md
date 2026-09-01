@@ -7,7 +7,7 @@
 - **Portillon qualité** : aucune étape n'est terminée sans `rtk npm run build` + `rtk npm run lint` (skill `quality-engineer`). Push automatique sur `dev-boaz` après chaque unité cohérente (skill `git-push-workflow`).
 - **API** : référence `FRONTEND_INTEGRATION.md` — erreurs `{"detail": "..."}`, `422` = tableau Pydantic, rate limits (admin 30/min, login 5/min), token `access_token` Bearer (15 min), `refresh_token` **non exposé** pour l'instant → sur `401` on déconnecte.
 - **Sécurité** : skill `security-hardening` — token admin en mémoire (jamais localStorage/URL/logs), `403` vs `401` traités différemment, jamais de secret en dur, pas de PII en log.
-- **SEO** : le backoffice vit sous `/admin/*` → doit rester **hors indexation** (robots.txt disallow). Ne pas mettre de meta OG sur les pages admin.
+- **SEO + discrétion du path admin** : le chemin du backoffice est **randomisé**, défini une seule fois côté build via variable d'env (cf. A3) — le **vrai** chemin ne doit pas traîner dans le code ni être devinable. Ne pas mettre de meta OG sur les pages admin ; le layout admin porte `<meta name="robots" content="noindex">` (on **ne met pas** le chemin secret dans `robots.txt` — ça le divulguerait publiquement).
 - **Composants** : réutiliser `src/components/ui/` (shadcn : sidebar, table, dialog, tabs, form, sonner, pagination…). Backend CORS dev autorise `http://localhost:5173`.
 - ⚠️ **Endpoints admin à confirmer** : `FRONTEND_INTEGRATION.md` documente le **public** ; les routes admin (`/api/admin/*`) ne sont pas détaillées (sauf login et PATCH roles/speakers/ambassadors). **Avant chaque étape C/D/E**, vérifier l'exact shape via Swagger (`make swagger`, backend `synca_conf_back`) et le reporter dans le suivi — ne jamais inventer un payload (skill `error-handling`).
 
@@ -25,9 +25,12 @@
 - Persistance : garder la session via `sessionStorage` uniquement si l'utilisateur demande une session prolongée (discutable avec utilisateur) — défaut : mémoire.
 - Intercepteur `401` global → logout + redirection `/admin/login` ; gestion des erreurs de login (compte verrouillé après 5 échecs → message dédié).
 
-### A3. Routage & layout admin
-- Routes `/admin/login`, `/admin/*` (dashboard + sections) avec `<RequireAuth>` (route publique loggée renvoie vers dashboard).
-- Layout dédié : sidebar (composants `ui/sidebar`), header, zone contenu — **séparé du layout public** (pas de Nav/Footer public dans l'admin).
+### A3. Routage & layout admin — chemin randomisé, non devinable
+
+- **Le chemin du backoffice n'est pas `/admin` en dur.** Il est porté par `import.meta.env.VITE_ADMIN_PATH` (ex. token aléatoire type `ct-8f3ka2z9`, choisi/roté par l'ops au déploiement). **Une seule occurrence** du token vit dans le code (le point de montage des routes), jamais répétée dans les composants, les liens, les logs ou les docs commitées.
+- **Construction** : `base = "/" + VITE_ADMIN_PATH` ; routes `base/login` et `base/*` avec `<RequireAuth>` (une route admin connectée renvoie vers le dashboard). Si `VITE_ADMIN_PATH` est absent au build, les routes admin **ne sont pas montées** → `404` (pas de surface à scanner). Valeur dev commode possible (`.env.development`) mais jamais par défaut dans un build de prod.
+- **Limite honnête et assumée (à noter pour l'utilisateur)** : dans une SPA 100% client, le token **existe forcément dans le bundle JS** pour router dedans. La randomisation + `noindex` + auth + RBAC = un contrôle de **défense en profondeur** (durcissement), **pas** une garantie d'invisibilité — la vraie sécurité d'accès reste l'auth/RBAC du backend. On le documente, on ne le vend pas comme une porte blindée.
+- **Layout dédié** : sidebar (composants `ui/sidebar`), header, zone contenu — **séparé du layout public** (pas de Nav/Footer public dans l'admin).
 
 ### A4. Gating RBAC dans l'UI
 - Lire rôle + permissions (réponse login et/ou `GET /api/admin/me` si dispo — à confirmer).
