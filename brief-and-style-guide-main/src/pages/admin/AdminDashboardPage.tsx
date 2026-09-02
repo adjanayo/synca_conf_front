@@ -100,6 +100,12 @@ export function AdminDashboardPage() {
           >
             Fenêtres de campagne
           </Link>
+          <Link
+            to="contacts"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Messages contact
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>

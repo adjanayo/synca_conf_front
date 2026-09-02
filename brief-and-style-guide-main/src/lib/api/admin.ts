@@ -294,3 +294,34 @@ export function updateCampaignWindow(key: CampaignWindowKey, body: CampaignWindo
     body,
   });
 }
+
+export type ContactMessage = {
+  id: number;
+  name: string;
+  email: string;
+  subject: string | null;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
+
+export type ContactMessageFilters = {
+  is_read?: boolean;
+};
+
+export function listContacts(filters: ContactMessageFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.is_read !== undefined) params.set("is_read", String(filters.is_read));
+  const query = params.toString();
+  return apiFetch<ContactMessage[]>(`/api/admin/contacts${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function updateContactReadStatus(id: number, is_read: boolean) {
+  return apiFetch<ContactMessage>(`/api/admin/contacts/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { is_read },
+  });
+}

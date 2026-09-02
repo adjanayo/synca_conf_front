@@ -22,6 +22,7 @@ import { AdminAmbassadorsPage } from "./pages/admin/AdminAmbassadorsPage";
 import { AdminExhibitorsPage } from "./pages/admin/AdminExhibitorsPage";
 import { AdminPartnersPage } from "./pages/admin/AdminPartnersPage";
 import { AdminCampaignWindowsPage } from "./pages/admin/AdminCampaignWindowsPage";
+import { AdminContactsPage } from "./pages/admin/AdminContactsPage";
 
 // Backoffice path is never "/admin" in the source (ROADMAP_ADMIN.md A3): it
 // comes from a build-time env var so the real path isn't hardcoded/greppable
@@ -118,6 +119,14 @@ export default function AppRoutes() {
                 permission="campaign_windows.manage"
               >
                 <AdminCampaignWindowsPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="contacts"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`}>
+                <AdminContactsPage />
               </AdminRequireAuth>
             }
           />
