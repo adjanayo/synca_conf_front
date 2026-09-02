@@ -17,7 +17,7 @@
 | D1 | Gestion fenêtres de campagne (écriture admin) | ✅ fait |
 | D2 | Messages contact | ✅ fait |
 | D3 | Gestion des rôles (matrice permissions) | ✅ fait |
-| E1 | Exports CSV | ⬜ pas commencé |
+| E1 | Exports CSV | ✅ fait |
 | E2 | Audit logs (tentatives connexion) | ⬜ pas commencé |
 | E3 | Durcissement session (401 global, 429, verrouillage) | ✅ fait |
 | F | Qualité & passation (build/lint zéro erreur, tests, docs) | ⬜ pas commencé (build/lint OK en continu, pas de tests ajoutés) |
@@ -37,6 +37,7 @@
 - [x] Phase D2 : messages contact
 - [x] Phase D3 : gestion des rôles
 - [x] Fix : session admin perdue au rafraîchissement de page (token mémoire uniquement)
+- [x] Phase E1 : exports CSV
 
 ## Journal
 
@@ -63,3 +64,4 @@
 - Fait : Phase D1 (fenêtres de campagne, écriture admin) — `AdminCampaignWindowsPage` : une carte par fenêtre (call_for_speaker/ticketing/call_for_partner/call_for_ambassador/call_for_exhibitor), édition début/fin (datetime-local) + toggle actif, `PATCH /api/admin/campaign-windows/{key}` gardé derrière `campaign_windows.manage`. Backend déjà complet côté `synca_conf_back` (`GET`+`PATCH` déjà présents et montés) — aucun ajout backend nécessaire, uniquement le front manquait.
 - Fait : Phase D2 (messages contact) — `AdminContactsPage` : liste filtrable (lu/non lu), détail en dialog, marquer lu/non lu. `GET /api/admin/contacts` existait déjà côté `synca_conf_back` (any admin, pas de permission dédiée — confirmé par le commentaire existant dans le code) mais aucun `PATCH` pour marquer lu/non lu — ajouté (`PATCH /api/admin/contacts/{id}`, même garde `get_current_admin` que le `GET`, pas de code RBAC dédié : les 8 permissions seedées en base n'incluent pas de `contacts.view`, contrairement à ce que laisse penser ROADMAP_ADMIN.md — suivi la réalité du code plutôt que le roadmap).
 - Fait : Phase D3 (gestion des rôles) — `AdminRolesPage` : matrice rôles × permissions (checkbox par cellule, bouton "Enregistrer" par rôle actif seulement si modifié), gardée derrière `roles.manage`. Backend n'avait que le `PATCH /api/admin/roles/{id}` (déjà présent) — aucun moyen de lister les rôles/permissions existants pour construire la matrice. Ajouté `GET /api/admin/roles` et `GET /api/admin/permissions` (mêmes schémas Pydantic déjà présents, juste jamais montés en lecture), côté `synca_conf_back`.
+- Fait : Phase E1 (exports CSV) — `AdminExportsPage` : deux boutons (inscriptions/paiements) téléchargeant `GET /api/admin/export/registrations` et `/payments`, gardés derrière `export.data`. Backend déjà complet côté `synca_conf_back` (routes + anti-injection formule CSV déjà en place) — aucun ajout backend nécessaire. Côté front, `apiFetch` ne gérait que le JSON ; ajouté `apiDownload` dans `client.ts` (fetch avec header Authorization, réponse en blob, déclenchement du téléchargement via URL d'objet temporaire) car un lien `<a href>` classique ne peut pas porter le token.

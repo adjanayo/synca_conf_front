@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiDownload, apiFetch } from "./client";
 
 export type AdminTokenPair = {
   access_token: string;
@@ -351,4 +351,12 @@ export function updateRolePermissions(roleId: number, permission_codes: string[]
     auth: "admin",
     body: { permission_codes },
   });
+}
+
+export function exportRegistrationsCsv() {
+  return apiDownload("/api/admin/export/registrations", "admin", "registrations.csv");
+}
+
+export function exportPaymentsCsv() {
+  return apiDownload("/api/admin/export/payments", "admin", "payments.csv");
 }

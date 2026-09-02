@@ -104,3 +104,42 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
 }
+
+/**
+ * CSV exports need the Authorization header (can't be a plain <a href> link),
+ * so fetch as blob then trigger a save via a throwaway object URL.
+ */
+export async function apiDownload(path: string, auth: AuthScope, filename: string): Promise<void> {
+  if (!API_BASE_URL) {
+    throw new Error("VITE_API_URL n'est pas configuré (voir .env.example).");
+  }
+
+  const token = tokens[auth];
+  if (!token) throw new ApiError(401, "Session expirée.");
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    let detail = "Une erreur est survenue.";
+    try {
+      const body = (await response.json()) as { detail?: unknown };
+      detail = extractErrorMessage(body.detail, detail);
+    } catch {
+      // response wasn't JSON -- keep the generic message
+    }
+    if (response.status === 401) unauthorizedHandlers[auth]?.();
+    throw new ApiError(response.status, detail);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}

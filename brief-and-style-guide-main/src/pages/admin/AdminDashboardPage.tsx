@@ -112,6 +112,12 @@ export function AdminDashboardPage() {
           >
             Rôles
           </Link>
+          <Link
+            to="exports"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Exports CSV
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>
