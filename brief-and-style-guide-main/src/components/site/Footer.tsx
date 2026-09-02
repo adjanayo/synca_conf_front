@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { LINKS } from "@/data/parameter";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 export function Footer() {
+  const { startAt } = useEventWindow();
+  const year = startAt ? startAt.getFullYear() : new Date().getFullYear();
+
   return (
     <footer className="bg-ink text-white/70 border-t border-white/5">
       <div className="mx-auto max-w-7xl px-6 py-14 grid md:grid-cols-4 gap-10">
@@ -15,7 +19,7 @@ export function Footer() {
               alt="Logo CMJN"
               className="h-12 w-12"
             />
-            Synca Conf <span className="text-primary">2027</span>
+            Synca Conf <span className="text-primary">{year}</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm">
             La conférence tech panafricaine. Organisée par la communauté Synca à Dakar, Sénégal.
@@ -89,7 +93,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/5">
         <div className="mx-auto max-w-7xl px-6 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <span>© 2027 Synca · Tous droits réservés</span>
+          <span>© {year} Synca · Tous droits réservés</span>
           {/* <div className="flex gap-5">
             <a href="#" className="hover:text-white">Mentions légales</a>
             <a href="#" className="hover:text-white">Confidentialité</a>

@@ -21,7 +21,7 @@ function useCountdown(target: number) {
 }
 
 function Hero() {
-  const { startAt, dateLabel } = useEventWindow();
+  const { startAt, dateLabel, venue } = useEventWindow();
   const t = useCountdown(startAt ? startAt.getTime() : FALLBACK_TARGET);
   const cells = [
     { v: t.d, l: "Jours" },
@@ -65,7 +65,7 @@ function Hero() {
             <Calendar className="w-4 h-4 text-primary" /> {dateLabel}
           </span>
           <span className="inline-flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-primary" /> {PARAMETER.lieu}
+            <MapPin className="w-4 h-4 text-primary" /> {venue}
           </span>
           <span className="inline-flex items-center gap-2">
             <Users className="w-4 h-4 text-primary" /> {PARAMETER.participants}

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCampaignWindows } from "@/lib/api/registration";
+import { getCampaignWindows, getEventSettings } from "@/lib/api/registration";
 import { PARAMETER } from "@/data/parameter";
 
 const MONTHS_FR = [
@@ -18,20 +18,28 @@ function formatRange(startAt: string, endAt: string): string {
   return `${start.getDate()} ${MONTHS_FR[start.getMonth()]} – ${end.getDate()} ${month} ${year}`;
 }
 
-// Dates de l'événement pilotées par le back-office (fenêtre de campagne
-// "event", cf. AdminCampaignWindowsPage) — repli sur PARAMETER.date tant
-// que la fenêtre n'a pas chargé ou si l'appel échoue.
+// Dates + nom/lieu de l'événement pilotés par le back-office (fenêtre de
+// campagne "event" et EventSettings, cf. AdminEventSettingsPage) — repli sur
+// PARAMETER tant que les requêtes n'ont pas chargé ou si l'appel échoue,
+// pour que l'édition suivante se configure depuis le dashboard sans redéploi.
 export function useEventWindow() {
-  const query = useQuery({
+  const windowsQuery = useQuery({
     queryKey: ["public", "campaign-windows"],
     queryFn: getCampaignWindows,
     staleTime: 5 * 60 * 1000,
   });
+  const settingsQuery = useQuery({
+    queryKey: ["public", "event-settings"],
+    queryFn: getEventSettings,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  const eventWindow = query.data?.find((w) => w.key === "event");
+  const eventWindow = windowsQuery.data?.find((w) => w.key === "event");
 
   return {
     startAt: eventWindow ? new Date(eventWindow.start_at) : null,
     dateLabel: eventWindow ? formatRange(eventWindow.start_at, eventWindow.end_at) : PARAMETER.date,
+    name: settingsQuery.data?.name ?? PARAMETER.title,
+    venue: settingsQuery.data?.venue ?? PARAMETER.lieu,
   };
 }

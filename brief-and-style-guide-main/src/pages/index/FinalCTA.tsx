@@ -1,17 +1,16 @@
-import { PARAMETER } from "@/data/parameter";
 import { useEventWindow } from "@/hooks/useEventWindow";
 
 function FinalCTA() {
-  const { dateLabel } = useEventWindow();
+  const { dateLabel, venue } = useEventWindow();
   return (
     <section className="relative overflow-hidden bg-ink text-white">
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] rounded-full bg-primary/20 blur-3xl" />
       <div className="relative mx-auto max-w-5xl px-6 py-28 text-center">
         <div className="text-xs uppercase tracking-[0.3em] text-primary font-semibold">
-          {PARAMETER.lieu} . {dateLabel}
+          {venue} . {dateLabel}
         </div>
         <h2 className="mt-6 font-display font-bold text-5xl md:text-7xl leading-[0.95] tracking-tighter">
-          Rejoins-nous à <span className="text-primary">{PARAMETER.lieu}</span>.
+          Rejoins-nous à <span className="text-primary">{venue}</span>.
         </h2>
         <p className="mt-6 text-lg text-white/70 max-w-xl mx-auto">
           Trois jours pour rencontrer, apprendre, recruter, pitcher, et célébrer la tech africaine.

@@ -2,6 +2,8 @@ import { FormShell, FormSection, Field, inputCls, textareaCls } from "../../comp
 import { CONTACT_SUBJECTS } from "../../lib/forms/constants";
 import { useState } from "react";
 import { toast } from "sonner";
+import { sendContactMessage } from "../../lib/api/contact";
+import { ApiError } from "../../lib/api/client";
 
 
 
@@ -9,12 +11,13 @@ type Form = { nom: string; email: string; sujet: string; message: string; rgpd: 
 const empty: Form = { nom: "", email: "", sujet: "", message: "", rgpd: false };
 
 export function ContactForm() {
- 
+
       const [f, setF] = useState<Form>(empty);
       const [errors, setErrors] = useState<Record<string, string>>({});
+      const [submitting, setSubmitting] = useState(false);
       const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
-    
-      const submit = (ev: React.FormEvent) => {
+
+      const submit = async (ev: React.FormEvent) => {
         ev.preventDefault();
         const e: Record<string, string> = {};
         if (!f.nom.trim()) e.nom = "Requis";
@@ -24,9 +27,22 @@ export function ContactForm() {
         if (!f.rgpd) e.rgpd = "Consentement requis";
         setErrors(e);
         if (Object.keys(e).length) return toast.error("Merci de corriger les champs.");
-        console.log("[CONTACT]", f);
-        toast.success("Message envoyé !", { description: "Réponse sous 48h." });
-        setF(empty);
+
+        setSubmitting(true);
+        try {
+          await sendContactMessage({
+            name: f.nom,
+            email: f.email,
+            subject: f.sujet,
+            message: f.message,
+          });
+          toast.success("Message envoyé !", { description: "Réponse sous 48h." });
+          setF(empty);
+        } catch (error) {
+          toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+        } finally {
+          setSubmitting(false);
+        }
       };
 
 
@@ -58,8 +74,8 @@ export function ContactForm() {
             </label>
           </FormSection>
           <div className="mt-8 flex justify-end">
-            <button type="submit" disabled className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow">
-              Envoyer
+            <button type="submit" disabled={submitting} className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow disabled:opacity-60">
+              {submitting ? "Envoi…" : "Envoyer"}
             </button>
           </div>
         </form>

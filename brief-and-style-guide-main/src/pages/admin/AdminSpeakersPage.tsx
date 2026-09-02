@@ -54,7 +54,7 @@ const STATUS_LABELS: Record<SpeakerApplicationStatus, string> = {
   rejected: "Rejeté",
 };
 
-const THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cybersec"];
+const THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cyber Sécurité"];
 const FORMATS = ["Keynote", "Panel", "Workshop", "Lightning Talk", "Fireside Chat"];
 
 const dateTime = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" });

@@ -53,6 +53,17 @@ export function getCampaignWindows() {
   return apiFetch<CampaignWindow[]>("/api/campaign-windows");
 }
 
+export type EventSettings = {
+  id: number;
+  name: string;
+  venue: string;
+  updated_at: string;
+};
+
+export function getEventSettings() {
+  return apiFetch<EventSettings>("/api/event-settings");
+}
+
 export function registerParticipant(payload: RegisterPayload) {
   return apiFetch<RegisterResponse>("/api/register", { method: "POST", body: payload });
 }
