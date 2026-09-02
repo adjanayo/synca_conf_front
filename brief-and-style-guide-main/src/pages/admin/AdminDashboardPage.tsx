@@ -94,6 +94,12 @@ export function AdminDashboardPage() {
           >
             Candidatures partenaires
           </Link>
+          <Link
+            to="campaign-windows"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Fenêtres de campagne
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>

@@ -14,7 +14,7 @@
 | C2 | Modération ambassadeurs | ✅ fait |
 | C3 | Modération partenaires | ✅ fait |
 | C4 | Modération exposants | ✅ fait |
-| D1 | Gestion fenêtres de campagne (écriture admin) | ⬜ pas commencé |
+| D1 | Gestion fenêtres de campagne (écriture admin) | ✅ fait |
 | D2 | Messages contact | ⬜ pas commencé |
 | D3 | Gestion des rôles (matrice permissions) | ⬜ pas commencé |
 | E1 | Exports CSV | ⬜ pas commencé |
@@ -33,7 +33,7 @@
 - [x] Phase C2 : modération ambassadeurs
 - [x] Phase C3 : modération partenaires
 - [x] Phase C4 : modération exposants
-- [ ] Phase D1 : gestion fenêtres de campagne (écriture admin)
+- [x] Phase D1 : gestion fenêtres de campagne (écriture admin)
 - [ ] Phase D2 : messages contact
 - [ ] Phase D3 : gestion des rôles
 - [x] Fix : session admin perdue au rafraîchissement de page (token mémoire uniquement)
@@ -58,3 +58,6 @@
 - Fait : Phase C4 (modération exposants) — `AdminExhibitorsPage` : liste filtrable (statut/type de stand), détail complet en dialog, changement de statut via un select à 5 valeurs (`pending`/`contacted`/`negotiating`/`confirmed`/`rejected`, pas un simple accepter/rejeter comme C1/C2) via `PATCH /api/admin/exhibitors/{id}` gardé derrière `exhibitors.manage`. `GET /api/admin/exhibitors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
 - Fait : Phase C3 (modération partenaires) — `AdminPartnersPage`, même patron que C4 : liste filtrable (statut), détail complet en dialog, changement de statut via select à 5 valeurs via `PATCH /api/admin/partners/{id}` gardé derrière `partners.manage`. `GET /api/admin/partners` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl. Pas de filtre/label par niveau de partenariat : aucun endpoint public n'expose `PartnerLevel` (nom/prix), le formulaire public a ses niveaux en dur côté front — id affiché brut plutôt que d'inventer un mapping.
 - Toutes les phases C (modération candidatures) sont maintenant faites.
+
+### 2026-09-02 (suite)
+- Fait : Phase D1 (fenêtres de campagne, écriture admin) — `AdminCampaignWindowsPage` : une carte par fenêtre (call_for_speaker/ticketing/call_for_partner/call_for_ambassador/call_for_exhibitor), édition début/fin (datetime-local) + toggle actif, `PATCH /api/admin/campaign-windows/{key}` gardé derrière `campaign_windows.manage`. Backend déjà complet côté `synca_conf_back` (`GET`+`PATCH` déjà présents et montés) — aucun ajout backend nécessaire, uniquement le front manquait.

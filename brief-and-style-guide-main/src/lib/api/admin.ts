@@ -259,3 +259,38 @@ export function updatePartnerStatus(id: number, status: ExhibitorStatus) {
     body: { status },
   });
 }
+
+export type CampaignWindowKey =
+  | "call_for_speaker"
+  | "ticketing"
+  | "call_for_partner"
+  | "call_for_ambassador"
+  | "call_for_exhibitor";
+
+export type CampaignWindow = {
+  id: number;
+  key: CampaignWindowKey;
+  start_at: string;
+  end_at: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CampaignWindowUpdate = {
+  start_at?: string;
+  end_at?: string;
+  is_active?: boolean;
+};
+
+export function listCampaignWindows() {
+  return apiFetch<CampaignWindow[]>("/api/admin/campaign-windows", { auth: "admin" });
+}
+
+export function updateCampaignWindow(key: CampaignWindowKey, body: CampaignWindowUpdate) {
+  return apiFetch<CampaignWindow>(`/api/admin/campaign-windows/${key}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
