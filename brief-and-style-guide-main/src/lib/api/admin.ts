@@ -212,3 +212,50 @@ export function updateExhibitorStatus(id: number, status: ExhibitorStatus) {
     body: { status },
   });
 }
+
+export type Partner = {
+  id: number;
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  website_url: string | null;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  level_id: number;
+  has_budget: string | null;
+  objectives: string;
+  previous_sponsor: boolean;
+  message: string | null;
+  heard_from: string | null;
+  gdpr_consent: boolean;
+  status: ExhibitorStatus;
+  logo_url: string | null;
+  is_public: boolean;
+  created_at: string;
+};
+
+export type PartnerFilters = {
+  status?: ExhibitorStatus;
+  level_id?: number;
+};
+
+export function listPartners(filters: PartnerFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.status) params.set("status", filters.status);
+  if (filters.level_id !== undefined) params.set("level_id", String(filters.level_id));
+  const query = params.toString();
+  return apiFetch<Partner[]>(`/api/admin/partners${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function updatePartnerStatus(id: number, status: ExhibitorStatus) {
+  return apiFetch<Partner>(`/api/admin/partners/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status },
+  });
+}

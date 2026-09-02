@@ -12,7 +12,7 @@
 | B2 | Listes récentes (inscriptions/paiements) | ✅ fait |
 | C1 | Modération speakers | ✅ fait |
 | C2 | Modération ambassadeurs | ✅ fait |
-| C3 | Modération partenaires | ⬜ pas commencé |
+| C3 | Modération partenaires | ✅ fait |
 | C4 | Modération exposants | ✅ fait |
 | D1 | Gestion fenêtres de campagne (écriture admin) | ⬜ pas commencé |
 | D2 | Messages contact | ⬜ pas commencé |
@@ -31,7 +31,7 @@
 - [x] RBAC UI (A4)
 - [x] Phase C1 : modération speakers
 - [x] Phase C2 : modération ambassadeurs
-- [ ] Phase C3 : modération partenaires
+- [x] Phase C3 : modération partenaires
 - [x] Phase C4 : modération exposants
 - [ ] Phase D1 : gestion fenêtres de campagne (écriture admin)
 - [ ] Phase D2 : messages contact
@@ -56,4 +56,5 @@
 - Fait : bouton "Se déconnecter" en rouge (`variant="destructive"`) sur le dashboard admin et l'espace inscrit — était en texte gris discret, demande explicite pour le rendre visible.
 - Fait : Phase C2 (modération ambassadeurs) — `AdminAmbassadorsPage`, même patron que C1 : liste filtrable (statut/profil), détail complet en dialog, actions accepter/rejeter via `PATCH /api/admin/ambassadors/{id}` gardé derrière `ambassadors.approve`. `GET /api/admin/ambassadors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
 - Fait : Phase C4 (modération exposants) — `AdminExhibitorsPage` : liste filtrable (statut/type de stand), détail complet en dialog, changement de statut via un select à 5 valeurs (`pending`/`contacted`/`negotiating`/`confirmed`/`rejected`, pas un simple accepter/rejeter comme C1/C2) via `PATCH /api/admin/exhibitors/{id}` gardé derrière `exhibitors.manage`. `GET /api/admin/exhibitors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
-- À suivre : Phase C3 (partenaires), même patron.
+- Fait : Phase C3 (modération partenaires) — `AdminPartnersPage`, même patron que C4 : liste filtrable (statut), détail complet en dialog, changement de statut via select à 5 valeurs via `PATCH /api/admin/partners/{id}` gardé derrière `partners.manage`. `GET /api/admin/partners` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl. Pas de filtre/label par niveau de partenariat : aucun endpoint public n'expose `PartnerLevel` (nom/prix), le formulaire public a ses niveaux en dur côté front — id affiché brut plutôt que d'inventer un mapping.
+- Toutes les phases C (modération candidatures) sont maintenant faites.

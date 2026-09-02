@@ -88,6 +88,12 @@ export function AdminDashboardPage() {
           >
             Candidatures exposants
           </Link>
+          <Link
+            to="partners"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Candidatures partenaires
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>
