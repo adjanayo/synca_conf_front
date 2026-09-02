@@ -56,6 +56,38 @@
 - [x] Fix : typo "Cybersec" → "Cyber Sécurité" (secteur inscription, thème candidature speaker)
 - [x] Nom/lieu de l'événement lus depuis la DB (`EventSettings`, déjà pilotable au dashboard) au lieu du fichier statique `parameter.ts` — nouveau `GET /api/event-settings` public
 
+## À faire plus tard — ROADMAP_PUBLIC_SEO.md (hors périmètre admin, pas à exécuter sans instruction explicite)
+
+### Partie 1 — SEO du site public
+- [ ] S1. `index.html` complet (meta description, Open Graph, Twitter cards, canonical, favicon/apple-touch-icon, theme-color)
+- [ ] S1. Titre/meta par route (`usePageMeta` ou react-helmet-async), une par route publique
+- [ ] S1. `public/robots.txt` (public autorisé, admin jamais mentionné — discrétion via token random + noindex + auth)
+- [ ] S1. `public/sitemap.xml` (routes publiques réelles, maintenu à jour)
+- [ ] S1. JSON-LD `Event` sur l'index (nom, dates, lieu, image, admission), synchronisé avec les vraies dates
+- [ ] S1. Pré-rendu (vite-plugin-prerender / SSG) — à valider avec l'utilisateur avant (impact build/mise en ligne)
+- [ ] S2. SEO au fil de l'eau (title/description/OG à jour à chaque nouvelle section) — pas de tracking/analytics sans accord explicite
+
+### Partie 2 — Reprise des données réelles (pages publiques)
+- [ ] P1. Lectures `GET /api/days`, `/sessions`, `/pass-types`, `/speakers`, `/partners`, `/exhibitors`, `/faqs`, `/campaign-windows` (TanStack Query + types/zod + loading/erreur/empty)
+- [ ] P2. Pagination `limit`/`offset` (max 200), pas de champ `total`
+- [ ] P3. Fenêtres de campagne — activer/griser les CTA selon `is_active`/dates, gérer le 403 fenêtre fermée
+
+### Partie 3 — Formulaires publics
+- [ ] Validation zod + gestion erreurs (`detail` string / tableau 422) + 401 vs 403 + état "Envoi…" sur chaque formulaire public restant
+
+### Partie 4 — Espace participant
+- [ ] Stockage token one-time (mémoire/sessionStorage uniquement), `Authorization: Bearer` centralisé
+- [ ] `GET /api/user/me`, `GET /api/user/me/tickets` (téléchargement `pdf_url` fourni par l'API, jamais construit à la main)
+- [ ] `DELETE /api/user/me` (RGPD, irréversible, usage unique → 401 ensuite)
+
+### Partie 5 — Paiement / billetterie
+- [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
+- [ ] Workflow inscription → paiement → webhook → ticket PDF+QR
+
+### Partie 6 — Divers
+- [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau
+- [ ] Gestion du refresh token quand le backend l'exposera
+
 ## Journal
 
 ### 2026-09-02
@@ -142,3 +174,5 @@
 - Décision : `EventSettings.name` ("Synca Cyber" par défaut, seedé en Phase I) n'a pas été branché sur les textes de marque affichés ("Synca Conf 2027" en dur dans `Nav.tsx`/`Footer.tsx`/`Hero.tsx`/pages admin) — incohérence de nommage pré-existante entre le seed et la marque réellement utilisée partout ailleurs sur le site ; changer l'affichage aurait remplacé "Synca Conf" par "Synca Cyber" en prod sans certitude que ce soit voulu. Signalé, pas corrigé sans confirmation.
 - Portée délibérément limitée aux champs structurés (validé avec l'utilisateur) : les nombreuses phrases FAQ/marketing contenant des dates ou lieux en dur (`data/faq.ts`, `data/programme.ts`, descriptions de pages) restent statiques — trop de texte libre à templater sans risque de dénaturer des phrases rédigées à la main.
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : `ruff check app/api/public.py` clean.
+- Fait : utilisateur a mis à jour `EventSettings.name` en base (corrigeant l'incohérence signalée ci-dessus) — nom branché sur `Footer.tsx` (`{name} {année}`, via `useEventWindow`). Repli statique (`data/parameter.ts::PARAMETER.title`) corrigé de "Synca Cyber" à "Synca Conf" pour rester cohérent si l'appel API échoue. `Nav.tsx`/`Hero.tsx` non touchés — leur marquage JSX scinde le nom et l'année dans des styles différents ("Synca Conf '27", "Synca Conf 2027") pas mappable proprement sur une chaîne dynamique unique sans réécrire leur mise en page.
+- Fait : ajout dans ce TODO des phases de `ROADMAP_PUBLIC_SEO.md` (SEO, données publiques, formulaires restants, espace participant, paiement, divers) en checkboxes — planification pour plus tard, aucune de ces phases exécutée (chantier non lancé, hors périmètre admin en cours).

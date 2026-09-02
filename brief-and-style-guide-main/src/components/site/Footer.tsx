@@ -3,7 +3,7 @@ import { LINKS } from "@/data/parameter";
 import { useEventWindow } from "@/hooks/useEventWindow";
 
 export function Footer() {
-  const { startAt } = useEventWindow();
+  const { name, startAt } = useEventWindow();
   const year = startAt ? startAt.getFullYear() : new Date().getFullYear();
 
   return (
@@ -19,7 +19,7 @@ export function Footer() {
               alt="Logo CMJN"
               className="h-12 w-12"
             />
-            Synca Conf <span className="text-primary">{year}</span>
+            {name} <span className="text-primary">{year}</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm">
             La conférence tech panafricaine. Organisée par la communauté Synca à Dakar, Sénégal.

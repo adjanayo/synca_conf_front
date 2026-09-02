@@ -40,7 +40,7 @@ const LINKS = [
 
 const PARAMETER = {
   logo: "/parameter/Logoicone orange blanc_CMJN.svg",
-  title: "Synca Cyber",
+  title: "Synca Conf",
   slogan:
     "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
   date: "16–18 Mars 2027",
