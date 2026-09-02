@@ -49,7 +49,7 @@
 - [x] Phase K : dashboard — création directe candidatures + pagination inscrits/waitlist
 - [x] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
 - [x] Phase N (découvert, demandé par l'utilisateur) : CRUD admin codes promo + validation live dans `inscription.tsx`
-- [ ] Amélioration waitlist/notifications (demandé, en todo) : rappels récurrents à fréquence(s) fixée(s) auprès des inscrits *après* l'ouverture de la fenêtre `ticketing` — aujourd'hui l'email est envoyé une seule fois à l'ouverture (J3, pas de cron, pas de rappel). À prévoir quand un scheduler/tâche périodique existera côté `synca_conf_back`.
+- [x] Amélioration waitlist/notifications : rappels récurrents auprès des inscrits *après* l'ouverture de la fenêtre `ticketing` — fait côté `synca_conf_back` uniquement (scheduler asyncio, pas de changement front nécessaire).
 - [x] CRUD comptes admin dashboard (hors plan, demandé par l'utilisateur) : créer/activer/désactiver/archiver
 
 ## Journal
@@ -124,3 +124,8 @@
 - Fait : N2 (front) — `AdminPromoCodesPage.tsx` (liste + création + édition inline, patron repris d'`AdminPassTypesPage`), route `promo-codes` sous `AdminRequireAuth permission="promo_codes.manage"`, lien "Codes promo" ajouté au dropdown "Référentiels" du dashboard.
 - Fait : N3 (front) — le champ "Code promo" d'`inscription.tsx` était décoratif (transmis à `/api/register` sans jamais avoir été vérifié côté UI). Ajouté bouton "Vérifier" qui appelle `POST /api/promo/validate` (déjà existant, jamais consommé côté front avant ce jour — `validatePromoCode`, `lib/api/registration.ts`) et affiche la remise (pourcentage ou montant fixe) ou un message d'erreur ; l'état de vérification se réinitialise à chaque frappe pour éviter d'afficher une remise obsolète. Flow paiement (`/api/payments`) non touché, hors périmètre comme prévu au plan.
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : migration appliquée (`upgrade head` réussi), `ruff check .` clean sur tout le repo.
+
+### 2026-09-02 (suite 7) — rappels waitlist récurrents (100% back)
+- Fait : le TODO ligne 52 demandait des rappels récurrents après l'ouverture de la billetterie, bloqué jusqu'ici par l'absence de scheduler côté `synca_conf_back`. Traité entièrement côté back — aucun changement front (l'admin ne pilote rien de plus, le comportement est automatique dès que la fenêtre `ticketing` est ouverte).
+- Fait (back) : boucle `asyncio` en tâche de fond (`lifespan` dans `app/main.py`, pas de nouvelle dépendance type APScheduler) qui appelle périodiquement `send_waitlist_reminders()` (`app/services/waitlist_reminder.py`) ; relance un email aux inscrits non enregistrés dont le dernier envoi date de plus de `WAITLIST_REMINDER_INTERVAL_DAYS` (3j par défaut, réglable), tant que la fenêtre `ticketing` reste ouverte. Nouvelle colonne `waitlist.last_notified_at` (migration `d3e4f5a6b7c8`).
+- Vérification : migration appliquée, `ruff check .` clean, `python -c "import app.main"` sans erreur.
