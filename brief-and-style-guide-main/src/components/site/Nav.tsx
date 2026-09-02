@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, User, X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../../lib/auth/useAuth";
 
 const links = [
   { to: "/", label: "Accueil" },
@@ -14,6 +15,7 @@ const links = [
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[oklch(0.18_0_0_/_0.75)] border-b border-white/5">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between text-white">
@@ -37,6 +39,12 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <Link
+            to={isAuthenticated ? "/espace" : "/connexion"}
+            className="hidden sm:inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition"
+          >
+            <User className="w-4 h-4" /> {isAuthenticated ? "Mon espace" : "Connexion"}
+          </Link>
           <Link
             to="/inscription"
             className="hidden sm:inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold text-sm px-4 py-2 hover:brightness-110 transition"
@@ -69,6 +77,13 @@ export function Nav() {
                 {l.label}
               </NavLink>
             ))}
+            <Link
+              to={isAuthenticated ? "/espace" : "/connexion"}
+              onClick={() => setOpen(false)}
+              className="py-1.5 inline-flex items-center gap-1.5 text-white/80 hover:text-white transition"
+            >
+              <User className="w-4 h-4" /> {isAuthenticated ? "Mon espace" : "Connexion"}
+            </Link>
             <Link
               to="/inscription"
               onClick={() => setOpen(false)}

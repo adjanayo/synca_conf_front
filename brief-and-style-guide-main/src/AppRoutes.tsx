@@ -10,6 +10,9 @@ import { ProgrammeView } from "./pages/programmes/ProgrammeView";
 import { SpeakersView } from "./pages/speakers/SpeakersView";
 import { SpeakerPage } from "./pages/candidature-speaker";
 import { IndexView } from "./pages/index/IndexView";
+import { ConnexionPage } from "./pages/connexion/ConnexionPage";
+import { EspacePage } from "./pages/espace/EspacePage";
+import { RequireAuth } from "./lib/auth/RequireAuth";
 
 function AppLayout() {
   return (
@@ -58,6 +61,15 @@ export default function AppRoutes() {
         <Route path="contact" element={<ContactView />} />
         <Route path="inscription" element={<InscriptionPage />} />
         <Route path="candidature-speaker" element={<SpeakerPage />} />
+        <Route path="connexion" element={<ConnexionPage />} />
+        <Route
+          path="espace"
+          element={
+            <RequireAuth>
+              <EspacePage />
+            </RequireAuth>
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
