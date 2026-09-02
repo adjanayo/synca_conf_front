@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Megaphone, Users, Gift } from "lucide-react";
 import { PageHeader } from "../components/site/PageHeader";
-import { DateGate } from "../components/site/DateGate";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import {
   AMBASSADEUR_PROFILS,
@@ -12,20 +10,16 @@ import {
   AMBASSADEUR_DISPO,
 } from "../lib/forms/constants";
 
-const OPENS_AT = new Date("2027-03-01T09:00:00+00:00");
-
-const PERKS = [
-  { i: <Gift className="w-5 h-5" />, t: "Code promo personnalisé", d: "Jusqu'à -30% pour ta communauté et commissions sur ventes." },
-  { i: <Users className="w-5 h-5" />, t: "Badge officiel & accès VIP", d: "Pass Pro offert, dîner ambassadeurs, accès backstage." },
-  { i: <Megaphone className="w-5 h-5" />, t: "Kit de communication", d: "Visuels, templates, contenus prêts à partager." },
-];
-
 export function AmbassadeurPage() {
   return (
     <>
       <PageHeader
         eyebrow="Programme ambassadeur"
-        title={<>Représente la <span className="text-primary">Synca Conf</span> dans ta ville.</>}
+        title={
+          <>
+            Représente la <span className="text-primary">Synca Conf</span> dans ta ville.
+          </>
+        }
         description="Étudiants, devs, leaders communauté : aide-nous à faire rayonner la conférence dans ta région et dans ton université."
       />
 
@@ -41,90 +35,84 @@ export function AmbassadeurPage() {
         </div>
       </section>*/}
       <section className="py-20 bg-white">
-  <div className="mx-auto max-w-6xl px-6">
-    <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
-    <h2 className="text-3xl font-bold mb-4">
-      Deviens un acteur clé de Synca Conf 2027
-    </h2>
-    <p className="text-muted-foreground mb-10 max-w-2xl">
-      En tant qu’ambassadeur, tu joues un rôle essentiel dans le succès de l’événement.
-      Tu es le lien entre ta communauté et Synca.
-    </p>
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
+          <h2 className="text-3xl font-bold mb-4">Deviens un acteur clé de Synca Conf 2027</h2>
+          <p className="text-muted-foreground mb-10 max-w-2xl">
+            En tant qu’ambassadeur, tu joues un rôle essentiel dans le succès de l’événement. Tu es
+            le lien entre ta communauté et Synca.
+          </p>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {[
-        {
-          id: "01",
-          t: "Relayer",
-          d: "Fais connaître Synca Conf 2027 sur tes réseaux et dans ta communauté.",
-        },
-        {
-          id: "02",
-          t: "Mobiliser",
-          d: "Inspire et motive ton entourage à participer à un événement unique.",
-        },
-        {
-          id: "03",
-          t: "Recruter",
-          d: "Attire de nouveaux participants et développe l’impact du projet.",
-        },
-        {
-          id: "04",
-          t: "Représenter",
-          d: "Sois le visage de Synca dans ta ville et lors de l’événement.",
-        },
-      ].map((item) => (
-        <div
-          key={item.id}
-          className="group border rounded-2xl p-6 bg-cream hover:bg-primary hover:text-white transition duration-300 shadow-sm hover:shadow-lg"
-        >
-          <span className="text-primary group-hover:text-white font-bold text-lg">
-            {item.id}
-          </span>
-          <h4 className="mt-3 font-semibold text-lg">{item.t}</h4>
-          <p className="text-sm mt-2 opacity-80">{item.d}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
-      <section className="py-20 bg-cream">
-  <div className="mx-auto max-w-6xl px-6">
-    <div className="text-sm uppercase text-primary mb-2">
-      Pourquoi candidater
-    </div>
-    <h2 className="text-3xl font-bold mb-4">
-      Ce que tu gagnes en devenant ambassadeur
-    </h2>
-    <p className="text-muted-foreground mb-10 max-w-2xl">
-      Rejoins une communauté dynamique et bénéficie d’avantages exclusifs
-      pour booster ton réseau et ton expérience.
-    </p>
-
-    <div className="grid md:grid-cols-2 gap-6">
-      {[
-        "Badge officiel Synca Conf 2027",
-        "Certificat valorisant pour ton CV",
-        "Accès privilégié aux coulisses",
-        "Opportunités de networking",
-        "Kit ambassadeur exclusif",
-        "Visibilité personnelle accrue",
-      ].map((adv, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition"
-        >
-          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white font-bold">
-            ✓
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                id: "01",
+                t: "Relayer",
+                d: "Fais connaître Synca Conf 2027 sur tes réseaux et dans ta communauté.",
+              },
+              {
+                id: "02",
+                t: "Mobiliser",
+                d: "Inspire et motive ton entourage à participer à un événement unique.",
+              },
+              {
+                id: "03",
+                t: "Recruter",
+                d: "Attire de nouveaux participants et développe l’impact du projet.",
+              },
+              {
+                id: "04",
+                t: "Représenter",
+                d: "Sois le visage de Synca dans ta ville et lors de l’événement.",
+              },
+            ].map((item) => (
+              <div
+                key={item.id}
+                className="group border rounded-2xl p-6 bg-cream hover:bg-primary hover:text-white transition duration-300 shadow-sm hover:shadow-lg"
+              >
+                <span className="text-primary group-hover:text-white font-bold text-lg">
+                  {item.id}
+                </span>
+                <h4 className="mt-3 font-semibold text-lg">{item.t}</h4>
+                <p className="text-sm mt-2 opacity-80">{item.d}</p>
+              </div>
+            ))}
           </div>
-          <p className="font-medium">{adv}</p>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
-<AmbassadeurForm />
-     {/*} <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
+      </section>
+      <section className="py-20 bg-cream">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="text-sm uppercase text-primary mb-2">Pourquoi candidater</div>
+          <h2 className="text-3xl font-bold mb-4">Ce que tu gagnes en devenant ambassadeur</h2>
+          <p className="text-muted-foreground mb-10 max-w-2xl">
+            Rejoins une communauté dynamique et bénéficie d’avantages exclusifs pour booster ton
+            réseau et ton expérience.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              "Badge officiel Synca Conf 2027",
+              "Certificat valorisant pour ton CV",
+              "Accès privilégié aux coulisses",
+              "Opportunités de networking",
+              "Kit ambassadeur exclusif",
+              "Visibilité personnelle accrue",
+            ].map((adv, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition"
+              >
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-white font-bold">
+                  ✓
+                </div>
+                <p className="font-medium">{adv}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <AmbassadeurForm />
+      {/*} <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
         
       </DateGate>*/}
     </>
@@ -152,12 +140,28 @@ type Form = {
 };
 
 const empty: Form = {
-  nom: "", age: "", paysVille: "", email: "", phone: "", profil: "", etablissement: "",
-  linkedin: "", reseaux: "", followers: "", motivation: "", mobilisation: "", reach: "",
-  dejaParticipe: "", canaux: [], dispo: "", rgpd: false,
+  nom: "",
+  age: "",
+  paysVille: "",
+  email: "",
+  phone: "",
+  profil: "",
+  etablissement: "",
+  linkedin: "",
+  reseaux: "",
+  followers: "",
+  motivation: "",
+  mobilisation: "",
+  reach: "",
+  dejaParticipe: "",
+  canaux: [],
+  dispo: "",
+  rgpd: false,
 };
 
-function countWords(s: string) { return s.trim() ? s.trim().split(/\s+/).length : 0; }
+function countWords(s: string) {
+  return s.trim() ? s.trim().split(/\s+/).length : 0;
+}
 
 function AmbassadeurForm() {
   const [f, setF] = useState<Form>(empty);
@@ -165,7 +169,10 @@ function AmbassadeurForm() {
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
   const toggleCanal = (c: string) => {
-    setF((p) => ({ ...p, canaux: p.canaux.includes(c) ? p.canaux.filter((x) => x !== c) : [...p.canaux, c] }));
+    setF((p) => ({
+      ...p,
+      canaux: p.canaux.includes(c) ? p.canaux.filter((x) => x !== c) : [...p.canaux, c],
+    }));
   };
 
   const submit = (ev: React.FormEvent) => {
@@ -175,7 +182,7 @@ function AmbassadeurForm() {
     if (!f.age || Number(f.age) < 15 || Number(f.age) > 99) e.age = "Âge invalide";
     if (!f.paysVille.trim()) e.paysVille = "Requis";
     if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-    if (!/^\+?[0-9 \-]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
+    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
     if (!f.profil) e.profil = "Requis";
     if (!f.motivation.trim()) e.motivation = "Requis";
     else if (countWords(f.motivation) > 150) e.motivation = "150 mots max";
@@ -196,64 +203,151 @@ function AmbassadeurForm() {
       <form onSubmit={submit} noValidate>
         <FormSection title="Identité">
           <Field label="Nom & Prénom" required error={errors.nom} full>
-            <input className={inputCls} value={f.nom} onChange={(e) => set("nom", e.target.value)} />
+            <input
+              className={inputCls}
+              value={f.nom}
+              onChange={(e) => set("nom", e.target.value)}
+            />
           </Field>
           <Field label="Âge" required error={errors.age}>
-            <input type="number" min={15} max={99} className={inputCls} value={f.age} onChange={(e) => set("age", e.target.value)} />
+            <input
+              type="number"
+              min={15}
+              max={99}
+              className={inputCls}
+              value={f.age}
+              onChange={(e) => set("age", e.target.value)}
+            />
           </Field>
           <Field label="Pays & Ville" required error={errors.paysVille}>
-            <input className={inputCls} value={f.paysVille} onChange={(e) => set("paysVille", e.target.value)} placeholder="Sénégal, Dakar" />
+            <input
+              className={inputCls}
+              value={f.paysVille}
+              onChange={(e) => set("paysVille", e.target.value)}
+              placeholder="Sénégal, Dakar"
+            />
           </Field>
           <Field label="Email" required error={errors.email}>
-            <input type="email" className={inputCls} value={f.email} onChange={(e) => set("email", e.target.value)} />
+            <input
+              type="email"
+              className={inputCls}
+              value={f.email}
+              onChange={(e) => set("email", e.target.value)}
+            />
           </Field>
           <Field label="Téléphone WhatsApp" required error={errors.phone}>
-            <input type="tel" placeholder="+221 77…" className={inputCls} value={f.phone} onChange={(e) => set("phone", e.target.value)} />
+            <input
+              type="tel"
+              placeholder="+221 77…"
+              className={inputCls}
+              value={f.phone}
+              onChange={(e) => set("phone", e.target.value)}
+            />
           </Field>
         </FormSection>
 
         <FormSection title="Profil & réseau">
           <Field label="Profil actuel" required error={errors.profil}>
-            <select className={inputCls} value={f.profil} onChange={(e) => set("profil", e.target.value)}>
+            <select
+              className={inputCls}
+              value={f.profil}
+              onChange={(e) => set("profil", e.target.value)}
+            >
               <option value="">— Sélectionner —</option>
-              {AMBASSADEUR_PROFILS.map((p) => <option key={p}>{p}</option>)}
+              {AMBASSADEUR_PROFILS.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
             </select>
           </Field>
           <Field label="Établissement / Entreprise">
-            <input className={inputCls} value={f.etablissement} onChange={(e) => set("etablissement", e.target.value)} />
+            <input
+              className={inputCls}
+              value={f.etablissement}
+              onChange={(e) => set("etablissement", e.target.value)}
+            />
           </Field>
           <Field label="Profil LinkedIn" hint="URL complète" full>
-            <input type="url" className={inputCls} value={f.linkedin} onChange={(e) => set("linkedin", e.target.value)} placeholder="https://linkedin.com/in/…" />
+            <input
+              type="url"
+              className={inputCls}
+              value={f.linkedin}
+              onChange={(e) => set("linkedin", e.target.value)}
+              placeholder="https://linkedin.com/in/…"
+            />
           </Field>
           <Field label="Comptes réseaux sociaux" hint="Instagram, X, TikTok…" full>
-            <input className={inputCls} value={f.reseaux} onChange={(e) => set("reseaux", e.target.value)} placeholder="@handle Instagram, @handle X…" />
+            <input
+              className={inputCls}
+              value={f.reseaux}
+              onChange={(e) => set("reseaux", e.target.value)}
+              placeholder="@handle Instagram, @handle X…"
+            />
           </Field>
           <Field label="Nombre de followers (total estimé)">
-            <select className={inputCls} value={f.followers} onChange={(e) => set("followers", e.target.value)}>
+            <select
+              className={inputCls}
+              value={f.followers}
+              onChange={(e) => set("followers", e.target.value)}
+            >
               <option value="">— Sélectionner —</option>
-              {AMBASSADEUR_FOLLOWERS.map((p) => <option key={p}>{p}</option>)}
+              {AMBASSADEUR_FOLLOWERS.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
             </select>
           </Field>
         </FormSection>
 
         <FormSection title="Motivation & mobilisation">
-          <Field label="Pourquoi veux-tu être ambassadeur Synca ?" required error={errors.motivation} hint={`${countWords(f.motivation)}/150 mots`} full>
-            <textarea className={textareaCls} value={f.motivation} onChange={(e) => set("motivation", e.target.value)} />
+          <Field
+            label="Pourquoi veux-tu être ambassadeur Synca ?"
+            required
+            error={errors.motivation}
+            hint={`${countWords(f.motivation)}/150 mots`}
+            full
+          >
+            <textarea
+              className={textareaCls}
+              value={f.motivation}
+              onChange={(e) => set("motivation", e.target.value)}
+            />
           </Field>
-          <Field label="Comment vas-tu mobiliser ton réseau ?" required error={errors.mobilisation} hint={`${countWords(f.mobilisation)}/100 mots`} full>
-            <textarea className={textareaCls} value={f.mobilisation} onChange={(e) => set("mobilisation", e.target.value)} />
+          <Field
+            label="Comment vas-tu mobiliser ton réseau ?"
+            required
+            error={errors.mobilisation}
+            hint={`${countWords(f.mobilisation)}/100 mots`}
+            full
+          >
+            <textarea
+              className={textareaCls}
+              value={f.mobilisation}
+              onChange={(e) => set("mobilisation", e.target.value)}
+            />
           </Field>
           <Field label="Combien de personnes penses-tu pouvoir amener ?">
-            <select className={inputCls} value={f.reach} onChange={(e) => set("reach", e.target.value)}>
+            <select
+              className={inputCls}
+              value={f.reach}
+              onChange={(e) => set("reach", e.target.value)}
+            >
               <option value="">— Sélectionner —</option>
-              {AMBASSADEUR_REACH.map((p) => <option key={p}>{p}</option>)}
+              {AMBASSADEUR_REACH.map((p) => (
+                <option key={p}>{p}</option>
+              ))}
             </select>
           </Field>
           <Field label="As-tu déjà participé à un événement Synca ?">
             <div className="flex gap-4 h-10 items-center">
               {["Oui", "Non"].map((v) => (
                 <label key={v} className="flex items-center gap-2 text-sm">
-                  <input type="radio" name="dejaParticipe" value={v} checked={f.dejaParticipe === v} onChange={(e) => set("dejaParticipe", e.target.value)} className="accent-primary" />
+                  <input
+                    type="radio"
+                    name="dejaParticipe"
+                    value={v}
+                    checked={f.dejaParticipe === v}
+                    onChange={(e) => set("dejaParticipe", e.target.value)}
+                    className="accent-primary"
+                  />
                   {v}
                 </label>
               ))}
@@ -276,26 +370,47 @@ function AmbassadeurForm() {
               })}
             </div>
           </Field>
-          <Field label="Disponibilité pour des actions pré-événement" required error={errors.dispo} full>
+          <Field
+            label="Disponibilité pour des actions pré-événement"
+            required
+            error={errors.dispo}
+            full
+          >
             <div className="flex gap-4 h-10 items-center">
               {AMBASSADEUR_DISPO.map((v) => (
                 <label key={v} className="flex items-center gap-2 text-sm">
-                  <input type="radio" name="dispo" value={v} checked={f.dispo === v} onChange={(e) => set("dispo", e.target.value)} className="accent-primary" />
+                  <input
+                    type="radio"
+                    name="dispo"
+                    value={v}
+                    checked={f.dispo === v}
+                    onChange={(e) => set("dispo", e.target.value)}
+                    className="accent-primary"
+                  />
                   {v}
                 </label>
               ))}
             </div>
           </Field>
           <label className="flex items-start gap-3 md:col-span-2">
-            <input type="checkbox" checked={f.rgpd} onChange={(e) => set("rgpd", e.target.checked)} className="mt-1 accent-primary" />
+            <input
+              type="checkbox"
+              checked={f.rgpd}
+              onChange={(e) => set("rgpd", e.target.checked)}
+              className="mt-1 accent-primary"
+            />
             <span className={`text-sm ${errors.rgpd ? "text-destructive" : ""}`}>
-              J'accepte le traitement de mes données conformément à la politique RGPD. <span className="text-primary">*</span>
+              J'accepte le traitement de mes données conformément à la politique RGPD.{" "}
+              <span className="text-primary">*</span>
             </span>
           </label>
         </FormSection>
 
         <div className="mt-8 flex justify-end">
-          <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow">
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow"
+          >
             Envoyer ma candidature
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { createElement, type SVGProps } from "react";
-import { Briefcase, Code2, Facebook, Instagram, Linkedin, PartyPopper, Shield, Sparkles, Users } from "lucide-react";
+import { Briefcase, Code2, Facebook, Instagram, Linkedin, Shield, Sparkles } from "lucide-react";
 
 const TikTokIcon = (props: SVGProps<SVGSVGElement>) =>
   createElement(
@@ -12,7 +12,7 @@ const TikTokIcon = (props: SVGProps<SVGSVGElement>) =>
     },
     createElement("path", {
       d: "M16.6 5.82a4.27 4.27 0 0 1-1.06-2.82h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.5 2.54 2.54 0 0 1 1 .2v-3.23a5.72 5.72 0 0 0-.98-.09 5.83 5.83 0 1 0 5.83 5.83V8.69a7.35 7.35 0 0 0 4.29 1.31V6.9a4.29 4.29 0 0 1-3.39-1.08Z",
-    })
+    }),
   );
 
 const LINKS = [
@@ -41,7 +41,8 @@ const LINKS = [
 const PARAMETER = {
   logo: "/parameter/Logoicone orange blanc_CMJN.svg",
   title: "Synca Cyber",
-  slogan: "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
+  slogan:
+    "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
   date: "16–18 Mars 2027",
   lieu: "Dakar, Sénégal",
   participants: "+2 000 participants",
@@ -56,8 +57,8 @@ const FEATURES = [
   { i: Briefcase, t: "Side Event, Entreprises Tours" },
 ];
 
-
-{/*const TICKETS = [
+{
+  /*const TICKETS = [
   { name: "VIP", price: "40 000", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
   { name: "PRO", price: "25 000", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
   { name: "Executif", price: "35 000", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
@@ -65,17 +66,66 @@ const FEATURES = [
   { name: "En ligne", price: "10 000", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
   { name: "Etudiant", price: "Gratuit(limité)", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
 
-];*/}
+];*/
+}
 const TICKETS = [
-  { name: "VIP", price: "** ***", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
-  { name: "PRO", price: "** ***", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
-  { name: "Executif", price: " ** ***", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
-  { name: "Premium", price: "** ***", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
-  { name: "En ligne", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-  { name: "Etudiant", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-
+  {
+    name: "VIP",
+    price: "** ***",
+    target: "VIP",
+    perks: [
+      "Déjeuner 3 jours",
+      "1 masterclass au choix",
+      "Networking Lounge",
+      "Accès prioritaire à certaines activités",
+      "Kit participant",
+      "Certificat de participation à la Masterclass",
+    ],
+    badge: "",
+  },
+  {
+    name: "PRO",
+    price: "** ***",
+    target: "PRO",
+    perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"],
+    badge: "Populaire",
+  },
+  {
+    name: "Executif",
+    price: " ** ***",
+    target: "Executif",
+    perks: ["Pitching B2B", "Networking VIP", "Accès complet"],
+    badge: "",
+  },
+  {
+    name: "Premium",
+    price: "** ***",
+    target: "Décideurs & partenaires",
+    perks: ["Tout inclus 3 jours", "Dîner gala", "After party"],
+    badge: "Premium",
+  },
+  {
+    name: "En ligne",
+    price: "** ***",
+    target: "En ligne",
+    perks: [
+      "Diffusion en streaming des keynotes",
+      "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)",
+      "Replay disponible pendant une durée à définir.",
+    ],
+    badge: "",
+  },
+  {
+    name: "Etudiant",
+    price: "** ***",
+    target: "En ligne",
+    perks: [
+      "Diffusion en streaming des keynotes",
+      "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)",
+      "Replay disponible pendant une durée à définir.",
+    ],
+    badge: "",
+  },
 ];
-
-
 
 export { LINKS, PARAMETER, FEATURES, TICKETS };

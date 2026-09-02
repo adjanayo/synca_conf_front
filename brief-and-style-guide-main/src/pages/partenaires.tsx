@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check } from "lucide-react";
 
 import { PageHeader } from "../components/site/PageHeader";
-import {
-  FormShell,
-  FormSection,
-  Field,
-  inputCls,
-  textareaCls,
-} from "../components/site/FormShell";
+import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 
 import {
   PARTNER_TIERS,
@@ -18,55 +11,6 @@ import {
   PARTNER_OBJECTIFS,
   SOURCES,
 } from "../lib/forms/constants";
-
-const TIERS = [
-  {
-    name: "Title Sponsor",
-    price: "15 000 000 FCFA",
-    color: "bg-ink text-white border-ink",
-    featured: true,
-    perks: [
-      "Partenaire titre de l'événement",
-      "Visibilité maximale : branding premium",
-      "Prise de parole officielle",
-      "Présence institutionnelle",
-      "Accès VIP et forte exposition médiatique",
-    ],
-  },
-  {
-    name: "Diamond Sponsor",
-    price: "10 000 000 FCFA",
-    color: "bg-white text-ink border-primary",
-    perks: [
-      "Partenaire stratégique majeur",
-      "Visibilité premium",
-      "Espace d’exposition",
-      "Présence dans les communications",
-      "Opportunités d’activation",
-    ],
-  },
-  {
-    name: "Gold Sponsor",
-    price: "5 000 000 FCFA",
-    color: "bg-white text-ink border-border",
-    perks: [
-      "Partenaire avec bonne visibilité",
-      "Espace d’exposition",
-      "Présence dans les activités du Synca Conf",
-    ],
-  },
-  {
-    name: "Bronze Sponsor",
-    price: "2 000 000 FCFA",
-    color: "bg-white text-ink border-border",
-    perks: [
-      "Partenaire associé",
-      "Contribution au développement de l’écosystème tech africain",
-      "Visibilité de base",
-      "Accès aux participants",
-    ],
-  },
-];
 
 const WHY_PARTNER = [
   {
@@ -110,19 +54,16 @@ const WHY_PARTNER = [
 export function PartenairesPage() {
   return (
     <>
-     
       <PageHeader
         eyebrow="Partenaires"
         title={
           <>
-            Construisez l'avenir tech africain{" "}
-            <span className="text-primary">avec nous</span>.
+            Construisez l'avenir tech africain <span className="text-primary">avec nous</span>.
           </>
         }
         description="Quatre niveaux de partenariat pour aligner votre marque sur l'écosystème tech le plus dynamique du continent. Recrutement, visibilité, B2B, impact."
       />
 
-      
       {/*<section className="py-20 bg-cream">
         <div className="mx-auto max-w-7xl px-6 space-y-6">
           {Array.from(
@@ -204,18 +145,13 @@ export function PartenairesPage() {
 
             <h2 className="mt-3 font-display font-bold text-3xl md:text-5xl">
               Faites de Synca Conf 2027 un{" "}
-              <span className="text-primary">
-                levier pour votre marque
-              </span>
-              .
+              <span className="text-primary">levier pour votre marque</span>.
             </h2>
 
             <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
-              Synca Conf 2027 rassemble entreprises, startups,
-              investisseurs, talents, décideurs et acteurs majeurs de
-              la technologie africaine. Devenir partenaire, c’est
-              associer votre marque à une dynamique panafricaine
-              tournée vers l’innovation et les opportunités.
+              Synca Conf 2027 rassemble entreprises, startups, investisseurs, talents, décideurs et
+              acteurs majeurs de la technologie africaine. Devenir partenaire, c’est associer votre
+              marque à une dynamique panafricaine tournée vers l’innovation et les opportunités.
             </p>
           </div>
 
@@ -230,9 +166,7 @@ export function PartenairesPage() {
                   {item.number}
                 </div>
 
-                <h3 className="mt-6 font-display font-bold text-xl">
-                  {item.title}
-                </h3>
+                <h3 className="mt-6 font-display font-bold text-xl">{item.title}</h3>
 
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                   {item.description}
@@ -245,14 +179,12 @@ export function PartenairesPage() {
           <div className="mt-10 rounded-3xl bg-ink text-white p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <div className="font-display font-bold text-2xl">
-                Votre marque. Votre impact. Votre place dans la
-                conversation.
+                Votre marque. Votre impact. Votre place dans la conversation.
               </div>
 
               <p className="mt-2 text-white/70 max-w-2xl">
-                Quel que soit votre objectif — visibilité, recrutement,
-                networking, business ou impact — nous construisons avec
-                vous une expérience de partenariat adaptée.
+                Quel que soit votre objectif — visibilité, recrutement, networking, business ou
+                impact — nous construisons avec vous une expérience de partenariat adaptée.
               </p>
             </div>
 
@@ -266,7 +198,6 @@ export function PartenairesPage() {
         </div>
       </section>
 
-      
       <PartnerForm />
     </>
   );
@@ -314,15 +245,12 @@ function PartnerForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const set = <K extends keyof Form>(k: K, v: Form[K]) =>
-    setF((p) => ({ ...p, [k]: v }));
+  const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
   const toggleObjectif = (o: string) => {
     setF((p) => ({
       ...p,
-      objectifs: p.objectifs.includes(o)
-        ? p.objectifs.filter((x) => x !== o)
-        : [...p.objectifs, o],
+      objectifs: p.objectifs.includes(o) ? p.objectifs.filter((x) => x !== o) : [...p.objectifs, o],
     }));
   };
 
@@ -355,7 +283,7 @@ function PartnerForm() {
       e.email = "Email invalide";
     }
 
-    if (!/^\+?[0-9 \-]{7,}$/.test(f.phone)) {
+    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) {
       e.phone = "Numéro invalide";
     }
 
@@ -381,8 +309,7 @@ function PartnerForm() {
     console.log("[PARTENAIRE]", f);
 
     toast.success("Demande envoyée !", {
-      description:
-        "L'équipe partenariats te recontacte sous 48h.",
+      description: "L'équipe partenariats te recontacte sous 48h.",
     });
 
     setF(empty);
@@ -402,43 +329,28 @@ function PartnerForm() {
           </h2>
 
           <p className="mt-4 text-muted-foreground">
-            Remplissez le formulaire et notre équipe partenariats
-            reviendra vers vous pour construire une proposition
-            adaptée à vos objectifs.
+            Remplissez le formulaire et notre équipe partenariats reviendra vers vous pour
+            construire une proposition adaptée à vos objectifs.
           </p>
         </div>
       </div>
 
       <FormShell>
         <form onSubmit={submit} noValidate>
-          
           <FormSection title="Organisation">
-            <Field
-              label="Dénomination sociale"
-              required
-              error={errors.denomination}
-              full
-            >
+            <Field label="Dénomination sociale" required error={errors.denomination} full>
               <input
                 className={inputCls}
                 value={f.denomination}
-                onChange={(e) =>
-                  set("denomination", e.target.value)
-                }
+                onChange={(e) => set("denomination", e.target.value)}
               />
             </Field>
 
-            <Field
-              label="Secteur d'activité"
-              required
-              error={errors.secteur}
-            >
+            <Field label="Secteur d'activité" required error={errors.secteur}>
               <select
                 className={inputCls}
                 value={f.secteur}
-                onChange={(e) =>
-                  set("secteur", e.target.value)
-                }
+                onChange={(e) => set("secteur", e.target.value)}
               >
                 <option value="">— Sélectionner —</option>
 
@@ -448,17 +360,11 @@ function PartnerForm() {
               </select>
             </Field>
 
-            <Field
-              label="Pays & Ville du siège"
-              required
-              error={errors.paysVille}
-            >
+            <Field label="Pays & Ville du siège" required error={errors.paysVille}>
               <input
                 className={inputCls}
                 value={f.paysVille}
-                onChange={(e) =>
-                  set("paysVille", e.target.value)
-                }
+                onChange={(e) => set("paysVille", e.target.value)}
                 placeholder="Sénégal, Dakar"
               />
             </Field>
@@ -468,87 +374,54 @@ function PartnerForm() {
                 type="url"
                 className={inputCls}
                 value={f.siteWeb}
-                onChange={(e) =>
-                  set("siteWeb", e.target.value)
-                }
+                onChange={(e) => set("siteWeb", e.target.value)}
                 placeholder="https://…"
               />
             </Field>
           </FormSection>
 
-          
           <FormSection title="Contact responsable">
-            <Field
-              label="Nom & Prénom du contact"
-              required
-              error={errors.contactNom}
-            >
+            <Field label="Nom & Prénom du contact" required error={errors.contactNom}>
               <input
                 className={inputCls}
                 value={f.contactNom}
-                onChange={(e) =>
-                  set("contactNom", e.target.value)
-                }
+                onChange={(e) => set("contactNom", e.target.value)}
               />
             </Field>
 
-            <Field
-              label="Poste / Fonction"
-              required
-              error={errors.contactPoste}
-            >
+            <Field label="Poste / Fonction" required error={errors.contactPoste}>
               <input
                 className={inputCls}
                 value={f.contactPoste}
-                onChange={(e) =>
-                  set("contactPoste", e.target.value)
-                }
+                onChange={(e) => set("contactPoste", e.target.value)}
               />
             </Field>
 
-            <Field
-              label="Email professionnel"
-              required
-              error={errors.email}
-            >
+            <Field label="Email professionnel" required error={errors.email}>
               <input
                 type="email"
                 className={inputCls}
                 value={f.email}
-                onChange={(e) =>
-                  set("email", e.target.value)
-                }
+                onChange={(e) => set("email", e.target.value)}
               />
             </Field>
 
-            <Field
-              label="Téléphone WhatsApp"
-              required
-              error={errors.phone}
-            >
+            <Field label="Téléphone WhatsApp" required error={errors.phone}>
               <input
                 type="tel"
                 placeholder="+221 77…"
                 className={inputCls}
                 value={f.phone}
-                onChange={(e) =>
-                  set("phone", e.target.value)
-                }
+                onChange={(e) => set("phone", e.target.value)}
               />
             </Field>
           </FormSection>
           <FormSection title="Intérêt de partenariat">
-            <Field
-              label="Offre souhaitée"
-              required
-              error={errors.tier}
-            >
+            <Field label="Offre souhaitée" required error={errors.tier}>
               <select
                 className={inputCls}
                 value={f.tier}
-                onChange={(e) =>
-                  set("tier", e.target.value)
-                }
+                onChange={(e) => set("tier", e.target.value)}
               >
                 <option value="">— Sélectionner —</option>
 
@@ -562,9 +435,7 @@ function PartnerForm() {
               <select
                 className={inputCls}
                 value={f.budget}
-                onChange={(e) =>
-                  set("budget", e.target.value)
-                }
+                onChange={(e) => set("budget", e.target.value)}
               >
                 <option value="">— Sélectionner —</option>
 
@@ -575,12 +446,7 @@ function PartnerForm() {
             </Field>
 
             {/* Objectifs */}
-            <Field
-              label="Objectifs prioritaires"
-              required
-              error={errors.objectifs}
-              full
-            >
+            <Field label="Objectifs prioritaires" required error={errors.objectifs} full>
               <div className="flex flex-wrap gap-2 pt-1">
                 {PARTNER_OBJECTIFS.map((o) => {
                   const active = f.objectifs.includes(o);
@@ -604,24 +470,16 @@ function PartnerForm() {
             </Field>
 
             {/* Sponsoring précédent */}
-            <Field
-              label="Avez-vous déjà sponsorisé un événement tech ?"
-              full
-            >
+            <Field label="Avez-vous déjà sponsorisé un événement tech ?" full>
               <div className="flex gap-4 h-10 items-center">
                 {["Oui", "Non"].map((v) => (
-                  <label
-                    key={v}
-                    className="flex items-center gap-2 text-sm"
-                  >
+                  <label key={v} className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="dejaSponsor"
                       value={v}
                       checked={f.dejaSponsor === v}
-                      onChange={(e) =>
-                        set("dejaSponsor", e.target.value)
-                      }
+                      onChange={(e) => set("dejaSponsor", e.target.value)}
                       className="accent-primary"
                     />
 
@@ -632,13 +490,11 @@ function PartnerForm() {
             </Field>
 
             {/* Message */}
-            <Field label="Message ou demande spécifique" full            >
+            <Field label="Message ou demande spécifique" full>
               <textarea
                 className={textareaCls}
                 value={f.message}
-                onChange={(e) =>
-                  set("message", e.target.value)
-                }
+                onChange={(e) => set("message", e.target.value)}
                 placeholder="Vos objectifs, contraintes, questions…"
               />
             </Field>
@@ -648,9 +504,7 @@ function PartnerForm() {
               <select
                 className={inputCls}
                 value={f.source}
-                onChange={(e) =>
-                  set("source", e.target.value)
-                }
+                onChange={(e) => set("source", e.target.value)}
               >
                 <option value="">— Sélectionner —</option>
 
@@ -664,9 +518,7 @@ function PartnerForm() {
               <input
                 className={inputCls}
                 value={f.sourceAutre}
-                onChange={(e) =>
-                  set("sourceAutre", e.target.value)
-                }
+                onChange={(e) => set("sourceAutre", e.target.value)}
               />
             </Field>
 
@@ -675,20 +527,13 @@ function PartnerForm() {
               <input
                 type="checkbox"
                 checked={f.rgpd}
-                onChange={(e) =>
-                  set("rgpd", e.target.checked)
-                }
+                onChange={(e) => set("rgpd", e.target.checked)}
                 className="mt-1 accent-primary"
               />
 
-              <span
-                className={`text-sm ${
-                  errors.rgpd ? "text-destructive" : ""
-                }`}
-              >
-                J'accepte le traitement de mes données conformément
-                à la politique RGPD et j'autorise Synca à me
-                recontacter à des fins commerciales.{" "}
+              <span className={`text-sm ${errors.rgpd ? "text-destructive" : ""}`}>
+                J'accepte le traitement de mes données conformément à la politique RGPD et
+                j'autorise Synca à me recontacter à des fins commerciales.{" "}
                 <span className="text-primary">*</span>
               </span>
             </label>

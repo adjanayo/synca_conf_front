@@ -20,7 +20,7 @@
 | E1 | Exports CSV | ✅ fait |
 | E2 | Audit logs (tentatives connexion) | ✅ fait |
 | E3 | Durcissement session (401 global, 429, verrouillage) | ✅ fait |
-| F | Qualité & passation (build/lint zéro erreur, tests, docs) | ⬜ pas commencé (build/lint OK en continu, pas de tests ajoutés) |
+| F | Qualité & passation (build/lint zéro erreur, tests, docs) | ✅ fait (lint/tsc zéro erreur des deux côtés, suite back verte, pas de tests front ajoutés) |
 | Hors roadmap | Espace inscrit (OTP) + inscription publique branchée API | ✅ fait (hors périmètre admin, fait sur demande explicite) |
 
 ## TODO
@@ -39,6 +39,7 @@
 - [x] Fix : session admin perdue au rafraîchissement de page (token mémoire uniquement)
 - [x] Phase E1 : exports CSV
 - [x] Phase E2 : audit logs (tentatives connexion)
+- [x] Phase F : lint front à zéro erreur (37 erreurs pré-existantes nettoyées, hors travail admin)
 
 ## Journal
 
@@ -67,3 +68,9 @@
 - Fait : Phase D3 (gestion des rôles) — `AdminRolesPage` : matrice rôles × permissions (checkbox par cellule, bouton "Enregistrer" par rôle actif seulement si modifié), gardée derrière `roles.manage`. Backend n'avait que le `PATCH /api/admin/roles/{id}` (déjà présent) — aucun moyen de lister les rôles/permissions existants pour construire la matrice. Ajouté `GET /api/admin/roles` et `GET /api/admin/permissions` (mêmes schémas Pydantic déjà présents, juste jamais montés en lecture), côté `synca_conf_back`.
 - Fait : Phase E1 (exports CSV) — `AdminExportsPage` : deux boutons (inscriptions/paiements) téléchargeant `GET /api/admin/export/registrations` et `/payments`, gardés derrière `export.data`. Backend déjà complet côté `synca_conf_back` (routes + anti-injection formule CSV déjà en place) — aucun ajout backend nécessaire. Côté front, `apiFetch` ne gérait que le JSON ; ajouté `apiDownload` dans `client.ts` (fetch avec header Authorization, réponse en blob, déclenchement du téléchargement via URL d'objet temporaire) car un lien `<a href>` classique ne peut pas porter le token.
 - Fait : Phase E2 (audit logs) — `AdminAuditLogsPage` : liste filtrable (email, réussite/échec) des tentatives de connexion admin (`AuditLog`, modèle déjà existant et déjà rempli par `auth_service.py` à chaque login réussi/échoué/verrouillage). Aucun endpoint de lecture n'existait côté `synca_conf_back` — ajouté `GET /api/admin/audit-logs` (`app/api/admin_audit.py`, schéma `AuditLogRead`), même patron que D2 (Messages contact) : pas de code RBAC dédié dans les 8 permissions seedées, donc gardé par `get_current_admin` (tout admin authentifié) plutôt qu'une permission inventée.
+
+### 2026-09-02 (suite 2) — Phase F (qualité)
+- Fait : `rtk lint` sur tout le repo (jusqu'ici vérifié seulement fichier par fichier après chaque phase) — 37 erreurs pré-existantes trouvées, aucune liée au travail admin de cette session. Toutes dans les pages marketing générées par Lovable (About, Hero, FinalCTA, PartenersTeaser, ambassadeur, candidature-speaker, partenaires, ProgrammePreview, TicketsPreview, Footer, data/parameter.ts) : imports/constantes mortes (souvent des blocs JSX commentés qui référençaient encore leurs symboles), une regex avec échappement inutile (`\-` en fin de classe de caractères) répétée dans 4 formulaires, un `eslint-disable` obsolète pointant vers un plugin prettier jamais enregistré dans `eslint.config.js`. Toutes nettoyées.
+- Fait : 6 erreurs restantes dans `src/components/ui/*.tsx` (badge/button/form/navigation-menu/sidebar/toggle) — pattern shadcn standard (composant + `cva`/hook exportés du même fichier), déclenche `react-refresh/only-export-components`. Pas de restructuration des fichiers vendor shadcn : `eslint-disable-next-line` ciblé sur l'export concerné.
+- Fait : côté `synca_conf_back`, l'item TODO "incompatibilité pytest-asyncio" était un faux diagnostic — investigué et corrigé (voir DEVLOG backend). Suite `pytest` : 244 passed. `ruff check .` : clean (1 erreur `B904` trouvée et corrigée dans `app/cli/create_admin.py`).
+- Phase F déclarée faite : lint + tsc à zéro erreur des deux côtés, tests backend verts. Pas de tests front ajoutés (aucune infra de test front existante dans le repo — hors scope de cette passe, qui a traité la dette lint/tests trouvée en l'état).

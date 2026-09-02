@@ -1,12 +1,5 @@
 import { FEATURES } from "@/data/parameter";
-import {
-  Briefcase,
-  Code2,
-  PartyPopper,
-  Shield,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 function About() {
   const themes = [
@@ -19,10 +12,8 @@ function About() {
   return (
     <section className="py-24 bg-background">
       <div className="mx-auto max-w-7xl px-6">
-
         {/* À propos */}
         <div className="grid md:grid-cols-12 gap-12 items-start">
-          
           <div className="md:col-span-5">
             <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">
               À propos
@@ -35,9 +26,9 @@ function About() {
 
             <div className="space-y-5 text-muted-foreground text-lg leading-relaxed pt-3">
               <p>
-                La <strong className="text-foreground">Synca Conf</strong> est
-                la conférence annuelle organisée par Synca pour rendre la tech
-                africaine accessible, inclusive et ambitieuse.
+                La <strong className="text-foreground">Synca Conf</strong> est la conférence
+                annuelle organisée par Synca pour rendre la tech africaine accessible, inclusive et
+                ambitieuse.
               </p>
             </div>
           </div>
@@ -54,9 +45,7 @@ function About() {
                     <x.i className="w-4 h-4" />
                   </span>
 
-                  <span className="font-medium">
-                    {x.t}
-                  </span>
+                  <span className="font-medium">{x.t}</span>
                 </div>
               ))}
             </div>
@@ -66,7 +55,6 @@ function About() {
         {/* Session Thématiques */}
         <div className="mt-20 pt-10 border-t border-border">
           <div className="grid md:grid-cols-12 gap-12 items-start">
-
             {/* Texte à gauche */}
             <div className="md:col-span-5">
               <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">
@@ -74,17 +62,13 @@ function About() {
               </div>
 
               <h3 className="mt-3 font-display font-bold text-3xl md:text-4xl leading-tight">
-                Thématiques{" "}
-                <span className="text-primary">
-                  Synca Conf 2027
-                </span>
+                Thématiques <span className="text-primary">Synca Conf 2027</span>
               </h3>
 
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
-                Découvrez les grandes thématiques qui seront au cœur de la
-                Synca Conf 2027 et qui réuniront experts, entrepreneurs,
-                innovateurs et acteurs de la transformation numérique
-                africaine.
+                Découvrez les grandes thématiques qui seront au cœur de la Synca Conf 2027 et qui
+                réuniront experts, entrepreneurs, innovateurs et acteurs de la transformation
+                numérique africaine.
               </p>
             </div>
 
@@ -100,14 +84,11 @@ function About() {
                       <Sparkles className="w-4 h-4" />
                     </span>
 
-                    <span className="font-medium">
-                      {theme}
-                    </span>
+                    <span className="font-medium">{theme}</span>
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
         </div>
       </div>

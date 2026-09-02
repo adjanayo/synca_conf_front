@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Instagram, Linkedin, Twitter } from "lucide-react";
 import { LINKS } from "@/data/parameter";
 
 export function Footer() {
@@ -7,8 +6,15 @@ export function Footer() {
     <footer className="bg-ink text-white/70 border-t border-white/5">
       <div className="mx-auto max-w-7xl px-6 py-14 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <Link to="/" className="flex items-center gap-2 font-display font-bold text-white text-xl">
-            <img src="/parameter/Logoicone orange blanc_CMJN.svg" alt="Logo CMJN" className="h-12 w-12"/>
+          <Link
+            to="/"
+            className="flex items-center gap-2 font-display font-bold text-white text-xl"
+          >
+            <img
+              src="/parameter/Logoicone orange blanc_CMJN.svg"
+              alt="Logo CMJN"
+              className="h-12 w-12"
+            />
             Synca Conf <span className="text-primary">2027</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm">
@@ -27,21 +33,57 @@ export function Footer() {
           </div>
         </div>
         <div>
-          <div className="text-white font-semibold text-sm uppercase tracking-widest">Événement</div>
+          <div className="text-white font-semibold text-sm uppercase tracking-widest">
+            Événement
+          </div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/programme" className="hover:text-white">Programme</Link></li>
-            <li><Link to="/speakers" className="hover:text-white">Speakers</Link></li>
-            <li><Link to="/inscription" className="hover:text-white">Billetterie</Link></li>
-            <li><Link to="/faq" className="hover:text-white">FAQ</Link></li>
+            <li>
+              <Link to="/programme" className="hover:text-white">
+                Programme
+              </Link>
+            </li>
+            <li>
+              <Link to="/speakers" className="hover:text-white">
+                Speakers
+              </Link>
+            </li>
+            <li>
+              <Link to="/inscription" className="hover:text-white">
+                Billetterie
+              </Link>
+            </li>
+            <li>
+              <Link to="/faq" className="hover:text-white">
+                FAQ
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
-          <div className="text-white font-semibold text-sm uppercase tracking-widest">Participer</div>
+          <div className="text-white font-semibold text-sm uppercase tracking-widest">
+            Participer
+          </div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><Link to="/candidature-speaker" className="hover:text-white">Candidater speaker</Link></li>
-            <li><Link to="/ambassadeur" className="hover:text-white">Devenir ambassadeur</Link></li>
-            <li><Link to="/partenaires" className="hover:text-white">Devenir partenaire</Link></li>
-            <li><Link to="/contact" className="hover:text-white">Contact</Link></li>
+            <li>
+              <Link to="/candidature-speaker" className="hover:text-white">
+                Candidater speaker
+              </Link>
+            </li>
+            <li>
+              <Link to="/ambassadeur" className="hover:text-white">
+                Devenir ambassadeur
+              </Link>
+            </li>
+            <li>
+              <Link to="/partenaires" className="hover:text-white">
+                Devenir partenaire
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:text-white">
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -39,4 +39,5 @@ const Toggle = React.forwardRef<
 
 Toggle.displayName = TogglePrimitive.Root.displayName;
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn pattern: component + its cva variants share a file
 export { Toggle, toggleVariants };
