@@ -831,9 +831,44 @@ Inscription newsletter. Toujours ouvert.
 
 ---
 
-## 6. Espace participant (`Bearer` token, pas de login)
+## 6. Espace participant
 
-Il n'y a pas de login participant : le seul identifiant est l'`access_token` reçu **une fois**, dans la réponse de `POST /api/register` (§5.2). Le frontend doit le stocker et l'envoyer en header `Authorization: Bearer <access_token>` sur les 3 routes ci-dessous. Voir §7 pour les précautions de stockage.
+Deux façons d'obtenir un `Authorization: Bearer <token>` valable sur les 3 routes de ce paragraphe :
+
+1. **`access_token` one-time** — reçu une seule fois dans la réponse de `POST /api/register` (§5.2). Historique, toujours valide, jamais réémis.
+2. **Login OTP (email + code)** — depuis le 2026-09-02, un participant déjà inscrit (`email_verified=true`) peut se reconnecter à tout moment sans redemander son `access_token` d'origine. Voir §6.0 ci-dessous.
+
+Voir §7 pour les précautions de stockage du token, quel que soit son origine.
+
+### 6.0 Login OTP (email + code à 6 chiffres)
+
+#### `POST /api/auth/otp/request`
+
+```json
+{ "email": "participant@example.com" }
+```
+
+**Réponse `200`** (toujours la même, que l'email existe ou non — anti-énumération) :
+```json
+{ "detail": "Si un compte existe pour cet email, un code de connexion vient d'être envoyé." }
+```
+
+Si l'email correspond à un compte `email_verified=true`, un code à 6 chiffres est envoyé par email, valable **10 minutes**, invalidé après **5 tentatives** de vérification. Rate limit : **3 requêtes / 15 min** par IP (`429` au-delà).
+
+#### `POST /api/auth/otp/verify`
+
+```json
+{ "email": "participant@example.com", "code": "123456" }
+```
+
+**Réponse `200`** :
+```json
+{ "access_token": "eyJhbGciOiJIUzI1NiIs...", "token_type": "bearer" }
+```
+
+**`401`** — code invalide, expiré, déjà utilisé, ou email inconnu (même message générique dans tous les cas). Rate limit : 10 requêtes / 15 min par IP.
+
+Le token retourné est un **JWT distinct** de l'`access_token` d'inscription (claim `type: participant_access`, expire après 24h — configurable côté serveur via `PARTICIPANT_TOKEN_EXPIRE_HOURS`). `GET/DELETE /api/user/me` et `GET /api/user/me/tickets` acceptent indifféremment l'un ou l'autre en header `Authorization: Bearer <token>`.
 
 ### 6.1 `GET /api/user/me`
 
@@ -873,7 +908,7 @@ Droit à l'effacement RGPD : anonymise le compte (nom/email/téléphone remplac�
 
 Points qui ne se voient pas dans le schéma JSON mais que le frontend doit gérer pour ne pas introduire de faille côté client :
 
-- **Stockage de `access_token`** — ni cookie ni `localStorage` (XSS = vol du token) : préférer la mémoire JS (variable de state) ou, si la session doit survivre un refresh de page, `sessionStorage`. Jamais dans une URL, un log, ou un outil d'analytics.
+- **Stockage du token** (`access_token` d'inscription ou JWT participant issu du login OTP §6.0) — ni cookie ni `localStorage` (XSS = vol du token) : préférer la mémoire JS (variable de state) ou, si la session doit survivre un refresh de page, `sessionStorage`. Jamais dans une URL, un log, ou un outil d'analytics.
 - **Ne jamais construire une URL de billet à la main** — toujours passer par `GET /api/user/me/tickets` (§6.2) pour obtenir `pdf_url` ; ne pas essayer de deviner/reconstruire un lien à partir d'un `ticket_number` ou d'un id. Le backend ne route pas les billets par id — ce n'est pas juste "poli", `GET /api/tickets/:id` n'existe pas.
 - **CORS strict** — l'API n'autorise que les origines listées dans `CORS_ORIGINS` côté serveur (pas de wildcard `*`). Un domaine de prod non enregistré doit être ajouté côté backend avant déploiement, le frontend ne peut pas contourner ça.
 - **Uploads (logo partenaire §5.5, photo speaker §5.3)** — le backend revalide déjà le type MIME réel et la taille (5 Mo photo / 10 Mo logo, cf. `TO_TEST.md` 7.6) et rejette en `400` sinon ; valider aussi côté client pour l'UX, mais ne pas s'y fier comme seul garde-fou.
@@ -914,6 +949,8 @@ Toutes les erreurs suivent le même format :
 | Formulaires (`POST /api/waitlist`, `/register`, `/speakers/apply`, etc.) | 3/min |
 | Login admin (`POST /api/admin/login`) | 5/min |
 | Backoffice admin (autres routes) | 30/min |
+| `POST /api/auth/otp/request` | 3/15min |
+| `POST /api/auth/otp/verify` | 10/15min |
 
 Quand la limite est dépassée, la réponse est :
 

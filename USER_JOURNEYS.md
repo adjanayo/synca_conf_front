@@ -5,7 +5,7 @@
 La plateforme SYNCA CONF 2027 gère une conférence tech panafricaine (Dakar, 18-20 août 2027). Elle distingue deux univers d'authentification :
 
 - **Backoffice Admin** : JWT + RBAC (4 rôles, 8 permissions)
-- **Participants** : Pas de login — token one-time pour auto-service RGPD
+- **Participants** : `access_token` one-time (délivré à l'inscription) **ou** login OTP (email + code à 6 chiffres, depuis le 2026-09-02) — les deux donnent accès au même espace self-service RGPD
 
 ---
 
@@ -49,7 +49,7 @@ La plateforme SYNCA CONF 2027 gère une conférence tech panafricaine (Dakar, 18
 
 ## 3. Participant Inscrit (Attendee)
 
-**État** : Compte créé, `email_verified=true`, token one-time
+**État** : Compte créé, `email_verified=true`
 
 **Parcours** :
 1. **Inscription** (`POST /api/register`) — pendant fenêtre `ticketing`
@@ -61,19 +61,22 @@ La plateforme SYNCA CONF 2027 gère une conférence tech panafricaine (Dakar, 18
    - Redirige vers le provider (Stripe/Wave/Orange Money)
    - Webhook confirme → génère un `Ticket` (PDF + QR code sur B2)
    - Email de confirmation envoyé
-3. **Accès aux billets** (`GET /api/user/me/tickets`)
-4. **Auto-service RGPD** :
+3. **Reconnexion ultérieure** (`POST /api/auth/otp/request` puis `/verify`) — plus besoin de retrouver l'`access_token` d'origine : un code à 6 chiffres envoyé par email suffit à obtenir un nouveau token d'accès (JWT, 24h)
+4. **Accès aux billets** (`GET /api/user/me/tickets`) — page `/espace` côté frontend
+5. **Auto-service RGPD** :
    - `GET /api/user/me` — consulte ses données
-   - `DELETE /api/user/me` — anonymise le compte, révoque le token
+   - `DELETE /api/user/me` — anonymise le compte, révoque l'accès
 
 **API disponibles** :
+- `POST /api/auth/otp/request` / `POST /api/auth/otp/verify` — login par code email
 - `POST /api/promo/validate` — valider un code promo
 - `GET /api/user/me` — données personnelles
 - `GET /api/user/me/tickets` — billets
 - `DELETE /api/user/me` — droit à l'effacement (RGPD)
 
 **Sécurité** :
-- Token porteur unique (pas de login/mot de passe)
+- Token porteur (`access_token` one-time OU JWT participant issu de l'OTP, jamais de mot de passe stocké)
+- Login OTP : réponse anti-énumération identique que l'email existe ou non, code expire en 10 min, 5 tentatives max, rate-limité (3 demandes / 15 min par IP)
 - Suppression = anonymisation (tickets/paiements conservés pour audit)
 
 ---
