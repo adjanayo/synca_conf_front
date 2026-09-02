@@ -36,6 +36,7 @@
 - [ ] Phase D1 : gestion fenêtres de campagne (écriture admin)
 - [ ] Phase D2 : messages contact
 - [ ] Phase D3 : gestion des rôles
+- [x] Fix : session admin perdue au rafraîchissement de page (token mémoire uniquement)
 
 ## Journal
 
@@ -50,4 +51,5 @@
 - Fait : diagnostic + fix flow inscription — c'était un stub statique (bannière "indisponible" en dur, submit désactivé, aucun appel API), pas un bug serveur. Branché sur `POST /api/register`, `GET /api/pass-types`, `GET /api/campaign-windows` (fenêtre `ticketing` réelle au lieu d'une date en dur déjà périmée) ; corrigé `PROFILS` (valeur "Freelance" invalide côté back, "Autre" manquant).
 - Fait : ajout tableau statut des phases (ROADMAP_ADMIN.md) dans ce journal pour suivi planning.
 - Fait : Phase A4 (RBAC UI) — `GET /api/admin/me` ajouté côté back, `AdminAuthContext` charge rôle+permissions après login, `AdminRequireAuth` distingue 401 (redirection login) et 403/permission manquante (message métier) ; dashboard gardé derrière `payments.view`.
+- Fait : fix session admin perdue au refresh — token mirroré en sessionStorage (client.ts) et revalidé via `GET /api/admin/me` au montage d'`AdminAuthProvider` ; `AdminRequireAuth` attend la fin de cette vérification (`isLoading`) avant de rediriger vers le login.
 - À suivre : Phase C (modération speakers/ambassadors/partners/exhibitors) prochaine étape, aucun blocage connu.
