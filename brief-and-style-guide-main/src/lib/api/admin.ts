@@ -353,6 +353,32 @@ export function updateRolePermissions(roleId: number, permission_codes: string[]
   });
 }
 
+export type AuditLog = {
+  id: number;
+  event: string;
+  email: string;
+  ip_address: string | null;
+  success: boolean;
+  created_at: string;
+};
+
+export type AuditLogFilters = {
+  event?: string;
+  email?: string;
+  success?: boolean;
+};
+
+export function listAuditLogs(filters: AuditLogFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.event) params.set("event", filters.event);
+  if (filters.email) params.set("email", filters.email);
+  if (filters.success !== undefined) params.set("success", String(filters.success));
+  const query = params.toString();
+  return apiFetch<AuditLog[]>(`/api/admin/audit-logs${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
 export function exportRegistrationsCsv() {
   return apiDownload("/api/admin/export/registrations", "admin", "registrations.csv");
 }

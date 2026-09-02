@@ -118,6 +118,12 @@ export function AdminDashboardPage() {
           >
             Exports CSV
           </Link>
+          <Link
+            to="audit-logs"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Journal d'audit
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>

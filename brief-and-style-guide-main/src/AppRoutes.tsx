@@ -25,6 +25,7 @@ import { AdminCampaignWindowsPage } from "./pages/admin/AdminCampaignWindowsPage
 import { AdminContactsPage } from "./pages/admin/AdminContactsPage";
 import { AdminRolesPage } from "./pages/admin/AdminRolesPage";
 import { AdminExportsPage } from "./pages/admin/AdminExportsPage";
+import { AdminAuditLogsPage } from "./pages/admin/AdminAuditLogsPage";
 
 // Backoffice path is never "/admin" in the source (ROADMAP_ADMIN.md A3): it
 // comes from a build-time env var so the real path isn't hardcoded/greppable
@@ -145,6 +146,14 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="export.data">
                 <AdminExportsPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="audit-logs"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`}>
+                <AdminAuditLogsPage />
               </AdminRequireAuth>
             }
           />
