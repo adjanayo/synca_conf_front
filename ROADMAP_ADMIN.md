@@ -80,6 +80,7 @@ Pour chaque entité : **liste filtrable + détail + action approuver/rejeter + t
 - Tableau `GET /api/campaign-windows` (public, §4.9) + écran de gestion (start/end/`is_active`).
 - Endpoint d'écriture admin à confirmer (PATCH/POST sur `/api/admin/campaign-windows`).
 - Impact métier : une fenêtre fermée → le formulaire public renvoie `403` (message à prévoir dans l'UI admin pour décision).
+- ⚠️ **Correction (2026-09-02)** : la clé `event` (dates de l'événement) est stockée dans `campaign_windows` comme les autres, mais son écran de gestion **ne vit pas ici** — voir I2 (page « Réglages événement », carte dédiée séparée). `AdminCampaignWindowsPage` filtre cette clé et n'affiche que les vraies fenêtres de campagne (speaker/ticketing/partner/ambassador/exhibitor).
 
 ### D2. Messages contact (`contacts.view`)
 - Liste des messages `GET /api/admin/contacts` (home/lecture), détail, marquer lu/non-lu.
@@ -129,7 +130,7 @@ Pour chaque entité : **liste filtrable + détail + action approuver/rejeter + t
 
 ## Phase I — Référentiels admin (backend + front)
 - I1. CRUD admin `PassType` (aucun endpoint admin existant, seulement lecture publique + seed manuel).
-- I2. Réglages événement : nom + lieu éditables (dates déjà faites via `campaign_windows` clé `event`).
+- I2. Réglages événement : nom + lieu éditables (`AdminEventSettingsPage`) + carte séparée « Dates de l'événement » (même page, cadre distinct) qui édite `campaign_windows` clé `event` — pas dans D1/Fenêtres de campagne (cf. correction D1, 2026-09-02).
 - I3. CRUD admin programme (`Session`/`Day` — modèles existants, aucune route/écran admin).
 
 ## Phase K — Dashboard : actions directes
@@ -137,16 +138,17 @@ Pour chaque entité : **liste filtrable + détail + action approuver/rejeter + t
 - K2. Actions sur les listes existantes (au-delà d'approuver/rejeter, si besoin).
 - K3. Pagination sur inscrits et waiting list.
 
-## Phase J — Waiting list + notifications (backend + front, le plus gros)
-- J1. Endpoint admin liste waitlist (`Waitlist` model existe, seul `POST /waitlist` public existe).
-- J2. Logique : fenêtre billetterie fermée/pas encore ouverte → proposer waiting list.
-- J3. Notification email automatique à l'ouverture d'une fenêtre (définir les périodes d'envoi).
-- J4. Vue waiting list sur le dashboard (dépend de J1).
+## Phase J — Waiting list + notifications (backend + front, le plus gros) — FAIT
+- J1. Endpoint admin liste waitlist — FAIT (déjà présent avant cette phase : `GET /api/admin/waitlist`, `app/api/admin_waitlist.py`, permission `waitlist.view`).
+- J2. Logique : fenêtre billetterie fermée/pas encore ouverte → proposer waiting list — FAIT. `inscription.tsx` affiche un formulaire d'inscription waitlist (`joinWaitlist`, `POST /api/waitlist`) dans les deux états : fermée (après la fin) et pas encore ouverte (sous le countdown `DateGate`).
+- J3. Notification email automatique à l'ouverture d'une fenêtre — FAIT, scope réduit : déclenché sur l'action admin qui bascule la fenêtre `ticketing` en ouverte (transition détectée dans `PATCH /api/admin/campaign-windows/{key}`), pas sur un cron (aucun scheduler en place côté back). Envoie à toute entrée `Waitlist` non notifiée, marque `notified=True`. Un changement d'heure système atteignant `start_at` sans action admin ne déclenche rien — accepté comme limite connue.
+- J4. Vue waiting list sur le dashboard — FAIT (déjà présent avant cette phase : `AdminWaitlistPage`, route `waitlist`, filtres notifié/inscrit, pagination).
 
 Ordre retenu : G → H → L → I → K → J.
 
 ## Phase M — Formulaires de candidature non branchés (découvert en L, à traiter après J)
 - M1. `candidature-speaker.tsx`, `ambassadeur.tsx` (AmbassadeurForm), `partenaires.tsx` (PartnerForm) : stubs, `toast.success` sans aucun appel API. Endpoints backend existants (`speaker_apply.py`/`ambassador_apply.py`/`partner_apply.py`) jamais consommés — aucune candidature réelle n'est enregistrée aujourd'hui. Seul le flow inscription participant est réellement branché.
+- M2. Photo speaker (demandé par l'utilisateur le 2026-09-02, après M1) : le modèle `Speaker` a déjà `photo_url` (`app/models/applications.py`), mais rien ne l'alimente ni ne l'affiche. À ajouter en même temps que M1 : champ upload photo sur `candidature-speaker.tsx` (réutiliser `app/services/storage.py`/`upload_file` — même mécanisme que les autres uploads B2, cf. `MAX_PHOTO_BYTES`), et affichage de la photo sur `SpeakersView`/fiche speaker publique (actuellement sans visuel).
 
 ## Phase N — Codes promo : CRUD admin + usage inscription (découvert, demandé par l'utilisateur)
 - N1. Backend `PromoCode` (`app/models/payments.py`) déjà existant + `POST /api/promo/validate` déjà fonctionnel + génération auto ambassadeur déjà en place. Aucun CRUD admin. À ajouter : `GET/POST/PATCH /api/admin/promo-codes` (pas de DELETE dur — `is_active` seul, FK payments/ambassadors). Permission `promo_codes.manage`.
