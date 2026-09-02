@@ -27,6 +27,20 @@ export function setAuthToken(scope: AuthScope, token: string | null) {
   tokens[scope] = token;
 }
 
+const unauthorizedHandlers: Record<AuthScope, (() => void) | null> = {
+  participant: null,
+  admin: null,
+};
+
+/**
+ * Chaque provider d'auth (Auth/AdminAuthContext) s'enregistre ici avec son
+ * logout -- ainsi apiFetch peut déclencher une déconnexion globale sur 401
+ * sans que chaque page appelante ait à vérifier l'erreur elle-même.
+ */
+export function setUnauthorizedHandler(scope: AuthScope, handler: (() => void) | null) {
+  unauthorizedHandlers[scope] = handler;
+}
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
@@ -66,6 +80,9 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
       detail = extractErrorMessage(body.detail, detail);
     } catch {
       // response wasn't JSON -- keep the generic message
+    }
+    if (response.status === 401 && options.auth) {
+      unauthorizedHandlers[options.auth]?.();
     }
     throw new ApiError(response.status, detail);
   }

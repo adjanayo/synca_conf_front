@@ -1,5 +1,5 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { setAuthToken } from "../api/client";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { setAuthToken, setUnauthorizedHandler } from "../api/client";
 import { AdminAuthContext } from "./adminContext";
 
 /**
@@ -20,6 +20,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setAuthToken("admin", null);
     setIsAuthenticated(false);
   };
+
+  useEffect(() => {
+    setUnauthorizedHandler("admin", logout);
+    return () => setUnauthorizedHandler("admin", null);
+  }, []);
 
   const value = useMemo(() => ({ isAuthenticated, login, logout }), [isAuthenticated]);
 

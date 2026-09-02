@@ -62,15 +62,6 @@ export function AdminDashboardPage() {
     queryFn: () => listRegistrations(5),
   });
 
-  // Pas d'intercepteur 401 global pour l'instant (A2/E3 à venir) -- on
-  // déconnecte localement dès qu'une des requêtes du dashboard le rencontre.
-  if (
-    (statsQuery.error instanceof ApiError && statsQuery.error.status === 401) ||
-    (registrationsQuery.error instanceof ApiError && registrationsQuery.error.status === 401)
-  ) {
-    logout();
-  }
-
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <div className="flex items-center justify-between mb-8">

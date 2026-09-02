@@ -1,5 +1,5 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { setAuthToken } from "../api/client";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { setAuthToken, setUnauthorizedHandler } from "../api/client";
 import { AuthContext } from "./context";
 
 const SESSION_STORAGE_KEY = "synca_participant_token";
@@ -51,6 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthToken("participant", null);
     setToken(null);
   };
+
+  useEffect(() => {
+    setUnauthorizedHandler("participant", logout);
+    return () => setUnauthorizedHandler("participant", null);
+  }, []);
 
   const value = useMemo(
     () => ({ token, isAuthenticated: token !== null, login, logout }),
