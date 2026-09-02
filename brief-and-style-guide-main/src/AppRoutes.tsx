@@ -17,6 +17,7 @@ import { AdminRequireAuth } from "./lib/auth/AdminRequireAuth";
 import { AdminLayout } from "./pages/admin/AdminLayout";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminSpeakersPage } from "./pages/admin/AdminSpeakersPage";
 
 // Backoffice path is never "/admin" in the source (ROADMAP_ADMIN.md A3): it
 // comes from a build-time env var so the real path isn't hardcoded/greppable
@@ -70,6 +71,14 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="payments.view">
                 <AdminDashboardPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="speakers"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="speakers.approve">
+                <AdminSpeakersPage />
               </AdminRequireAuth>
             }
           />

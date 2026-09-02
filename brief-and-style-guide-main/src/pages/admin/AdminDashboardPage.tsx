@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { useAdminAuth } from "../../lib/auth/useAdminAuth";
 import { getAdminStats, listRegistrations } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
@@ -55,7 +56,8 @@ export function AdminDashboardPage() {
   const statsQuery = useQuery({
     queryKey: ["admin", "stats"],
     queryFn: getAdminStats,
-    retry: (failureCount, error) => error instanceof ApiError && error.status !== 401 && failureCount < 2,
+    retry: (failureCount, error) =>
+      error instanceof ApiError && error.status !== 401 && failureCount < 2,
   });
   const registrationsQuery = useQuery({
     queryKey: ["admin", "registrations", "recent"],
@@ -66,12 +68,20 @@ export function AdminDashboardPage() {
     <div className="mx-auto max-w-5xl px-6 py-16">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display font-bold text-2xl text-ink">Tableau de bord</h1>
-        <button
-          onClick={logout}
-          className="text-sm text-muted-foreground hover:text-foreground transition"
-        >
-          Se déconnecter
-        </button>
+        <div className="flex items-center gap-4">
+          <Link
+            to="speakers"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Candidatures speakers
+          </Link>
+          <button
+            onClick={logout}
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Se déconnecter
+          </button>
+        </div>
       </div>
 
       {statsQuery.isPending && (
@@ -82,20 +92,24 @@ export function AdminDashboardPage() {
         </div>
       )}
 
-      {statsQuery.isError && !(statsQuery.error instanceof ApiError && statsQuery.error.status === 401) && (
-        <p role="alert" className="text-sm text-destructive mb-10">
-          {statsQuery.error instanceof ApiError
-            ? statsQuery.error.detail
-            : "Impossible de charger les statistiques."}
-        </p>
-      )}
+      {statsQuery.isError &&
+        !(statsQuery.error instanceof ApiError && statsQuery.error.status === 401) && (
+          <p role="alert" className="text-sm text-destructive mb-10">
+            {statsQuery.error instanceof ApiError
+              ? statsQuery.error.detail
+              : "Impossible de charger les statistiques."}
+          </p>
+        )}
 
       {statsQuery.data && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
             <KpiCard label="Inscriptions" value={statsQuery.data.total_registrations.toString()} />
             <KpiCard label="Revenu total" value={currency.format(statsQuery.data.total_revenue)} />
-            <KpiCard label="Paiements complétés" value={statsQuery.data.completed_payments.toString()} />
+            <KpiCard
+              label="Paiements complétés"
+              value={statsQuery.data.completed_payments.toString()}
+            />
             <KpiCard
               label="Conversion code promo"
               value={`${Math.round(statsQuery.data.promo_conversion_rate * 100)}%`}
@@ -119,13 +133,16 @@ export function AdminDashboardPage() {
 
       <h2 className="font-display font-semibold text-lg text-ink mb-4">Dernières inscriptions</h2>
       {registrationsQuery.isPending && <Skeleton className="h-40" />}
-      {registrationsQuery.isError && !(registrationsQuery.error instanceof ApiError && registrationsQuery.error.status === 401) && (
-        <p role="alert" className="text-sm text-destructive">
-          {registrationsQuery.error instanceof ApiError
-            ? registrationsQuery.error.detail
-            : "Impossible de charger les inscriptions."}
-        </p>
-      )}
+      {registrationsQuery.isError &&
+        !(
+          registrationsQuery.error instanceof ApiError && registrationsQuery.error.status === 401
+        ) && (
+          <p role="alert" className="text-sm text-destructive">
+            {registrationsQuery.error instanceof ApiError
+              ? registrationsQuery.error.detail
+              : "Impossible de charger les inscriptions."}
+          </p>
+        )}
       {registrationsQuery.data && (
         <Table>
           <TableHeader>

@@ -54,3 +54,61 @@ export function listRegistrations(limit = 5) {
     auth: "admin",
   });
 }
+
+export type SpeakerApplicationStatus = "pending" | "accepted" | "rejected";
+
+export type Speaker = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  title_role: string;
+  company: string | null;
+  country: string;
+  email: string;
+  phone_whatsapp: string;
+  linkedin_url: string | null;
+  website_url: string | null;
+  photo_url: string | null;
+  intervention_format: string;
+  intervention_title: string;
+  theme: string;
+  summary: string;
+  audience_level: string | null;
+  language: string | null;
+  past_experience: string | null;
+  video_link: string | null;
+  availability: string | null;
+  departure_city: string | null;
+  needs_accommodation: boolean;
+  motivation: string;
+  video_consent: string | null;
+  gdpr_consent: boolean;
+  status: SpeakerApplicationStatus;
+  is_public: boolean;
+  created_at: string;
+};
+
+export type SpeakerFilters = {
+  status?: SpeakerApplicationStatus;
+  theme?: string;
+  format?: string;
+};
+
+export function listSpeakers(filters: SpeakerFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.status) params.set("status", filters.status);
+  if (filters.theme) params.set("theme", filters.theme);
+  if (filters.format) params.set("format", filters.format);
+  const query = params.toString();
+  return apiFetch<Speaker[]>(`/api/admin/speakers${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function updateSpeakerStatus(id: number, status: SpeakerApplicationStatus) {
+  return apiFetch<Speaker>(`/api/admin/speakers/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status },
+  });
+}
