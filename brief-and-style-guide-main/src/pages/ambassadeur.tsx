@@ -12,8 +12,11 @@ import {
 } from "../lib/forms/constants";
 import { applyAsAmbassador } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 export function AmbassadeurPage() {
+  const { year } = useEventWindow();
+  const yearSuffix = year != null ? ` ${year}` : "";
   return (
     <>
       <PageHeader
@@ -40,7 +43,7 @@ export function AmbassadeurPage() {
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-sm uppercase text-primary mb-2">Le rôle</div>
-          <h2 className="text-3xl font-bold mb-4">Deviens un acteur clé de Synca Conf 2027</h2>
+          <h2 className="text-3xl font-bold mb-4">Deviens un acteur clé de Synca Conf{yearSuffix}</h2>
           <p className="text-muted-foreground mb-10 max-w-2xl">
             En tant qu’ambassadeur, tu joues un rôle essentiel dans le succès de l’événement. Tu es
             le lien entre ta communauté et Synca.
@@ -51,7 +54,7 @@ export function AmbassadeurPage() {
               {
                 id: "01",
                 t: "Relayer",
-                d: "Fais connaître Synca Conf 2027 sur tes réseaux et dans ta communauté.",
+                d: `Fais connaître Synca Conf${yearSuffix} sur tes réseaux et dans ta communauté.`,
               },
               {
                 id: "02",
@@ -94,7 +97,7 @@ export function AmbassadeurPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              "Badge officiel Synca Conf 2027",
+              `Badge officiel Synca Conf${yearSuffix}`,
               "Certificat valorisant pour ton CV",
               "Accès privilégié aux coulisses",
               "Opportunités de networking",

@@ -55,16 +55,17 @@
 - [x] Fix : `ContactForm.tsx` (page /contact) était un stub statique, jamais branché à l'API — branché sur `POST /api/contact`
 - [x] Fix : typo "Cybersec" → "Cyber Sécurité" (secteur inscription, thème candidature speaker)
 - [x] Nom/lieu de l'événement lus depuis la DB (`EventSettings`, déjà pilotable au dashboard) au lieu du fichier statique `parameter.ts` — nouveau `GET /api/event-settings` public
+- [x] Année de l'événement (`EventSettings.year`, nullable) pilotable au dashboard, branchée sur les textes de marque "Synca Conf &lt;année&gt;" (Nav, Hero, Footer, login admin, inscription, ambassadeur, about, partenaires) — n'affiche rien si non définie
 
 ## À faire plus tard — ROADMAP_PUBLIC_SEO.md (hors périmètre admin, pas à exécuter sans instruction explicite)
 
 ### Partie 1 — SEO du site public
-- [ ] S1. `index.html` complet (meta description, Open Graph, Twitter cards, canonical, favicon/apple-touch-icon, theme-color)
-- [ ] S1. Titre/meta par route (`usePageMeta` ou react-helmet-async), une par route publique
-- [ ] S1. `public/robots.txt` (public autorisé, admin jamais mentionné — discrétion via token random + noindex + auth)
-- [ ] S1. `public/sitemap.xml` (routes publiques réelles, maintenu à jour)
-- [ ] S1. JSON-LD `Event` sur l'index (nom, dates, lieu, image, admission), synchronisé avec les vraies dates
-- [ ] S1. Pré-rendu (vite-plugin-prerender / SSG) — à valider avec l'utilisateur avant (impact build/mise en ligne)
+- [ ] S1.1. `index.html` complet (meta description, Open Graph, Twitter cards, canonical, favicon/apple-touch-icon, theme-color)
+- [ ] S1.2. Titre/meta par route (`usePageMeta` ou react-helmet-async), une par route publique
+- [ ] S1.3. `public/robots.txt` (public autorisé, admin jamais mentionné — discrétion via token random + noindex + auth)
+- [ ] S1.4. `public/sitemap.xml` (routes publiques réelles, maintenu à jour)
+- [ ] S1.5. JSON-LD `Event` sur l'index (nom, dates, lieu, image, admission), synchronisé avec les vraies dates
+- [ ] S1.6. Pré-rendu (vite-plugin-prerender / SSG) — à valider avec l'utilisateur avant (impact build/mise en ligne)
 - [ ] S2. SEO au fil de l'eau (title/description/OG à jour à chaque nouvelle section) — pas de tracking/analytics sans accord explicite
 
 ### Partie 2 — Reprise des données réelles (pages publiques)
@@ -176,3 +177,9 @@
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : `ruff check app/api/public.py` clean.
 - Fait : utilisateur a mis à jour `EventSettings.name` en base (corrigeant l'incohérence signalée ci-dessus) — nom branché sur `Footer.tsx` (`{name} {année}`, via `useEventWindow`). Repli statique (`data/parameter.ts::PARAMETER.title`) corrigé de "Synca Cyber" à "Synca Conf" pour rester cohérent si l'appel API échoue. `Nav.tsx`/`Hero.tsx` non touchés — leur marquage JSX scinde le nom et l'année dans des styles différents ("Synca Conf '27", "Synca Conf 2027") pas mappable proprement sur une chaîne dynamique unique sans réécrire leur mise en page.
 - Fait : ajout dans ce TODO des phases de `ROADMAP_PUBLIC_SEO.md` (SEO, données publiques, formulaires restants, espace participant, paiement, divers) en checkboxes — planification pour plus tard, aucune de ces phases exécutée (chantier non lancé, hors périmètre admin en cours).
+
+### 2026-09-02 (suite 9) — année de l'événement pilotable au dashboard
+- Fait : demande utilisateur — corriger la limite signalée en suite 8 (année codée en dur à plusieurs endroits "Synca Conf &lt;année&gt;") en ajoutant un vrai champ année en base, distinct des dates de l'événement (`campaign_windows.event`, déjà pilotable). Nouvelle colonne `event_settings.year` (nullable, migration `e4f5a6b7c8d9` côté `synca_conf_back`) exposée dans `GET /api/event-settings` (public) et `GET/PATCH /api/admin/event-settings` ; champ "Année" ajouté à `AdminEventSettingsPage.tsx` (vide = pas d'année affichée côté public, comportement demandé explicitement).
+- Fait : `useEventWindow.ts` expose désormais `year: number | null` (pas de repli `PARAMETER` — si non défini en base, aucune année n'est affichée plutôt que d'en deviner une fausse). Branché sur chaque endroit où "Synca Conf 2027" était codé en dur : `Nav.tsx` (format abrégé `'27`, calculé depuis `year`), `Footer.tsx` (nom + copyright), `Hero.tsx` (titre + badge "Édition"), `AdminLoginPage.tsx`, `inscription.tsx`, `ambassadeur.tsx` (3 occurrences), `About.tsx` (2 occurrences), `partenaires.tsx` (2 occurrences). Les phrases FAQ (`data/faq.ts`) restent hors scope, comme décidé en suite 8.
+- Fait : PATCH admin distingue "année non transmise" de "année explicitement effacée" (`model_fields_set` côté back) — nécessaire pour permettre de revenir à "aucune année affichée" depuis le dashboard, pas seulement d'en fixer une.
+- Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : migration appliquée, `ruff check .` clean sur tout le repo.

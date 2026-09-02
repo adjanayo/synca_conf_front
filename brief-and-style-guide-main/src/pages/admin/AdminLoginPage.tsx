@@ -5,10 +5,12 @@ import { Field, inputCls } from "../../components/site/FormShell";
 import { ApiError } from "../../lib/api/client";
 import { adminLogin } from "../../lib/api/admin";
 import { useAdminAuth } from "../../lib/auth/useAdminAuth";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 export function AdminLoginPage({ dashboardPath }: { dashboardPath: string }) {
   const navigate = useNavigate();
   const { login } = useAdminAuth();
+  const { year } = useEventWindow();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +47,9 @@ export function AdminLoginPage({ dashboardPath }: { dashboardPath: string }) {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-6">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-white shadow-card p-8">
         <h1 className="font-display font-bold text-xl text-ink mb-1">Backoffice</h1>
-        <p className="text-sm text-muted-foreground mb-6">Synca Conf 2027 — accès administrateur</p>
+        <p className="text-sm text-muted-foreground mb-6">
+          Synca Conf{year != null ? ` ${year}` : ""} — accès administrateur
+        </p>
 
         {error && (
           <div

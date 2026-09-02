@@ -13,6 +13,7 @@ import {
 } from "../lib/forms/constants";
 import { applyAsPartner, getPartnerLevels, type PartnerLevel } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 const WHY_PARTNER = [
   {
@@ -54,6 +55,8 @@ const WHY_PARTNER = [
 ];
 
 export function PartenairesPage() {
+  const { year } = useEventWindow();
+  const yearSuffix = year != null ? ` ${year}` : "";
   return (
     <>
       <PageHeader
@@ -146,14 +149,15 @@ export function PartenairesPage() {
             </div>
 
             <h2 className="mt-3 font-display font-bold text-3xl md:text-5xl">
-              Faites de Synca Conf 2027 un{" "}
+              Faites de Synca Conf{yearSuffix} un{" "}
               <span className="text-primary">levier pour votre marque</span>.
             </h2>
 
             <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
-              Synca Conf 2027 rassemble entreprises, startups, investisseurs, talents, décideurs et
-              acteurs majeurs de la technologie africaine. Devenir partenaire, c’est associer votre
-              marque à une dynamique panafricaine tournée vers l’innovation et les opportunités.
+              Synca Conf{yearSuffix} rassemble entreprises, startups, investisseurs, talents,
+              décideurs et acteurs majeurs de la technologie africaine. Devenir partenaire, c’est
+              associer votre marque à une dynamique panafricaine tournée vers l’innovation et les
+              opportunités.
             </p>
           </div>
 

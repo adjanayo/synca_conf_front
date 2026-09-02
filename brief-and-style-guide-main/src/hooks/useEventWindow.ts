@@ -41,5 +41,10 @@ export function useEventWindow() {
     dateLabel: eventWindow ? formatRange(eventWindow.start_at, eventWindow.end_at) : PARAMETER.date,
     name: settingsQuery.data?.name ?? PARAMETER.title,
     venue: settingsQuery.data?.venue ?? PARAMETER.lieu,
+    // Champ distinct des dates de l'événement (fenêtre `event` ci-dessus) --
+    // sert uniquement au texte de marque "Synca Conf <année>" affiché à
+    // plusieurs endroits. Pas de repli si non défini en base : on n'affiche
+    // simplement pas d'année plutôt que d'en deviner une fausse.
+    year: settingsQuery.data?.year ?? null,
   };
 }

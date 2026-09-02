@@ -1,7 +1,9 @@
 import { FEATURES } from "@/data/parameter";
 import { Sparkles } from "lucide-react";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 function About() {
+  const { year } = useEventWindow();
   const themes = [
     "Cybersécurité, Data et IA",
     "Cloud, infrastructures et souveraineté numérique",
@@ -62,13 +64,13 @@ function About() {
               </div>
 
               <h3 className="mt-3 font-display font-bold text-3xl md:text-4xl leading-tight">
-                Thématiques <span className="text-primary">Synca Conf 2027</span>
+                Thématiques <span className="text-primary">Synca Conf{year != null ? ` ${year}` : ""}</span>
               </h3>
 
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
-                Découvrez les grandes thématiques qui seront au cœur de la Synca Conf 2027 et qui
-                réuniront experts, entrepreneurs, innovateurs et acteurs de la transformation
-                numérique africaine.
+                Découvrez les grandes thématiques qui seront au cœur de la Synca
+                Conf{year != null ? ` ${year}` : ""} et qui réuniront experts, entrepreneurs,
+                innovateurs et acteurs de la transformation numérique africaine.
               </p>
             </div>
 

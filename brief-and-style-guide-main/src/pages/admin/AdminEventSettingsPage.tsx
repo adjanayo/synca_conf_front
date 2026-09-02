@@ -131,16 +131,19 @@ export function AdminEventSettingsPage() {
 
   const [name, setName] = useState("");
   const [venue, setVenue] = useState("");
+  const [year, setYear] = useState("");
 
   useEffect(() => {
     if (settingsQuery.data) {
       setName(settingsQuery.data.name);
       setVenue(settingsQuery.data.venue);
+      setYear(settingsQuery.data.year != null ? String(settingsQuery.data.year) : "");
     }
   }, [settingsQuery.data]);
 
   const mutation = useMutation({
-    mutationFn: () => updateEventSettings({ name, venue }),
+    mutationFn: () =>
+      updateEventSettings({ name, venue, year: year.trim() === "" ? null : Number(year) }),
     onSuccess: () => {
       toast.success("Réglages de l'événement mis à jour.");
       queryClient.invalidateQueries({ queryKey: ["admin", "event-settings"] });
@@ -150,9 +153,10 @@ export function AdminEventSettingsPage() {
     },
   });
 
+  const currentYear = settingsQuery.data?.year != null ? String(settingsQuery.data.year) : "";
   const dirty =
     !!settingsQuery.data &&
-    (name !== settingsQuery.data.name || venue !== settingsQuery.data.venue);
+    (name !== settingsQuery.data.name || venue !== settingsQuery.data.venue || year !== currentYear);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
@@ -192,6 +196,15 @@ export function AdminEventSettingsPage() {
               <div className="space-y-1">
                 <Label htmlFor="event-venue">Lieu</Label>
                 <Input id="event-venue" value={venue} onChange={(e) => setVenue(e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="event-year">Année (affichée dans "Synca Conf &lt;année&gt;" — laisser vide pour ne rien afficher)</Label>
+                <Input
+                  id="event-year"
+                  type="number"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                />
               </div>
               <div className="flex justify-end">
                 <Button

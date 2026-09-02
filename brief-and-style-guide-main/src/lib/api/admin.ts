@@ -623,12 +623,14 @@ export type EventSettings = {
   id: number;
   name: string;
   venue: string;
+  year: number | null;
   updated_at: string;
 };
 
 export type EventSettingsUpdate = {
   name?: string;
   venue?: string;
+  year?: number | null;
 };
 
 export function getEventSettings() {

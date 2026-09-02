@@ -24,6 +24,7 @@ import {
   type PromoValidateResponse,
 } from "../../lib/api/registration";
 import { useAuth } from "../../lib/auth/useAuth";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 const currency = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -106,6 +107,7 @@ export function InscriptionPage() {
     queryKey: ["public", "campaign-windows"],
     queryFn: getCampaignWindows,
   });
+  const { year } = useEventWindow();
   const ticketing = windowsQuery.data?.find((w) => w.key === "ticketing");
   const closed = ticketing && (!ticketing.is_active || new Date(ticketing.end_at) < new Date());
 
@@ -115,7 +117,7 @@ export function InscriptionPage() {
         eyebrow="Inscription participant"
         title={
           <>
-            Rejoins la Synca Conf <span className="text-primary">2027</span>.
+            Rejoins la Synca Conf{year != null && <> <span className="text-primary">{year}</span></>}.
           </>
         }
         description="Remplis le formulaire d'inscription pour réserver ton pass. Tu recevras un email de confirmation avec ton billet."

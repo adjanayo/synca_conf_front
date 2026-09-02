@@ -57,6 +57,7 @@ export type EventSettings = {
   id: number;
   name: string;
   venue: string;
+  year: number | null;
   updated_at: string;
 };
 

@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { ArrowRight, Menu, User, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../lib/auth/useAuth";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
 const links = [
   { to: "/", label: "Accueil" },
@@ -16,12 +17,15 @@ const links = [
 export function Nav() {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { year } = useEventWindow();
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[oklch(0.18_0_0_/_0.75)] border-b border-white/5">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between text-white">
         <Link to="/" className="flex items-center gap-2 font-display font-bold tracking-tight">
           <img src="/parameter/Logoicone orange blanc_CMJN.svg" alt="Logo CMJN" className="h-12 w-12"/>
-          <span>Synca Conf <span className="text-primary">'27</span></span>
+          <span>
+            Synca Conf {year != null && <span className="text-primary">'{String(year).slice(-2)}</span>}
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-7 text-sm">

@@ -21,7 +21,7 @@ function useCountdown(target: number) {
 }
 
 function Hero() {
-  const { startAt, dateLabel, venue } = useEventWindow();
+  const { startAt, dateLabel, venue, year } = useEventWindow();
   const t = useCountdown(startAt ? startAt.getTime() : FALLBACK_TARGET);
   const cells = [
     { v: t.d, l: "Jours" },
@@ -44,10 +44,10 @@ function Hero() {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/80">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          La conférence tech panafricaine · Édition 2027
+          La conférence tech panafricaine{year != null && ` · Édition ${year}`}
         </div>
         <h1 className="mt-6 font-display font-bold text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] tracking-tighter">
-          Synca <span className="text-primary">Conf 2027</span>
+          Synca <span className="text-primary">Conf{year != null ? ` ${year}` : ""}</span>
           <br />
           {/* <span className="text-white/90">Dakar · Africa builds.</span> */}
         </h1>
