@@ -13,17 +13,24 @@ export class ApiError extends Error {
   }
 }
 
-let authToken: string | null = null;
+type AuthScope = "participant" | "admin";
 
-/** Central place the participant JWT lives in memory — never localStorage/cookie (XSS risk). */
-export function setAuthToken(token: string | null) {
-  authToken = token;
+const tokens: Record<AuthScope, string | null> = { participant: null, admin: null };
+
+/**
+ * Central place each JWT lives in memory — never localStorage/cookie (XSS
+ * risk). Participant and admin tokens are separate slots: a browser tab
+ * could plausibly hold both (participant self-service + admin backoffice),
+ * and they must never be sent on the other's requests.
+ */
+export function setAuthToken(scope: AuthScope, token: string | null) {
+  tokens[scope] = token;
 }
 
 type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
-  auth?: boolean;
+  auth?: AuthScope;
 };
 
 /**
@@ -38,8 +45,9 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   const headers: Record<string, string> = {};
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
   if (options.auth) {
-    if (!authToken) throw new ApiError(401, "Session expirée.");
-    headers["Authorization"] = `Bearer ${authToken}`;
+    const token = tokens[options.auth];
+    if (!token) throw new ApiError(401, "Session expirée.");
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {

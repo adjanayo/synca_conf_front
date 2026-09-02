@@ -18,15 +18,20 @@ export function ConnexionPage() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Client-side validation (zod-style) renders at the field; server/API
+  // errors render as a global banner -- two states so the two never get
+  // mixed into the same slot (error-handling skill).
+  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const redirectTo = (location.state as { from?: string } | null)?.from ?? "/espace";
 
   const submitEmail = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    setError(null);
+    setFieldError(null);
+    setServerError(null);
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Email invalide.");
+      setFieldError("Email invalide.");
       return;
     }
     setPending(true);
@@ -35,8 +40,13 @@ export function ConnexionPage() {
       toast.success("Code envoyé", { description: "Vérifie ta boîte mail." });
       setStep("code");
     } catch (err) {
-      const message = err instanceof ApiError ? err.detail : "Une erreur est survenue.";
-      setError(message);
+      const message =
+        err instanceof ApiError && err.status === 429
+          ? "Trop de tentatives — réessaie dans quelques minutes."
+          : err instanceof ApiError
+            ? err.detail
+            : "Une erreur est survenue.";
+      setServerError(message);
     } finally {
       setPending(false);
     }
@@ -44,9 +54,10 @@ export function ConnexionPage() {
 
   const submitCode = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    setError(null);
+    setFieldError(null);
+    setServerError(null);
     if (code.length !== 6) {
-      setError("Le code doit contenir 6 chiffres.");
+      setFieldError("Le code doit contenir 6 chiffres.");
       return;
     }
     setPending(true);
@@ -59,10 +70,12 @@ export function ConnexionPage() {
       const message =
         err instanceof ApiError && err.status === 401
           ? "Code invalide ou expiré."
-          : err instanceof ApiError
-            ? err.detail
-            : "Une erreur est survenue.";
-      setError(message);
+          : err instanceof ApiError && err.status === 429
+            ? "Trop de tentatives — réessaie dans quelques minutes."
+            : err instanceof ApiError
+              ? err.detail
+              : "Une erreur est survenue.";
+      setServerError(message);
     } finally {
       setPending(false);
     }
@@ -70,10 +83,18 @@ export function ConnexionPage() {
 
   return (
     <FormShell>
+      {serverError && (
+        <div
+          role="alert"
+          className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+        >
+          {serverError}
+        </div>
+      )}
       {step === "email" ? (
         <form onSubmit={submitEmail} noValidate>
           <FormSection title="Accéder à mon espace">
-            <Field label="Email" required error={error ?? undefined} full>
+            <Field label="Email" required error={fieldError ?? undefined} full>
               <input
                 type="email"
                 className={inputCls}
@@ -99,7 +120,7 @@ export function ConnexionPage() {
             <Field
               label={`Code envoyé à ${email}`}
               required
-              error={error ?? undefined}
+              error={fieldError ?? undefined}
               hint="Valable 10 minutes."
               full
             >
@@ -119,7 +140,8 @@ export function ConnexionPage() {
               onClick={() => {
                 setStep("email");
                 setCode("");
-                setError(null);
+                setFieldError(null);
+                setServerError(null);
               }}
             >
               Changer d'email

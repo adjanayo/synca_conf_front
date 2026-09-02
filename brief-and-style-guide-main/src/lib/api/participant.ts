@@ -45,13 +45,13 @@ export function verifyOtp(email: string, code: string) {
 }
 
 export function getMyProfile() {
-  return apiFetch<ParticipantProfile>("/api/user/me", { auth: true });
+  return apiFetch<ParticipantProfile>("/api/user/me", { auth: "participant" });
 }
 
 export function getMyTickets() {
-  return apiFetch<Ticket[]>("/api/user/me/tickets", { auth: true });
+  return apiFetch<Ticket[]>("/api/user/me/tickets", { auth: "participant" });
 }
 
 export function deleteMyAccount() {
-  return apiFetch<{ detail: string }>("/api/user/me", { method: "DELETE", auth: true });
+  return apiFetch<{ detail: string }>("/api/user/me", { method: "DELETE", auth: "participant" });
 }
