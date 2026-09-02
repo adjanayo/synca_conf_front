@@ -567,6 +567,58 @@ export function updatePassType(id: number, body: PassTypeUpdate) {
   });
 }
 
+export type PromoCode = {
+  id: number;
+  code: string;
+  discount_pct: number;
+  discount_fixed: number | null;
+  usage_limit: number | null;
+  usage_count: number;
+  valid_from: string | null;
+  valid_until: string | null;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type PromoCodeCreate = {
+  code: string;
+  discount_pct?: number;
+  discount_fixed?: number;
+  usage_limit?: number;
+  valid_from?: string;
+  valid_until?: string;
+  is_active?: boolean;
+};
+
+export type PromoCodeUpdate = {
+  discount_pct?: number;
+  discount_fixed?: number;
+  usage_limit?: number;
+  valid_from?: string;
+  valid_until?: string;
+  is_active?: boolean;
+};
+
+export function listPromoCodes() {
+  return apiFetch<PromoCode[]>("/api/admin/promo-codes", { auth: "admin" });
+}
+
+export function createPromoCode(body: PromoCodeCreate) {
+  return apiFetch<PromoCode>("/api/admin/promo-codes", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updatePromoCode(id: number, body: PromoCodeUpdate) {
+  return apiFetch<PromoCode>(`/api/admin/promo-codes/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
 export type EventSettings = {
   id: number;
   name: string;

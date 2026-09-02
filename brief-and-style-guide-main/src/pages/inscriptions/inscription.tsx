@@ -20,6 +20,8 @@ import {
   getPassTypes,
   joinWaitlist,
   registerParticipant,
+  validatePromoCode,
+  type PromoValidateResponse,
 } from "../../lib/api/registration";
 import { useAuth } from "../../lib/auth/useAuth";
 
@@ -214,7 +216,25 @@ function InscriptionForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [promoStatus, setPromoStatus] = useState<
+    { state: "idle" } | { state: "checking" } | { state: "valid"; data: PromoValidateResponse } | { state: "invalid" }
+  >({ state: "idle" });
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
+
+  const checkPromoCode = async () => {
+    const code = f.promo.trim();
+    if (!code) {
+      setPromoStatus({ state: "idle" });
+      return;
+    }
+    setPromoStatus({ state: "checking" });
+    try {
+      const data = await validatePromoCode(code);
+      setPromoStatus({ state: "valid", data });
+    } catch {
+      setPromoStatus({ state: "invalid" });
+    }
+  };
 
   const passTypesQuery = useQuery({ queryKey: ["public", "pass-types"], queryFn: getPassTypes });
 
@@ -487,12 +507,38 @@ function InscriptionForm() {
               />
             </Field>
           )}
-          <Field label="Code promo">
-            <input
-              className={inputCls}
-              value={f.promo}
-              onChange={(e) => set("promo", e.target.value)}
-            />
+          <Field
+            label="Code promo"
+            hint={
+              promoStatus.state === "valid"
+                ? `Code valide — ${
+                    promoStatus.data.discount_fixed !== null
+                      ? `${currency.format(promoStatus.data.discount_fixed)} de réduction`
+                      : `${promoStatus.data.discount_pct}% de réduction`
+                  }`
+                : promoStatus.state === "invalid"
+                  ? "Ce code promo n'est pas valide."
+                  : "Optionnel"
+            }
+          >
+            <div className="flex gap-2">
+              <input
+                className={inputCls}
+                value={f.promo}
+                onChange={(e) => {
+                  set("promo", e.target.value);
+                  setPromoStatus({ state: "idle" });
+                }}
+              />
+              <button
+                type="button"
+                onClick={checkPromoCode}
+                disabled={promoStatus.state === "checking" || !f.promo.trim()}
+                className="shrink-0 rounded-lg border border-border px-4 text-sm font-medium hover:border-primary transition disabled:opacity-60"
+              >
+                {promoStatus.state === "checking" ? "…" : "Vérifier"}
+              </button>
+            </div>
           </Field>
           <Field label="LinkedIn / Portfolio" hint="URL">
             <input

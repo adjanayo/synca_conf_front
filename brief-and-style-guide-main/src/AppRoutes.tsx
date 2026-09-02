@@ -28,6 +28,7 @@ import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
 import { AdminExportsPage } from "./pages/admin/AdminExportsPage";
 import { AdminAuditLogsPage } from "./pages/admin/AdminAuditLogsPage";
 import { AdminPassTypesPage } from "./pages/admin/AdminPassTypesPage";
+import { AdminPromoCodesPage } from "./pages/admin/AdminPromoCodesPage";
 import { AdminEventSettingsPage } from "./pages/admin/AdminEventSettingsPage";
 import { AdminProgramPage } from "./pages/admin/AdminProgramPage";
 import { AdminRegistrationsPage } from "./pages/admin/AdminRegistrationsPage";
@@ -176,6 +177,14 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="pass_types.manage">
                 <AdminPassTypesPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="promo-codes"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="promo_codes.manage">
+                <AdminPromoCodesPage />
               </AdminRequireAuth>
             }
           />

@@ -68,3 +68,16 @@ export type WaitlistEntry = {
 export function joinWaitlist(email: string) {
   return apiFetch<WaitlistEntry>("/api/waitlist", { method: "POST", body: { email } });
 }
+
+export type PromoValidateResponse = {
+  code: string;
+  discount_pct: number;
+  discount_fixed: number | null;
+};
+
+export function validatePromoCode(code: string) {
+  return apiFetch<PromoValidateResponse>("/api/promo/validate", {
+    method: "POST",
+    body: { code },
+  });
+}

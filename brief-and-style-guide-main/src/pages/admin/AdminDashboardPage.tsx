@@ -105,6 +105,9 @@ export function AdminDashboardPage() {
                 <Link to="pass-types">Types de pass</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <Link to="promo-codes">Codes promo</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="event-settings">Réglages événement</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
