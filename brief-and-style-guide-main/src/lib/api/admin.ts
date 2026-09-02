@@ -49,8 +49,16 @@ export type AdminRegistration = {
   created_at: string;
 };
 
-export function listRegistrations(limit = 5) {
-  return apiFetch<AdminRegistration[]>(`/api/admin/registrations?limit=${limit}`, {
+export type RegistrationFilters = {
+  limit?: number;
+  offset?: number;
+};
+
+export function listRegistrations({ limit = 5, offset = 0 }: RegistrationFilters = {}) {
+  const params = new URLSearchParams();
+  params.set("limit", String(limit));
+  params.set("offset", String(offset));
+  return apiFetch<AdminRegistration[]>(`/api/admin/registrations?${params.toString()}`, {
     auth: "admin",
   });
 }
@@ -113,6 +121,43 @@ export function updateSpeakerStatus(id: number, status: SpeakerApplicationStatus
   });
 }
 
+export type SpeakerCreate = {
+  first_name: string;
+  last_name: string;
+  title_role: string;
+  country: string;
+  email: string;
+  phone_whatsapp: string;
+  intervention_format: string;
+  intervention_title: string;
+  theme: string;
+  summary: string;
+  motivation: string;
+  company?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  photo_url?: string;
+  audience_level?: string;
+  language?: string;
+  past_experience?: string;
+  video_link?: string;
+  availability?: string;
+  departure_city?: string;
+  needs_accommodation?: boolean;
+  video_consent?: string;
+  gdpr_consent?: boolean;
+  status?: SpeakerApplicationStatus;
+  is_public?: boolean;
+};
+
+export function createSpeaker(body: SpeakerCreate) {
+  return apiFetch<Speaker>("/api/admin/speakers", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
 export type Ambassador = {
   id: number;
   first_name: string;
@@ -159,6 +204,37 @@ export function updateAmbassadorStatus(id: number, status: SpeakerApplicationSta
     method: "PATCH",
     auth: "admin",
     body: { status },
+  });
+}
+
+export type AmbassadorCreate = {
+  first_name: string;
+  last_name: string;
+  age: number;
+  country: string;
+  city: string;
+  email: string;
+  phone_whatsapp: string;
+  motivation: string;
+  mobilization_plan: string;
+  preferred_channels: string;
+  current_profile?: string;
+  institution_company?: string;
+  linkedin_url?: string;
+  social_handles?: Record<string, string>;
+  followers_range?: string;
+  estimated_reach?: string;
+  previous_synca?: boolean;
+  availability_pre?: string;
+  gdpr_consent?: boolean;
+  status?: SpeakerApplicationStatus;
+};
+
+export function createAmbassador(body: AmbassadorCreate) {
+  return apiFetch<Ambassador>("/api/admin/ambassadors", {
+    method: "POST",
+    auth: "admin",
+    body,
   });
 }
 
@@ -213,6 +289,38 @@ export function updateExhibitorStatus(id: number, status: ExhibitorStatus) {
   });
 }
 
+export type ExhibitorCreate = {
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  stand_type: string;
+  reps_count: number;
+  products_services: string;
+  website_url?: string;
+  linked_partner_level?: string;
+  equipment_needs?: string;
+  side_activities?: string;
+  visuals_url?: string;
+  payment_method?: string;
+  rules_accepted?: boolean;
+  gdpr_consent?: boolean;
+  status?: ExhibitorStatus;
+  is_public?: boolean;
+};
+
+export function createExhibitor(body: ExhibitorCreate) {
+  return apiFetch<Exhibitor>("/api/admin/exhibitors", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
 export type Partner = {
   id: number;
   organization_name: string;
@@ -257,6 +365,36 @@ export function updatePartnerStatus(id: number, status: ExhibitorStatus) {
     method: "PATCH",
     auth: "admin",
     body: { status },
+  });
+}
+
+export type PartnerCreate = {
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  level_id: number;
+  objectives: string;
+  website_url?: string;
+  has_budget?: string;
+  previous_sponsor?: boolean;
+  message?: string;
+  heard_from?: string;
+  gdpr_consent?: boolean;
+  status?: ExhibitorStatus;
+  logo_url?: string;
+  is_public?: boolean;
+};
+
+export function createPartner(body: PartnerCreate) {
+  return apiFetch<Partner>("/api/admin/partners", {
+    method: "POST",
+    auth: "admin",
+    body,
   });
 }
 
@@ -581,6 +719,32 @@ export function updateSession(id: number, body: SessionUpdate) {
 export function deleteSession(id: number) {
   return apiFetch<void>(`/api/admin/sessions/${id}`, {
     method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export type Waitlist = {
+  id: number;
+  email: string;
+  notified: boolean;
+  registered: boolean;
+  created_at: string;
+};
+
+export type WaitlistFilters = {
+  limit?: number;
+  offset?: number;
+  notified?: boolean;
+  registered?: boolean;
+};
+
+export function listWaitlist({ limit = 50, offset = 0, notified, registered }: WaitlistFilters = {}) {
+  const params = new URLSearchParams();
+  params.set("limit", String(limit));
+  params.set("offset", String(offset));
+  if (notified !== undefined) params.set("notified", String(notified));
+  if (registered !== undefined) params.set("registered", String(registered));
+  return apiFetch<Waitlist[]>(`/api/admin/waitlist?${params.toString()}`, {
     auth: "admin",
   });
 }

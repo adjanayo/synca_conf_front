@@ -69,7 +69,7 @@ export function AdminDashboardPage() {
   });
   const registrationsQuery = useQuery({
     queryKey: ["admin", "registrations", "recent"],
-    queryFn: () => listRegistrations(5),
+    queryFn: () => listRegistrations({ limit: 5 }),
   });
 
   return (
@@ -142,6 +142,12 @@ export function AdminDashboardPage() {
           >
             Journal d'audit
           </Link>
+          <Link
+            to="waitlist"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Liste d'attente
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>
@@ -195,7 +201,15 @@ export function AdminDashboardPage() {
         </>
       )}
 
-      <h2 className="font-display font-semibold text-lg text-ink mb-4">Dernières inscriptions</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-display font-semibold text-lg text-ink">Dernières inscriptions</h2>
+        <Link
+          to="registrations"
+          className="text-sm text-muted-foreground hover:text-foreground transition"
+        >
+          Voir tout →
+        </Link>
+      </div>
       {registrationsQuery.isPending && <Skeleton className="h-40" />}
       {registrationsQuery.isError &&
         !(

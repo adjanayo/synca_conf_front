@@ -29,6 +29,8 @@ import { AdminAuditLogsPage } from "./pages/admin/AdminAuditLogsPage";
 import { AdminPassTypesPage } from "./pages/admin/AdminPassTypesPage";
 import { AdminEventSettingsPage } from "./pages/admin/AdminEventSettingsPage";
 import { AdminProgramPage } from "./pages/admin/AdminProgramPage";
+import { AdminRegistrationsPage } from "./pages/admin/AdminRegistrationsPage";
+import { AdminWaitlistPage } from "./pages/admin/AdminWaitlistPage";
 
 // Backoffice path is never "/admin" in the source (ROADMAP_ADMIN.md A3): it
 // comes from a build-time env var so the real path isn't hardcoded/greppable
@@ -184,6 +186,22 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="sessions.manage">
                 <AdminProgramPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="registrations"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="payments.view">
+                <AdminRegistrationsPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="waitlist"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="waitlist.view">
+                <AdminWaitlistPage />
               </AdminRequireAuth>
             }
           />

@@ -3,14 +3,21 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  createExhibitor,
   listExhibitors,
   updateExhibitorStatus,
   type Exhibitor,
+  type ExhibitorCreate,
   type ExhibitorStatus,
 } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
+import { COUNTRIES, PARTNER_SECTEURS } from "../../lib/forms/constants";
 import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -26,7 +33,13 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
 
 const STATUS_LABELS: Record<ExhibitorStatus, string> = {
   pending: "En attente",
@@ -39,6 +52,264 @@ const STATUS_LABELS: Record<ExhibitorStatus, string> = {
 const STAND_TYPES = ["Standard", "Premium", "Mutualisé"];
 
 const dateTime = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" });
+
+type ExhibitorFormState = {
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  website_url: string;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  stand_type: string;
+  reps_count: string;
+  products_services: string;
+  equipment_needs: string;
+};
+
+const EMPTY_EXHIBITOR_FORM: ExhibitorFormState = {
+  organization_name: "",
+  sector: "",
+  country: "",
+  city: "",
+  website_url: "",
+  contact_name: "",
+  contact_position: "",
+  contact_email: "",
+  contact_phone: "",
+  stand_type: "",
+  reps_count: "",
+  products_services: "",
+  equipment_needs: "",
+};
+
+function CreateExhibitorDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState<ExhibitorFormState>(EMPTY_EXHIBITOR_FORM);
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      const body: ExhibitorCreate = {
+        organization_name: form.organization_name,
+        sector: form.sector,
+        country: form.country,
+        city: form.city,
+        contact_name: form.contact_name,
+        contact_position: form.contact_position,
+        contact_email: form.contact_email,
+        contact_phone: form.contact_phone,
+        stand_type: form.stand_type,
+        reps_count: Number(form.reps_count),
+        products_services: form.products_services,
+        website_url: form.website_url || undefined,
+        equipment_needs: form.equipment_needs || undefined,
+      };
+      return createExhibitor(body);
+    },
+    onSuccess: () => {
+      toast.success("Exposant créé.");
+      setForm(EMPTY_EXHIBITOR_FORM);
+      queryClient.invalidateQueries({ queryKey: ["admin", "exhibitors"] });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const canSubmit =
+    form.organization_name.trim() !== "" &&
+    form.sector.trim() !== "" &&
+    form.country.trim() !== "" &&
+    form.city.trim() !== "" &&
+    form.contact_name.trim() !== "" &&
+    form.contact_position.trim() !== "" &&
+    form.contact_email.trim() !== "" &&
+    form.contact_phone.trim() !== "" &&
+    form.stand_type.trim() !== "" &&
+    form.reps_count.trim() !== "" &&
+    form.products_services.trim() !== "";
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) setForm(EMPTY_EXHIBITOR_FORM);
+        onOpenChange(o);
+      }}
+    >
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Nouvel exposant</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ex-org">Organisation</Label>
+              <Input
+                id="ex-org"
+                value={form.organization_name}
+                onChange={(e) => setForm((f) => ({ ...f, organization_name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="ex-sector">Secteur</Label>
+              <Select value={form.sector} onValueChange={(v) => setForm((f) => ({ ...f, sector: v }))}>
+                <SelectTrigger id="ex-sector">
+                  <SelectValue placeholder="Choisir un secteur" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PARTNER_SECTEURS.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ex-country">Pays</Label>
+              <Select value={form.country} onValueChange={(v) => setForm((f) => ({ ...f, country: v }))}>
+                <SelectTrigger id="ex-country">
+                  <SelectValue placeholder="Choisir un pays" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="ex-city">Ville</Label>
+              <Input
+                id="ex-city"
+                value={form.city}
+                onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="ex-website">Site web</Label>
+            <Input
+              id="ex-website"
+              value={form.website_url}
+              onChange={(e) => setForm((f) => ({ ...f, website_url: e.target.value }))}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ex-contact-name">Contact</Label>
+              <Input
+                id="ex-contact-name"
+                value={form.contact_name}
+                onChange={(e) => setForm((f) => ({ ...f, contact_name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="ex-contact-position">Fonction</Label>
+              <Input
+                id="ex-contact-position"
+                value={form.contact_position}
+                onChange={(e) => setForm((f) => ({ ...f, contact_position: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ex-contact-email">Email</Label>
+              <Input
+                id="ex-contact-email"
+                type="email"
+                value={form.contact_email}
+                onChange={(e) => setForm((f) => ({ ...f, contact_email: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="ex-contact-phone">Téléphone</Label>
+              <Input
+                id="ex-contact-phone"
+                value={form.contact_phone}
+                onChange={(e) => setForm((f) => ({ ...f, contact_phone: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ex-stand-type">Type de stand</Label>
+              <Select
+                value={form.stand_type}
+                onValueChange={(v) => setForm((f) => ({ ...f, stand_type: v }))}
+              >
+                <SelectTrigger id="ex-stand-type">
+                  <SelectValue placeholder="Choisir un type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STAND_TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="ex-reps">Nombre de représentants</Label>
+              <Input
+                id="ex-reps"
+                type="number"
+                value={form.reps_count}
+                onChange={(e) => setForm((f) => ({ ...f, reps_count: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="ex-products">Produits / services</Label>
+            <Textarea
+              id="ex-products"
+              value={form.products_services}
+              onChange={(e) => setForm((f) => ({ ...f, products_services: e.target.value }))}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="ex-equipment">Besoins équipement</Label>
+            <Textarea
+              id="ex-equipment"
+              value={form.equipment_needs}
+              onChange={(e) => setForm((f) => ({ ...f, equipment_needs: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button disabled={!canSubmit || mutation.isPending} onClick={() => mutation.mutate()}>
+            Créer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function statusVariant(status: ExhibitorStatus): "default" | "secondary" | "destructive" {
   if (status === "confirmed") return "default";
@@ -60,6 +331,7 @@ export function AdminExhibitorsPage() {
   const [status, setStatus] = useState<ExhibitorStatus | "all">("pending");
   const [standType, setStandType] = useState<string | "all">("all");
   const [selected, setSelected] = useState<Exhibitor | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -97,6 +369,9 @@ export function AdminExhibitorsPage() {
             ← Tableau de bord
           </Link>
         </div>
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
+          Créer
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -243,6 +518,8 @@ export function AdminExhibitorsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <CreateExhibitorDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }

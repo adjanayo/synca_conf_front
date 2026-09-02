@@ -3,15 +3,28 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  createSpeaker,
   listSpeakers,
   updateSpeakerStatus,
   type Speaker,
   type SpeakerApplicationStatus,
+  type SpeakerCreate,
 } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
+import {
+  COUNTRIES,
+  SPEAKER_AUDIENCE,
+  SPEAKER_FORMATS,
+  SPEAKER_LANGUES,
+  SPEAKER_THEMES,
+} from "../../lib/forms/constants";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Switch } from "../../components/ui/switch";
+import { Textarea } from "../../components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -27,7 +40,13 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
 
 const STATUS_LABELS: Record<SpeakerApplicationStatus, string> = {
   pending: "En attente",
@@ -39,6 +58,320 @@ const THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cybe
 const FORMATS = ["Keynote", "Panel", "Workshop", "Lightning Talk", "Fireside Chat"];
 
 const dateTime = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" });
+
+type SpeakerFormState = {
+  first_name: string;
+  last_name: string;
+  title_role: string;
+  company: string;
+  country: string;
+  email: string;
+  phone_whatsapp: string;
+  linkedin_url: string;
+  intervention_format: string;
+  intervention_title: string;
+  theme: string;
+  summary: string;
+  audience_level: string;
+  language: string;
+  motivation: string;
+  needs_accommodation: boolean;
+};
+
+const EMPTY_SPEAKER_FORM: SpeakerFormState = {
+  first_name: "",
+  last_name: "",
+  title_role: "",
+  company: "",
+  country: "",
+  email: "",
+  phone_whatsapp: "",
+  linkedin_url: "",
+  intervention_format: "",
+  intervention_title: "",
+  theme: "",
+  summary: "",
+  audience_level: "",
+  language: "",
+  motivation: "",
+  needs_accommodation: false,
+};
+
+function CreateSpeakerDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState<SpeakerFormState>(EMPTY_SPEAKER_FORM);
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      const body: SpeakerCreate = {
+        first_name: form.first_name,
+        last_name: form.last_name,
+        title_role: form.title_role,
+        country: form.country,
+        email: form.email,
+        phone_whatsapp: form.phone_whatsapp,
+        intervention_format: form.intervention_format,
+        intervention_title: form.intervention_title,
+        theme: form.theme,
+        summary: form.summary,
+        motivation: form.motivation,
+        company: form.company || undefined,
+        linkedin_url: form.linkedin_url || undefined,
+        audience_level: form.audience_level || undefined,
+        language: form.language || undefined,
+        needs_accommodation: form.needs_accommodation,
+      };
+      return createSpeaker(body);
+    },
+    onSuccess: () => {
+      toast.success("Speaker créé.");
+      setForm(EMPTY_SPEAKER_FORM);
+      queryClient.invalidateQueries({ queryKey: ["admin", "speakers"] });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const canSubmit =
+    form.first_name.trim() !== "" &&
+    form.last_name.trim() !== "" &&
+    form.title_role.trim() !== "" &&
+    form.country.trim() !== "" &&
+    form.email.trim() !== "" &&
+    form.phone_whatsapp.trim() !== "" &&
+    form.intervention_format.trim() !== "" &&
+    form.intervention_title.trim() !== "" &&
+    form.theme.trim() !== "" &&
+    form.summary.trim() !== "" &&
+    form.motivation.trim() !== "";
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) setForm(EMPTY_SPEAKER_FORM);
+        onOpenChange(o);
+      }}
+    >
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Nouveau speaker</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-first-name">Prénom</Label>
+              <Input
+                id="sp-first-name"
+                value={form.first_name}
+                onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-last-name">Nom</Label>
+              <Input
+                id="sp-last-name"
+                value={form.last_name}
+                onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-title-role">Rôle / titre</Label>
+              <Input
+                id="sp-title-role"
+                value={form.title_role}
+                onChange={(e) => setForm((f) => ({ ...f, title_role: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-company">Entreprise</Label>
+              <Input
+                id="sp-company"
+                value={form.company}
+                onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-country">Pays</Label>
+              <Select value={form.country} onValueChange={(v) => setForm((f) => ({ ...f, country: v }))}>
+                <SelectTrigger id="sp-country">
+                  <SelectValue placeholder="Choisir un pays" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-email">Email</Label>
+              <Input
+                id="sp-email"
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-phone">WhatsApp</Label>
+              <Input
+                id="sp-phone"
+                value={form.phone_whatsapp}
+                onChange={(e) => setForm((f) => ({ ...f, phone_whatsapp: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-linkedin">LinkedIn</Label>
+              <Input
+                id="sp-linkedin"
+                value={form.linkedin_url}
+                onChange={(e) => setForm((f) => ({ ...f, linkedin_url: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-format">Format</Label>
+              <Select
+                value={form.intervention_format}
+                onValueChange={(v) => setForm((f) => ({ ...f, intervention_format: v }))}
+              >
+                <SelectTrigger id="sp-format">
+                  <SelectValue placeholder="Choisir un format" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SPEAKER_FORMATS.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-theme">Thème</Label>
+              <Select value={form.theme} onValueChange={(v) => setForm((f) => ({ ...f, theme: v }))}>
+                <SelectTrigger id="sp-theme">
+                  <SelectValue placeholder="Choisir un thème" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SPEAKER_THEMES.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="sp-intervention-title">Titre de l'intervention</Label>
+            <Input
+              id="sp-intervention-title"
+              value={form.intervention_title}
+              onChange={(e) => setForm((f) => ({ ...f, intervention_title: e.target.value }))}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="sp-summary">Résumé</Label>
+            <Textarea
+              id="sp-summary"
+              value={form.summary}
+              onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="sp-motivation">Motivation</Label>
+            <Textarea
+              id="sp-motivation"
+              value={form.motivation}
+              onChange={(e) => setForm((f) => ({ ...f, motivation: e.target.value }))}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="sp-audience">Niveau audience</Label>
+              <Select
+                value={form.audience_level}
+                onValueChange={(v) => setForm((f) => ({ ...f, audience_level: v }))}
+              >
+                <SelectTrigger id="sp-audience">
+                  <SelectValue placeholder="Choisir un niveau" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SPEAKER_AUDIENCE.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="sp-language">Langue</Label>
+              <Select
+                value={form.language}
+                onValueChange={(v) => setForm((f) => ({ ...f, language: v }))}
+              >
+                <SelectTrigger id="sp-language">
+                  <SelectValue placeholder="Choisir une langue" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SPEAKER_LANGUES.map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Switch
+              id="sp-accommodation"
+              checked={form.needs_accommodation}
+              onCheckedChange={(v) => setForm((f) => ({ ...f, needs_accommodation: v }))}
+            />
+            <Label htmlFor="sp-accommodation">Hébergement nécessaire</Label>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button disabled={!canSubmit || mutation.isPending} onClick={() => mutation.mutate()}>
+            Créer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function statusVariant(status: SpeakerApplicationStatus): "default" | "secondary" | "destructive" {
   if (status === "accepted") return "default";
@@ -61,6 +394,7 @@ export function AdminSpeakersPage() {
   const [theme, setTheme] = useState<string | "all">("all");
   const [format, setFormat] = useState<string | "all">("all");
   const [selected, setSelected] = useState<Speaker | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -101,6 +435,9 @@ export function AdminSpeakersPage() {
             ← Tableau de bord
           </Link>
         </div>
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
+          Créer
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -262,6 +599,8 @@ export function AdminSpeakersPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <CreateSpeakerDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }
