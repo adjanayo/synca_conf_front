@@ -7,7 +7,7 @@
 | A1 | Client API central (`apiFetch`, parseur d'erreur) | ✅ fait |
 | A2 | Auth admin (login, token mémoire, 401→logout) | ✅ fait |
 | A3 | Routage chemin admin randomisé + layout dédié | ✅ fait (testé e2e) |
-| A4 | Gating RBAC UI (rôle/permissions) | 🚫 bloqué — `GET /api/admin/me` absent côté back |
+| A4 | Gating RBAC UI (rôle/permissions) | ✅ fait |
 | B1 | Dashboard KPI (inscriptions, revenu, paiements, candidatures) | ✅ fait |
 | B2 | Listes récentes (inscriptions/paiements) | ✅ fait |
 | C1 | Modération speakers | ⬜ pas commencé |
@@ -28,7 +28,7 @@
 - [x] Push refactor auth (client.ts, participant.ts, AdminAuthContext) — fait via l'intercepteur 401 (21f2d8d)
 - [x] Tester login admin end-to-end sur chemin randomisé
 - [x] Phase B2+ : intercepteur 401 global (E3)
-- [ ] RBAC UI (A4, bloqué sans `/api/admin/me` côté back)
+- [x] RBAC UI (A4)
 - [ ] Phase C1 : modération speakers (prochaine étape logique — cœur du métier, aucun blocage connu)
 - [ ] Phase C2 : modération ambassadeurs
 - [ ] Phase C3 : modération partenaires
@@ -49,4 +49,5 @@
 - Fait : intercepteur 401 global (registre de handlers dans client.ts, branché sur AuthContext et AdminAuthContext) — remplace le check 401 ad hoc du dashboard admin.
 - Fait : diagnostic + fix flow inscription — c'était un stub statique (bannière "indisponible" en dur, submit désactivé, aucun appel API), pas un bug serveur. Branché sur `POST /api/register`, `GET /api/pass-types`, `GET /api/campaign-windows` (fenêtre `ticketing` réelle au lieu d'une date en dur déjà périmée) ; corrigé `PROFILS` (valeur "Freelance" invalide côté back, "Autre" manquant).
 - Fait : ajout tableau statut des phases (ROADMAP_ADMIN.md) dans ce journal pour suivi planning.
-- À suivre : `/api/admin/me` manquant côté back bloque le RBAC UI (A4) — Phase C (modération speakers/ambassadors/partners/exhibitors) prochaine étape, aucun blocage connu.
+- Fait : Phase A4 (RBAC UI) — `GET /api/admin/me` ajouté côté back, `AdminAuthContext` charge rôle+permissions après login, `AdminRequireAuth` distingue 401 (redirection login) et 403/permission manquante (message métier) ; dashboard gardé derrière `payments.view`.
+- À suivre : Phase C (modération speakers/ambassadors/partners/exhibitors) prochaine étape, aucun blocage connu.
