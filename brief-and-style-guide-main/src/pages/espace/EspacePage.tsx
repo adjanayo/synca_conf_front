@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ApiError } from "../../lib/api/client";
 import { deleteMyAccount, getMyProfile, getMyTickets } from "../../lib/api/participant";
 import { useAuth } from "../../lib/auth/useAuth";
+import { Button } from "../../components/ui/button";
 
 export function EspacePage() {
   const navigate = useNavigate();
@@ -62,12 +63,9 @@ export function EspacePage() {
       <div className="mx-auto max-w-3xl px-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="font-display font-bold text-2xl text-ink">Mon espace</h1>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
+          <Button variant="destructive" size="sm" onClick={handleLogout}>
             Se déconnecter
-          </button>
+          </Button>
         </div>
 
         <section className="rounded-3xl bg-white border border-border shadow-card p-8">

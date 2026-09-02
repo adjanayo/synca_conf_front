@@ -6,6 +6,7 @@ import { ApiError } from "../../lib/api/client";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import {
   Table,
   TableBody,
@@ -75,12 +76,9 @@ export function AdminDashboardPage() {
           >
             Candidatures speakers
           </Link>
-          <button
-            onClick={logout}
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
+          <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
-          </button>
+          </Button>
         </div>
       </div>
 
