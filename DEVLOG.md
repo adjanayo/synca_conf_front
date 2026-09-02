@@ -1,7 +1,7 @@
 # Journal de dev — synca_conf_front
 
 ## TODO
-- [ ] Vérifier flow inscription (`inscription.tsx`) — bloqué avec erreur "service indisponible"
+- [x] Vérifier flow inscription (`inscription.tsx`) — bloqué avec erreur "service indisponible"
 - [ ] Push refactor auth (client.ts, participant.ts, AdminAuthContext) une fois typecheck/lint clean
 - [x] Tester login admin end-to-end sur chemin randomisé
 - [x] Phase B2+ : intercepteur 401 global (E3)
@@ -18,4 +18,5 @@
 - Fait : skill `devlog` créé pour ce suivi.
 - Fait : ROADMAP_ADMIN.md Phase B1/B2 — dashboard admin avec KPI (inscriptions, revenu, paiements, candidatures en attente par entité) et tableau des dernières inscriptions, branché sur `GET /api/admin/stats` et `GET /api/admin/registrations` (confirmés par lecture directe du backend, pas de Swagger dispo en session).
 - Fait : intercepteur 401 global (registre de handlers dans client.ts, branché sur AuthContext et AdminAuthContext) — remplace le check 401 ad hoc du dashboard admin.
-- À suivre : diagnostiquer le flow inscription bloqué, finir refactor auth avant push, `/api/admin/me` manquant côté back bloque le RBAC UI (A4), puis Phase C (modération).
+- Fait : diagnostic + fix flow inscription — c'était un stub statique (bannière "indisponible" en dur, submit désactivé, aucun appel API), pas un bug serveur. Branché sur `POST /api/register`, `GET /api/pass-types`, `GET /api/campaign-windows` (fenêtre `ticketing` réelle au lieu d'une date en dur déjà périmée) ; corrigé `PROFILS` (valeur "Freelance" invalide côté back, "Autre" manquant).
+- À suivre : finir refactor auth avant push, `/api/admin/me` manquant côté back bloque le RBAC UI (A4), puis Phase C (modération).
