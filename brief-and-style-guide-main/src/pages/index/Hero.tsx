@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { PARAMETER } from "@/data/parameter";
+import { useEventWindow } from "@/hooks/useEventWindow";
 
-const TARGET = new Date("2027-03-16T09:00:00+00:00").getTime();
+const FALLBACK_TARGET = new Date("2027-03-16T09:00:00+00:00").getTime();
 
-function useCountdown() {
+function useCountdown(target: number) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
-  const diff = Math.max(0, TARGET - now);
+  const diff = Math.max(0, target - now);
   return {
     d: Math.floor(diff / 86400000),
     h: Math.floor((diff / 3600000) % 24),
@@ -20,7 +21,8 @@ function useCountdown() {
 }
 
 function Hero() {
-  const t = useCountdown();
+  const { startAt, dateLabel } = useEventWindow();
+  const t = useCountdown(startAt ? startAt.getTime() : FALLBACK_TARGET);
   const cells = [
     { v: t.d, l: "Jours" },
     { v: t.h, l: "Heures" },
@@ -60,7 +62,7 @@ function Hero() {
         </div> */}
         <div className="mt-10 flex flex-wrap gap-6 text-sm text-white/70">
           <span className="inline-flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary" /> {PARAMETER.date}
+            <Calendar className="w-4 h-4 text-primary" /> {dateLabel}
           </span>
           <span className="inline-flex items-center gap-2">
             <MapPin className="w-4 h-4 text-primary" /> {PARAMETER.lieu}

@@ -265,7 +265,8 @@ export type CampaignWindowKey =
   | "ticketing"
   | "call_for_partner"
   | "call_for_ambassador"
-  | "call_for_exhibitor";
+  | "call_for_exhibitor"
+  | "event";
 
 export type CampaignWindow = {
   id: number;

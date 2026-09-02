@@ -40,6 +40,7 @@
 - [x] Phase E1 : exports CSV
 - [x] Phase E2 : audit logs (tentatives connexion)
 - [x] Phase F : lint front à zéro erreur (37 erreurs pré-existantes nettoyées, hors travail admin)
+- [x] Dates de l'événement pilotables au back-office (fenêtre de campagne `event`)
 
 ## Journal
 
@@ -74,3 +75,7 @@
 - Fait : 6 erreurs restantes dans `src/components/ui/*.tsx` (badge/button/form/navigation-menu/sidebar/toggle) — pattern shadcn standard (composant + `cva`/hook exportés du même fichier), déclenche `react-refresh/only-export-components`. Pas de restructuration des fichiers vendor shadcn : `eslint-disable-next-line` ciblé sur l'export concerné.
 - Fait : côté `synca_conf_back`, l'item TODO "incompatibilité pytest-asyncio" était un faux diagnostic — investigué et corrigé (voir DEVLOG backend). Suite `pytest` : 244 passed. `ruff check .` : clean (1 erreur `B904` trouvée et corrigée dans `app/cli/create_admin.py`).
 - Phase F déclarée faite : lint + tsc à zéro erreur des deux côtés, tests backend verts. Pas de tests front ajoutés (aucune infra de test front existante dans le repo — hors scope de cette passe, qui a traité la dette lint/tests trouvée en l'état).
+
+### 2026-09-02 (suite 3) — dates de l'événement pilotables au back-office
+- Fait : demande explicite — pouvoir définir début/fin de l'événement au back-office. Les dates de la conférence (18-20 août 2027) étaient codées en dur (`Hero.tsx` : `TARGET` pour le compte à rebours, `PARAMETER.date` pour l'affichage), aucune fenêtre de campagne ne les couvrait (D1 ne gérait que candidatures/billetterie). Réutilisé `AdminCampaignWindowsPage` (nouvelle clé `event` ajoutée côté `synca_conf_back`, voir DEVLOG backend) — aucun nouvel écran, juste un libellé ajouté ("Dates de l'événement").
+- Fait : `src/hooks/useEventWindow.ts` — récupère la fenêtre `event` via `GET /api/campaign-windows` (déjà utilisé par le flow d'inscription), calcule la cible du compte à rebours et un libellé de date formaté (repli sur `PARAMETER.date` tant que la fenêtre n'a pas chargé). Branché sur `Hero.tsx` (countdown + date affichée) et `FinalCTA.tsx` (date affichée).

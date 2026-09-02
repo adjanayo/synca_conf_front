@@ -23,6 +23,7 @@ const KEY_LABELS: Record<CampaignWindowKey, string> = {
   call_for_partner: "Appel à partenaires",
   call_for_ambassador: "Appel à ambassadeurs",
   call_for_exhibitor: "Appel à exposants",
+  event: "Dates de l'événement",
 };
 
 // datetime-local n'accepte ni le "Z" ni les secondes/microsecondes ISO renvoyées par l'API.
