@@ -68,7 +68,7 @@ export default function AppRoutes() {
           <Route
             index
             element={
-              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`}>
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="payments.view">
                 <AdminDashboardPage />
               </AdminRequireAuth>
             }

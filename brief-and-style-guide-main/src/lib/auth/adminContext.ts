@@ -2,7 +2,10 @@ import { createContext } from "react";
 
 export type AdminAuthContextValue = {
   isAuthenticated: boolean;
-  login: (token: string) => void;
+  role: string | null;
+  permissions: string[];
+  hasPermission: (code: string) => boolean;
+  login: (token: string) => Promise<void>;
   logout: () => void;
 };
 

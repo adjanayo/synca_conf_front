@@ -13,6 +13,17 @@ export function adminLogin(email: string, password: string) {
   });
 }
 
+export type AdminMe = {
+  id: number;
+  email: string;
+  role: string;
+  permission_codes: string[];
+};
+
+export function getAdminMe() {
+  return apiFetch<AdminMe>("/api/admin/me", { auth: "admin" });
+}
+
 export type AdminStats = {
   total_registrations: number;
   total_revenue: number;
