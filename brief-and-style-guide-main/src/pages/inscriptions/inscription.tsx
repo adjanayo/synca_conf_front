@@ -1,16 +1,46 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { DateGate } from "../../components/site/DateGate";
+import { Skeleton } from "../../components/ui/skeleton";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../../components/site/FormShell";
 import {
-  COUNTRIES, SECTEURS, NIVEAUX, PROFILS, PASS, GENRES, SOURCES,
+  COUNTRIES, SECTEURS, NIVEAUX, PROFILS, GENRES, SOURCES,
 } from "../../lib/forms/constants";
+import { ApiError } from "../../lib/api/client";
+import { getCampaignWindows, getPassTypes, registerParticipant } from "../../lib/api/registration";
+import { useAuth } from "../../lib/auth/useAuth";
 
-const OPENS_AT = new Date("2026-07-01T00:00:00+00:00");
+const currency = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "XOF",
+  maximumFractionDigits: 0,
+});
+
+function StatusBanner({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 md:p-6 flex items-start gap-4 shadow-sm">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-destructive text-white shadow-sm">
+          <AlertCircle className="h-6 w-6" />
+        </div>
+        <div>
+          <h3 className="font-display font-bold text-destructive text-base md:text-lg">{title}</h3>
+          <p className="mt-1 text-sm text-foreground/80 leading-relaxed">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function InscriptionPage() {
+  const windowsQuery = useQuery({ queryKey: ["public", "campaign-windows"], queryFn: getCampaignWindows });
+  const ticketing = windowsQuery.data?.find((w) => w.key === "ticketing");
+  const closed = ticketing && (!ticketing.is_active || new Date(ticketing.end_at) < new Date());
+
   return (
     <section className="bg-cream">
       <PageHeader
@@ -19,25 +49,31 @@ export function InscriptionPage() {
         description="Remplis le formulaire d'inscription pour réserver ton pass. Tu recevras un email de confirmation avec ton billet."
       />
 
-      <div className="mx-auto max-w-3xl px-6 pt-10 bg-cream">
-        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 md:p-6 flex items-start gap-4 shadow-sm">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-destructive text-white shadow-sm">
-            <AlertCircle className="h-6 w-6" />
-          </div>
-          <div>
-            <h3 className="font-display font-bold text-destructive text-base md:text-lg">
-              Service d'inscription actuellement indisponible
-            </h3>
-            <p className="mt-1 text-sm text-foreground/80 leading-relaxed">
-              Le service d'inscription est momentanément indisponible. Nos équipes s'efforcent de rétablir le service au plus vite. Merci de réessayer ultérieurement.
-            </p>
-          </div>
+      {windowsQuery.isPending && (
+        <div className="mx-auto max-w-3xl px-6 py-10">
+          <Skeleton className="h-32" />
         </div>
-      </div>
+      )}
 
-      <DateGate opensAt={OPENS_AT} label="Les inscriptions participants ouvrent en mars 2027.">
-        <InscriptionForm />
-      </DateGate>
+      {windowsQuery.isError && (
+        <StatusBanner
+          title="Impossible de vérifier l'état des inscriptions"
+          description="Une erreur réseau nous empêche de charger le formulaire. Merci de réessayer dans quelques instants."
+        />
+      )}
+
+      {ticketing && closed && (
+        <StatusBanner
+          title="Inscriptions closes"
+          description="La fenêtre d'inscription participant n'est plus ouverte. Suis nos réseaux pour être informé de la prochaine session."
+        />
+      )}
+
+      {ticketing && !closed && (
+        <DateGate opensAt={new Date(ticketing.start_at)} label="Les inscriptions participants ouvrent bientôt.">
+          <InscriptionForm />
+        </DateGate>
+      )}
     </section>
   );
 }
@@ -45,20 +81,26 @@ export function InscriptionPage() {
 type Form = {
   nom: string; prenom: string; genre: string; email: string; phone: string;
   pays: string; ville: string; profils: string[]; secteur: string; niveau: string;
-  pass: string; source: string; sourceAutre: string; promo: string; linkedin: string;
+  passTypeId: number | null; source: string; sourceAutre: string; promo: string; linkedin: string;
   besoins: string; rgpd: boolean; opt: boolean;
 };
 
 const empty: Form = {
   nom: "", prenom: "", genre: "", email: "", phone: "", pays: "", ville: "",
-  profils: [], secteur: "", niveau: "", pass: "", source: "", sourceAutre: "",
+  profils: [], secteur: "", niveau: "", passTypeId: null, source: "", sourceAutre: "",
   promo: "", linkedin: "", besoins: "", rgpd: false, opt: false,
 };
 
 function InscriptionForm() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
+
+  const passTypesQuery = useQuery({ queryKey: ["public", "pass-types"], queryFn: getPassTypes });
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -72,21 +114,57 @@ function InscriptionForm() {
     if (f.profils.length === 0) e.profils = "Choisis au moins un profil";
     if (!f.secteur) e.secteur = "Requis";
     if (!f.niveau) e.niveau = "Requis";
-    if (!f.pass) e.pass = "Requis";
+    if (!f.passTypeId) e.passTypeId = "Requis";
     if (!f.rgpd) e.rgpd = "Tu dois accepter la politique RGPD";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const onSubmit = (ev: React.FormEvent) => {
+  const onSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
+    setServerError(null);
     if (!validate()) {
       toast.error("Merci de corriger les champs en erreur.");
       return;
     }
-    console.log("[INSCRIPTION]", f);
-    toast.success("Inscription envoyée !", { description: "Un email de confirmation t'a été envoyé." });
-    setF(empty);
+    setPending(true);
+    try {
+      const { access_token } = await registerParticipant({
+        first_name: f.prenom.trim(),
+        last_name: f.nom.trim(),
+        gender: f.genre,
+        email: f.email.trim(),
+        phone_whatsapp: f.phone.trim(),
+        country: f.pays,
+        city: f.ville.trim(),
+        profiles: f.profils,
+        sector: f.secteur || undefined,
+        experience_level: f.niveau || undefined,
+        // f.passTypeId validated non-null just above
+        pass_type_id: f.passTypeId as number,
+        promo_code: f.promo.trim() || undefined,
+        linkedin_url: f.linkedin.trim() || undefined,
+        special_needs: f.besoins.trim() || undefined,
+        heard_from: f.source === "Autre" ? f.sourceAutre.trim() || undefined : f.source || undefined,
+        gdpr_consent: f.rgpd,
+        newsletter_consent: f.opt,
+      });
+      login(access_token);
+      toast.success("Inscription envoyée !", { description: "Un email de confirmation t'a été envoyé." });
+      navigate("/espace", { replace: true });
+    } catch (err) {
+      const message =
+        err instanceof ApiError && err.status === 409
+          ? "Cet email est déjà inscrit — connecte-toi via ton espace inscrit."
+          : err instanceof ApiError && err.status === 429
+            ? "Trop de tentatives — réessaie dans quelques minutes."
+            : err instanceof ApiError
+              ? err.detail
+              : "Une erreur est survenue.";
+      setServerError(message);
+    } finally {
+      setPending(false);
+    }
   };
 
   const toggleProfil = (p: string) =>
@@ -94,6 +172,14 @@ function InscriptionForm() {
 
   return (
     <FormShell>
+      {serverError && (
+        <div
+          role="alert"
+          className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+        >
+          {serverError}
+        </div>
+      )}
       <form onSubmit={onSubmit} noValidate>
         <FormSection title="Identité">
           <Field label="Nom de famille" required error={errors.nom}>
@@ -159,17 +245,34 @@ function InscriptionForm() {
         </FormSection>
 
         <FormSection title="Ton pass">
-          <Field label="Type de pass choisi" required error={errors.pass} full>
-            <div className="grid sm:grid-cols-2 gap-2">
-              {PASS.map((p) => (
-                <label key={p} className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition ${
-                  f.pass === p ? "border-primary bg-peach" : "border-border hover:border-primary/60"
-                }`}>
-                  <input type="radio" name="pass" value={p} checked={f.pass === p} onChange={() => set("pass", p)} className="accent-primary" />
-                  <span className="text-sm font-medium">{p}</span>
-                </label>
-              ))}
-            </div>
+          <Field label="Type de pass choisi" required error={errors.passTypeId} full>
+            {passTypesQuery.isPending && <Skeleton className="h-24" />}
+            {passTypesQuery.isError && (
+              <p role="alert" className="text-sm text-destructive">
+                Impossible de charger les types de pass.
+              </p>
+            )}
+            {passTypesQuery.data && (
+              <div className="grid sm:grid-cols-2 gap-2">
+                {passTypesQuery.data.map((p) => (
+                  <label key={p.id} className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition ${
+                    f.passTypeId === p.id ? "border-primary bg-peach" : "border-border hover:border-primary/60"
+                  }`}>
+                    <input
+                      type="radio"
+                      name="pass"
+                      value={p.id}
+                      checked={f.passTypeId === p.id}
+                      onChange={() => set("passTypeId", p.id)}
+                      className="accent-primary"
+                    />
+                    <span className="text-sm font-medium">
+                      {p.name} ({currency.format(p.price)})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
           </Field>
         </FormSection>
 
@@ -213,8 +316,12 @@ function InscriptionForm() {
         </FormSection>
 
         <div className="mt-10 flex justify-end">
-          <button type="submit" disabled className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow">
-            Valider mon inscription
+          <button
+            type="submit"
+            disabled={pending}
+            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow disabled:opacity-60"
+          >
+            {pending ? "Envoi…" : "Valider mon inscription"}
           </button>
         </div>
       </form>

@@ -7,7 +7,7 @@ export const COUNTRIES = [
 
 export const SECTEURS = ["Dev", "Data", "Design", "Cybersec", "Product", "IA", "Autre"] as const;
 export const NIVEAUX = ["Débutant", "Junior", "Senior", "Expert"] as const;
-export const PROFILS = ["Étudiant", "Professionnel", "Freelance", "Entrepreneur", "Recruteur"] as const;
+export const PROFILS = ["Étudiant", "Professionnel", "Entrepreneur", "Recruteur", "Autre"] as const;
 export const PASS = [
   "Étudiant (5 000 F)",
   "Professionnel (25 000 F)",
