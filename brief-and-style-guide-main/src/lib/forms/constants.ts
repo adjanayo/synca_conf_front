@@ -56,8 +56,8 @@ export const SPEAKER_FORMATS = ["Keynote", "Panel", "Workshop", "Lightning Talk"
 export const SPEAKER_THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cybersec"] as const;
 export const SPEAKER_AUDIENCE = ["Débutant", "Intermédiaire", "Avancé", "Tous"] as const;
 export const SPEAKER_LANGUES = ["Français", "Anglais", "Bilingue", "Autre"] as const;
-export const SPEAKER_DISPO = ["Oui, confirmé", "Sous réserve", "Besoin aide déplacement"] as const;
-export const SPEAKER_DIFFUSION = ["Oui, sans restriction", "Oui, avec validation", "Non"] as const;
+export const SPEAKER_DISPO = ["Oui confirmé", "Sous réserve", "Besoin aide déplacement"] as const;
+export const SPEAKER_DIFFUSION = ["Oui sans restriction", "Oui avec validation", "Non"] as const;
 
 export const PARTNER_TIERS = [
   "Title (10M F CFA)",
@@ -81,7 +81,7 @@ export const AMBASSADEUR_DISPO = ["Oui", "Non", "Partielle"] as const;
 
 // Partenaire
 export const PARTNER_SECTEURS = ["Tech/ESN", "Fintech", "Télécoms", "Banque", "ONG", "Université", "Médias", "Autre"] as const;
-export const PARTNER_BUDGET = ["Oui — budget précis", "Oui — à discuter", "Non défini"] as const;
+export const PARTNER_BUDGET = ["Oui — budget précis", "Oui — à discuter", "Non — exploration"] as const;
 export const PARTNER_OBJECTIFS = [
   "Visibilité / notoriété",
   "Recrutement / marque employeur",

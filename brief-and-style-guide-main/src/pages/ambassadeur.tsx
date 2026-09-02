@@ -3,12 +3,15 @@ import { toast } from "sonner";
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import {
+  COUNTRIES,
   AMBASSADEUR_PROFILS,
   AMBASSADEUR_FOLLOWERS,
   AMBASSADEUR_REACH,
   AMBASSADEUR_CANAUX,
   AMBASSADEUR_DISPO,
 } from "../lib/forms/constants";
+import { applyAsAmbassador } from "../lib/api/applications";
+import { ApiError } from "../lib/api/client";
 
 export function AmbassadeurPage() {
   return (
@@ -120,9 +123,11 @@ export function AmbassadeurPage() {
 }
 
 type Form = {
+  prenom: string;
   nom: string;
   age: string;
-  paysVille: string;
+  pays: string;
+  ville: string;
   email: string;
   phone: string;
   profil: string;
@@ -140,9 +145,11 @@ type Form = {
 };
 
 const empty: Form = {
+  prenom: "",
   nom: "",
   age: "",
-  paysVille: "",
+  pays: "",
+  ville: "",
   email: "",
   phone: "",
   profil: "",
@@ -166,6 +173,7 @@ function countWords(s: string) {
 function AmbassadeurForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState(false);
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
   const toggleCanal = (c: string) => {
@@ -175,12 +183,14 @@ function AmbassadeurForm() {
     }));
   };
 
-  const submit = (ev: React.FormEvent) => {
+  const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     const e: Record<string, string> = {};
+    if (!f.prenom.trim()) e.prenom = "Requis";
     if (!f.nom.trim()) e.nom = "Requis";
     if (!f.age || Number(f.age) < 15 || Number(f.age) > 99) e.age = "Âge invalide";
-    if (!f.paysVille.trim()) e.paysVille = "Requis";
+    if (!f.pays) e.pays = "Requis";
+    if (!f.ville.trim()) e.ville = "Requis";
     if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
     if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
     if (!f.profil) e.profil = "Requis";
@@ -193,16 +203,52 @@ function AmbassadeurForm() {
     if (!f.rgpd) e.rgpd = "Consentement requis";
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs.");
-    console.log("[AMBASSADEUR]", f);
-    toast.success("Candidature envoyée !", { description: "Réponse sous 2 semaines." });
-    setF(empty);
+
+    setPending(true);
+    try {
+      await applyAsAmbassador({
+        first_name: f.prenom.trim(),
+        last_name: f.nom.trim(),
+        age: Number(f.age),
+        country: f.pays,
+        city: f.ville.trim(),
+        email: f.email.trim(),
+        phone_whatsapp: f.phone.trim(),
+        current_profile: f.profil || undefined,
+        institution_company: f.etablissement.trim() || undefined,
+        linkedin_url: f.linkedin.trim() || undefined,
+        social_handles: f.reseaux.trim() ? { reseaux: f.reseaux.trim() } : undefined,
+        followers_range: f.followers || undefined,
+        motivation: f.motivation.trim(),
+        mobilization_plan: f.mobilisation.trim(),
+        estimated_reach: f.reach || undefined,
+        previous_synca: f.dejaParticipe === "Oui",
+        preferred_channels: f.canaux,
+        availability_pre: f.dispo || undefined,
+        gdpr_consent: true,
+      });
+      toast.success("Candidature envoyée !", { description: "Réponse sous 2 semaines." });
+      setF(empty);
+      setErrors({});
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.detail : "Une erreur est survenue.");
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
     <FormShell>
       <form onSubmit={submit} noValidate>
         <FormSection title="Identité">
-          <Field label="Nom & Prénom" required error={errors.nom} full>
+          <Field label="Prénom" required error={errors.prenom}>
+            <input
+              className={inputCls}
+              value={f.prenom}
+              onChange={(e) => set("prenom", e.target.value)}
+            />
+          </Field>
+          <Field label="Nom" required error={errors.nom}>
             <input
               className={inputCls}
               value={f.nom}
@@ -219,12 +265,24 @@ function AmbassadeurForm() {
               onChange={(e) => set("age", e.target.value)}
             />
           </Field>
-          <Field label="Pays & Ville" required error={errors.paysVille}>
+          <Field label="Pays" required error={errors.pays}>
+            <select
+              className={inputCls}
+              value={f.pays}
+              onChange={(e) => set("pays", e.target.value)}
+            >
+              <option value="">— Sélectionner —</option>
+              {COUNTRIES.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Ville" required error={errors.ville}>
             <input
               className={inputCls}
-              value={f.paysVille}
-              onChange={(e) => set("paysVille", e.target.value)}
-              placeholder="Sénégal, Dakar"
+              value={f.ville}
+              onChange={(e) => set("ville", e.target.value)}
+              placeholder="Dakar"
             />
           </Field>
           <Field label="Email" required error={errors.email}>
@@ -409,9 +467,10 @@ function AmbassadeurForm() {
         <div className="mt-8 flex justify-end">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow"
+            disabled={pending}
+            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow disabled:opacity-60"
           >
-            Envoyer ma candidature
+            {pending ? "Envoi…" : "Envoyer ma candidature"}
           </button>
         </div>
       </form>

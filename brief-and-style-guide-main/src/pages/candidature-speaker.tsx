@@ -11,6 +11,8 @@ import {
   SPEAKER_DISPO,
   SPEAKER_DIFFUSION,
 } from "../lib/forms/constants";
+import { applyAsSpeaker } from "../lib/api/applications";
+import { ApiError } from "../lib/api/client";
 
 export function SpeakerPage() {
   return (
@@ -33,6 +35,7 @@ export function SpeakerPage() {
 }
 
 type Form = {
+  prenom: string;
   nom: string;
   titre: string;
   entreprise: string;
@@ -59,6 +62,7 @@ type Form = {
 };
 
 const empty: Form = {
+  prenom: "",
   nom: "",
   titre: "",
   entreprise: "",
@@ -91,11 +95,13 @@ function countWords(s: string) {
 function SpeakerForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState(false);
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
-  const submit = (ev: React.FormEvent) => {
+  const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     const e: Record<string, string> = {};
+    if (!f.prenom.trim()) e.prenom = "Requis";
     if (!f.nom.trim()) e.nom = "Requis";
     if (!f.titre.trim()) e.titre = "Requis";
     if (!f.entreprise.trim()) e.entreprise = "Requis";
@@ -120,17 +126,60 @@ function SpeakerForm() {
     if (!f.rgpd) e.rgpd = "Consentement requis";
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs en erreur.");
-    console.log("[SPEAKER]", { ...f, photo: f.photo?.name });
-    toast.success("Candidature envoyée !", {
-      description: "Tu recevras une réponse sous 4 semaines.",
-    });
+
+    const fd = new FormData();
+    fd.set("first_name", f.prenom.trim());
+    fd.set("last_name", f.nom.trim());
+    fd.set("title_role", f.titre.trim());
+    fd.set("company", f.entreprise.trim());
+    fd.set("country", f.pays);
+    fd.set("email", f.email.trim());
+    fd.set("phone_whatsapp", f.phone.trim());
+    fd.set("linkedin_url", f.linkedin.trim());
+    if (f.site.trim()) fd.set("website_url", f.site.trim());
+    fd.set("photo", f.photo as File);
+    fd.set("intervention_format", f.format);
+    fd.set("intervention_title", f.titreIntervention.trim());
+    fd.set("theme", f.thematique);
+    fd.set("summary", f.resume.trim());
+    fd.set("audience_level", f.audience);
+    fd.set("language", f.langue);
+    if (f.experiences.trim()) fd.set("past_experience", f.experiences.trim());
+    if (f.videoUrl.trim()) fd.set("video_link", f.videoUrl.trim());
+    fd.set("availability", f.dispo);
+    if (f.villeDepart.trim()) fd.set("departure_city", f.villeDepart.trim());
+    fd.set("needs_accommodation", f.hebergement === "Oui" ? "true" : "false");
+    fd.set("motivation", f.motivation.trim());
+    fd.set("video_consent", f.diffusion);
+    fd.set("gdpr_consent", "true");
+
+    setPending(true);
+    try {
+      await applyAsSpeaker(fd);
+      toast.success("Candidature envoyée !", {
+        description: "Tu recevras une réponse sous 4 semaines.",
+      });
+      setF(empty);
+      setErrors({});
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.detail : "Une erreur est survenue.");
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
     <FormShell>
       <form onSubmit={submit} noValidate>
         <FormSection title="Identité">
-          <Field label="Nom & prénom" required error={errors.nom} full>
+          <Field label="Prénom" required error={errors.prenom}>
+            <input
+              className={inputCls}
+              value={f.prenom}
+              onChange={(e) => set("prenom", e.target.value)}
+            />
+          </Field>
+          <Field label="Nom" required error={errors.nom}>
             <input
               className={inputCls}
               value={f.nom}
@@ -386,9 +435,10 @@ function SpeakerForm() {
         <div className="mt-10 flex justify-end">
           <button
             type="submit"
-            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow"
+            disabled={pending}
+            className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow disabled:opacity-60"
           >
-            Envoyer ma candidature
+            {pending ? "Envoi…" : "Envoyer ma candidature"}
           </button>
         </div>
       </form>

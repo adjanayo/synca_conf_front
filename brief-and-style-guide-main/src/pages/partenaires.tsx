@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 
 import {
-  PARTNER_TIERS,
+  COUNTRIES,
   PARTNER_SECTEURS,
   PARTNER_BUDGET,
   PARTNER_OBJECTIFS,
   SOURCES,
 } from "../lib/forms/constants";
+import { applyAsPartner, getPartnerLevels, type PartnerLevel } from "../lib/api/applications";
+import { ApiError } from "../lib/api/client";
 
 const WHY_PARTNER = [
   {
@@ -206,7 +208,8 @@ export function PartenairesPage() {
 type Form = {
   denomination: string;
   secteur: string;
-  paysVille: string;
+  pays: string;
+  ville: string;
   siteWeb: string;
   contactNom: string;
   contactPoste: string;
@@ -225,7 +228,8 @@ type Form = {
 const empty: Form = {
   denomination: "",
   secteur: "",
-  paysVille: "",
+  pays: "",
+  ville: "",
   siteWeb: "",
   contactNom: "",
   contactPoste: "",
@@ -244,6 +248,14 @@ const empty: Form = {
 function PartnerForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState(false);
+  const [levels, setLevels] = useState<PartnerLevel[]>([]);
+
+  useEffect(() => {
+    getPartnerLevels()
+      .then(setLevels)
+      .catch(() => setLevels([]));
+  }, []);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
@@ -254,7 +266,7 @@ function PartnerForm() {
     }));
   };
 
-  const submit = (ev: React.FormEvent) => {
+  const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
 
     const e: Record<string, string> = {};
@@ -267,8 +279,12 @@ function PartnerForm() {
       e.secteur = "Requis";
     }
 
-    if (!f.paysVille.trim()) {
-      e.paysVille = "Requis";
+    if (!f.pays) {
+      e.pays = "Requis";
+    }
+
+    if (!f.ville.trim()) {
+      e.ville = "Requis";
     }
 
     if (!f.contactNom.trim()) {
@@ -306,13 +322,37 @@ function PartnerForm() {
       return;
     }
 
-    console.log("[PARTENAIRE]", f);
+    const fd = new FormData();
+    fd.set("organization_name", f.denomination.trim());
+    fd.set("sector", f.secteur);
+    fd.set("country", f.pays);
+    fd.set("city", f.ville.trim());
+    if (f.siteWeb.trim()) fd.set("website_url", f.siteWeb.trim());
+    fd.set("contact_name", f.contactNom.trim());
+    fd.set("contact_position", f.contactPoste.trim());
+    fd.set("contact_email", f.email.trim());
+    fd.set("contact_phone", f.phone.trim());
+    fd.set("level_id", f.tier);
+    if (f.budget) fd.set("has_budget", f.budget);
+    for (const o of f.objectifs) fd.append("objectives", o);
+    fd.set("previous_sponsor", f.dejaSponsor === "Oui" ? "true" : "false");
+    if (f.message.trim()) fd.set("message", f.message.trim());
+    if (f.source) fd.set("heard_from", f.sourceAutre.trim() || f.source);
+    fd.set("gdpr_consent", "true");
 
-    toast.success("Demande envoyée !", {
-      description: "L'équipe partenariats te recontacte sous 48h.",
-    });
-
-    setF(empty);
+    setPending(true);
+    try {
+      await applyAsPartner(fd);
+      toast.success("Demande envoyée !", {
+        description: "L'équipe partenariats te recontacte sous 48h.",
+      });
+      setF(empty);
+      setErrors({});
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.detail : "Une erreur est survenue.");
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
@@ -360,12 +400,25 @@ function PartnerForm() {
               </select>
             </Field>
 
-            <Field label="Pays & Ville du siège" required error={errors.paysVille}>
+            <Field label="Pays du siège" required error={errors.pays}>
+              <select
+                className={inputCls}
+                value={f.pays}
+                onChange={(e) => set("pays", e.target.value)}
+              >
+                <option value="">— Sélectionner —</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field label="Ville du siège" required error={errors.ville}>
               <input
                 className={inputCls}
-                value={f.paysVille}
-                onChange={(e) => set("paysVille", e.target.value)}
-                placeholder="Sénégal, Dakar"
+                value={f.ville}
+                onChange={(e) => set("ville", e.target.value)}
+                placeholder="Dakar"
               />
             </Field>
 
@@ -425,8 +478,10 @@ function PartnerForm() {
               >
                 <option value="">— Sélectionner —</option>
 
-                {PARTNER_TIERS.map((t) => (
-                  <option key={t}>{t}</option>
+                {levels.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    {l.name} ({l.price.toLocaleString("fr-FR")} F CFA)
+                  </option>
                 ))}
               </select>
             </Field>
@@ -545,9 +600,10 @@ function PartnerForm() {
           <div className="mt-8 flex justify-end">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow"
+              disabled={pending}
+              className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-3.5 hover:brightness-110 transition shadow-glow disabled:opacity-60"
             >
-              Envoyer ma demande
+              {pending ? "Envoi…" : "Envoyer ma demande"}
             </button>
           </div>
         </form>

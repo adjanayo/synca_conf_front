@@ -106,6 +106,35 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
 }
 
 /**
+ * Multipart submit for endpoints that accept an UploadFile alongside form
+ * fields (speaker/partner applications) -- no Content-Type header so the
+ * browser sets the multipart boundary itself.
+ */
+export async function apiFetchForm<T>(path: string, formData: FormData): Promise<T> {
+  if (!API_BASE_URL) {
+    throw new Error("VITE_API_URL n'est pas configuré (voir .env.example).");
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    let detail = "Une erreur est survenue.";
+    try {
+      const body = (await response.json()) as { detail?: unknown };
+      detail = extractErrorMessage(body.detail, detail);
+    } catch {
+      // response wasn't JSON -- keep the generic message
+    }
+    throw new ApiError(response.status, detail);
+  }
+
+  return (await response.json()) as T;
+}
+
+/**
  * CSV exports need the Authorization header (can't be a plain <a href> link),
  * so fetch as blob then trigger a save via a throwaway object URL.
  */
