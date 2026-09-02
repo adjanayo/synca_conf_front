@@ -161,3 +161,54 @@ export function updateAmbassadorStatus(id: number, status: SpeakerApplicationSta
     body: { status },
   });
 }
+
+export type ExhibitorStatus = "pending" | "contacted" | "negotiating" | "confirmed" | "rejected";
+
+export type Exhibitor = {
+  id: number;
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  website_url: string | null;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  stand_type: string;
+  reps_count: number;
+  linked_partner_level: string | null;
+  products_services: string;
+  equipment_needs: string | null;
+  side_activities: string | null;
+  visuals_url: string | null;
+  payment_method: string | null;
+  rules_accepted: boolean;
+  gdpr_consent: boolean;
+  status: ExhibitorStatus;
+  is_public: boolean;
+  created_at: string;
+};
+
+export type ExhibitorFilters = {
+  status?: ExhibitorStatus;
+  stand_type?: string;
+};
+
+export function listExhibitors(filters: ExhibitorFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.status) params.set("status", filters.status);
+  if (filters.stand_type) params.set("stand_type", filters.stand_type);
+  const query = params.toString();
+  return apiFetch<Exhibitor[]>(`/api/admin/exhibitors${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function updateExhibitorStatus(id: number, status: ExhibitorStatus) {
+  return apiFetch<Exhibitor>(`/api/admin/exhibitors/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status },
+  });
+}

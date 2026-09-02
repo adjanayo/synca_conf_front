@@ -13,7 +13,7 @@
 | C1 | Modération speakers | ✅ fait |
 | C2 | Modération ambassadeurs | ✅ fait |
 | C3 | Modération partenaires | ⬜ pas commencé |
-| C4 | Modération exposants | ⬜ pas commencé |
+| C4 | Modération exposants | ✅ fait |
 | D1 | Gestion fenêtres de campagne (écriture admin) | ⬜ pas commencé |
 | D2 | Messages contact | ⬜ pas commencé |
 | D3 | Gestion des rôles (matrice permissions) | ⬜ pas commencé |
@@ -32,7 +32,7 @@
 - [x] Phase C1 : modération speakers
 - [x] Phase C2 : modération ambassadeurs
 - [ ] Phase C3 : modération partenaires
-- [ ] Phase C4 : modération exposants
+- [x] Phase C4 : modération exposants
 - [ ] Phase D1 : gestion fenêtres de campagne (écriture admin)
 - [ ] Phase D2 : messages contact
 - [ ] Phase D3 : gestion des rôles
@@ -55,4 +55,5 @@
 - Fait : Phase C1 (modération speakers) — `AdminSpeakersPage` : liste filtrable (statut/thème/format), détail complet en dialog (PII incluses, jamais loggées), actions accepter/rejeter via `PATCH /api/admin/speakers/{id}` gardé derrière `speakers.approve`. `GET /api/admin/speakers` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
 - Fait : bouton "Se déconnecter" en rouge (`variant="destructive"`) sur le dashboard admin et l'espace inscrit — était en texte gris discret, demande explicite pour le rendre visible.
 - Fait : Phase C2 (modération ambassadeurs) — `AdminAmbassadorsPage`, même patron que C1 : liste filtrable (statut/profil), détail complet en dialog, actions accepter/rejeter via `PATCH /api/admin/ambassadors/{id}` gardé derrière `ambassadors.approve`. `GET /api/admin/ambassadors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
-- À suivre : Phase C3-C4 (partenaires/exposants), même patron que C1/C2.
+- Fait : Phase C4 (modération exposants) — `AdminExhibitorsPage` : liste filtrable (statut/type de stand), détail complet en dialog, changement de statut via un select à 5 valeurs (`pending`/`contacted`/`negotiating`/`confirmed`/`rejected`, pas un simple accepter/rejeter comme C1/C2) via `PATCH /api/admin/exhibitors/{id}` gardé derrière `exhibitors.manage`. `GET /api/admin/exhibitors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
+- À suivre : Phase C3 (partenaires), même patron.
