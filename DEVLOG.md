@@ -44,10 +44,10 @@
 - [x] Phase G : fixes UI (formulaire connexion/espace collé au menu, dashboard trop étroit)
 - [x] Phase H : dashboard admin — menu "Candidatures" en dropdown (speakers/ambassadeurs/exposants/partenaires)
 - [x] Phase L : liste des pays passée de 24 pays curatés à liste ISO complète (~195)
-- [ ] Phase M (découvert, pas dans la todo initiale) : formulaires candidature speaker/ambassadeur/partenaire non branchés à l'API (stubs, `toast.success` sans appel réseau)
+- [x] Phase M (découvert, pas dans la todo initiale) : formulaires candidature speaker/ambassadeur/partenaire branchés à l'API + photo speaker (M2, demandé par l'utilisateur)
 - [x] Phase I : CRUD admin pass types, réglages événement (nom+lieu), CRUD admin programme
 - [x] Phase K : dashboard — création directe candidatures + pagination inscrits/waitlist
-- [ ] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
+- [x] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
 - [ ] Phase N (découvert, demandé par l'utilisateur) : CRUD admin codes promo + validation live dans `inscription.tsx`
 - [x] CRUD comptes admin dashboard (hors plan, demandé par l'utilisateur) : créer/activer/désactiver/archiver
 
@@ -107,3 +107,13 @@
 - Fait : `ROADMAP_ADMIN.md` Phase J marquée FAITE avec le détail du scope réel de J3 (déclenché par l'action admin d'ouverture, pas de cron).
 - Ajouté à Phase M (pas traité, juste planifié) : M2, photo speaker — demande utilisateur pour le travail après M1. Le modèle `Speaker` a déjà `photo_url` mais rien ne l'alimente ni ne l'affiche ; à faire en même temps que M1 (formulaire `candidature-speaker.tsx` non branché) — upload à ajouter sur le formulaire + affichage sur la fiche speaker publique.
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean après ces changements (0 erreur, 1 warning pré-existant hors scope).
+
+### 2026-09-02 (suite 5) — Phase M : formulaires candidature branchés + photo speaker
+- Fait : M1 — `candidature-speaker.tsx`, `ambassadeur.tsx`, `partenaires.tsx` appellent désormais réellement `POST /api/speakers/apply`, `/api/ambassadors/apply`, `/api/partners/apply` (auparavant `toast.success` sans appel réseau, cf. suite 4). Nouveau module `lib/api/applications.ts` (types + fonctions d'appel) et nouvel helper `apiFetchForm` (`lib/api/client.ts`) pour les deux endpoints multipart (upload photo/logo côté back) — `apiFetch` JSON existant réutilisé pour ambassadeur (endpoint JSON classique, pas de fichier).
+- Découvert en câblant (pas visible avant d'essayer d'appeler l'API réelle), corrigé dans la foulée :
+  - Champs "Nom & prénom" combinés (speaker, ambassadeur) → séparés Prénom/Nom, le backend attend `first_name`/`last_name` distincts.
+  - Champ "Pays & Ville" combiné (ambassadeur, partenaire) → séparé en select pays (`COUNTRIES`) + ville texte, le backend attend `country`/`city` distincts (dette signalée dans la note L1 de la suite 4).
+  - 3 valeurs de `lib/forms/constants.ts` (`SPEAKER_DISPO`, `SPEAKER_DIFFUSION`, `PARTNER_BUDGET`) avaient une ponctuation différente des enums backend (virgule/tiret) — la valeur envoyée aurait échoué la validation Pydantic 422 silencieusement pour l'utilisateur ; alignées à l'identique.
+  - `PARTNER_TIERS` (noms de palier en dur, sans lien avec la table `partner_levels`) remplacé par un select alimenté par un nouvel endpoint public **`GET /api/partner-levels`** (n'existait pas — ajouté côté back, `app/api/public.py`, même schéma `PartnerLevelRead` déjà utilisé côté admin).
+- Fait : M2 — champ upload photo existait déjà dans `candidature-speaker.tsx` sans être branché ; le backend gérait déjà l'upload (`upload_file`/`MAX_PHOTO_BYTES`, `speakers/apply` exige déjà un `UploadFile`) — seul le câblage manquait, fait avec le reste de M1. Affichage : `SpeakersView.tsx` interrogeait uniquement des données statiques (`data/speaker.ts`) ; branché sur `GET /api/speakers` (`photo_url` inclus), avec repli sur les données statiques tant qu'aucun speaker n'est `is_public=true` (aucune approbation admin encore faite en usage réel).
+- Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : `ruff check .` clean sur tout le repo. Pas de test end-to-end réel (formulaires non soumis en conditions réelles faute d'environnement de test fonctionnel, cf. régression pytest-asyncio notée en suite précédente côté back).
