@@ -15,7 +15,12 @@ import {
 } from "../../components/site/FormShell";
 import { COUNTRIES, SECTEURS, NIVEAUX, PROFILS, GENRES, SOURCES } from "../../lib/forms/constants";
 import { ApiError } from "../../lib/api/client";
-import { getCampaignWindows, getPassTypes, registerParticipant } from "../../lib/api/registration";
+import {
+  getCampaignWindows,
+  getPassTypes,
+  joinWaitlist,
+  registerParticipant,
+} from "../../lib/api/registration";
 import { useAuth } from "../../lib/auth/useAuth";
 
 const currency = new Intl.NumberFormat("fr-FR", {
@@ -37,6 +42,60 @@ function StatusBanner({ title, description }: { title: string; description: stri
         </div>
       </div>
     </div>
+  );
+}
+
+function WaitlistSignup() {
+  const [email, setEmail] = useState("");
+  const [pending, setPending] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const onSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setPending(true);
+    try {
+      await joinWaitlist(email.trim());
+      setDone(true);
+      toast.success("Tu es sur la liste d'attente !");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 409) {
+        setDone(true);
+      } else {
+        toast.error(
+          err instanceof ApiError ? err.detail : "Une erreur est survenue.",
+        );
+      }
+    } finally {
+      setPending(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <p className="mt-6 text-sm font-medium text-foreground">
+        Tu recevras un email dès que la billetterie ouvrira.
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+      <input
+        type="email"
+        required
+        placeholder="ton@email.com"
+        className="rounded-full border border-border px-4 py-2.5 text-sm w-full sm:w-72"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex items-center justify-center rounded-full bg-primary text-ink font-semibold px-6 py-2.5 hover:brightness-110 transition disabled:opacity-60"
+      >
+        {pending ? "Envoi…" : "Rejoindre la liste d'attente"}
+      </button>
+    </form>
   );
 }
 
@@ -74,10 +133,15 @@ export function InscriptionPage() {
       )}
 
       {ticketing && closed && (
-        <StatusBanner
-          title="Inscriptions closes"
-          description="La fenêtre d'inscription participant n'est plus ouverte. Suis nos réseaux pour être informé de la prochaine session."
-        />
+        <>
+          <StatusBanner
+            title="Inscriptions closes"
+            description="La fenêtre d'inscription participant n'est plus ouverte. Rejoins la liste d'attente pour être averti·e d'une prochaine ouverture."
+          />
+          <div className="mx-auto max-w-2xl px-6 pb-16 -mt-4 text-center">
+            <WaitlistSignup />
+          </div>
+        </>
       )}
 
       {ticketing && !closed && (
@@ -87,6 +151,15 @@ export function InscriptionPage() {
         >
           <InscriptionForm />
         </DateGate>
+      )}
+
+      {ticketing && !closed && new Date(ticketing.start_at) > new Date() && (
+        <div className="mx-auto max-w-2xl px-6 pb-16 text-center -mt-10">
+          <p className="text-sm text-muted-foreground">
+            Inscris-toi sur la liste d'attente pour être notifié·e dès l'ouverture.
+          </p>
+          <WaitlistSignup />
+        </div>
       )}
     </section>
   );

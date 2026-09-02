@@ -56,3 +56,15 @@ export function getCampaignWindows() {
 export function registerParticipant(payload: RegisterPayload) {
   return apiFetch<RegisterResponse>("/api/register", { method: "POST", body: payload });
 }
+
+export type WaitlistEntry = {
+  id: number;
+  email: string;
+  notified: boolean;
+  registered: boolean;
+  created_at: string;
+};
+
+export function joinWaitlist(email: string) {
+  return apiFetch<WaitlistEntry>("/api/waitlist", { method: "POST", body: { email } });
+}
