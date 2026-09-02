@@ -106,6 +106,12 @@ export function AdminDashboardPage() {
           >
             Messages contact
           </Link>
+          <Link
+            to="roles"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Rôles
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>

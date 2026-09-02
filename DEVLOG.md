@@ -16,7 +16,7 @@
 | C4 | Modération exposants | ✅ fait |
 | D1 | Gestion fenêtres de campagne (écriture admin) | ✅ fait |
 | D2 | Messages contact | ✅ fait |
-| D3 | Gestion des rôles (matrice permissions) | ⬜ pas commencé |
+| D3 | Gestion des rôles (matrice permissions) | ✅ fait |
 | E1 | Exports CSV | ⬜ pas commencé |
 | E2 | Audit logs (tentatives connexion) | ⬜ pas commencé |
 | E3 | Durcissement session (401 global, 429, verrouillage) | ✅ fait |
@@ -35,7 +35,7 @@
 - [x] Phase C4 : modération exposants
 - [x] Phase D1 : gestion fenêtres de campagne (écriture admin)
 - [x] Phase D2 : messages contact
-- [ ] Phase D3 : gestion des rôles
+- [x] Phase D3 : gestion des rôles
 - [x] Fix : session admin perdue au rafraîchissement de page (token mémoire uniquement)
 
 ## Journal
@@ -62,3 +62,4 @@
 ### 2026-09-02 (suite)
 - Fait : Phase D1 (fenêtres de campagne, écriture admin) — `AdminCampaignWindowsPage` : une carte par fenêtre (call_for_speaker/ticketing/call_for_partner/call_for_ambassador/call_for_exhibitor), édition début/fin (datetime-local) + toggle actif, `PATCH /api/admin/campaign-windows/{key}` gardé derrière `campaign_windows.manage`. Backend déjà complet côté `synca_conf_back` (`GET`+`PATCH` déjà présents et montés) — aucun ajout backend nécessaire, uniquement le front manquait.
 - Fait : Phase D2 (messages contact) — `AdminContactsPage` : liste filtrable (lu/non lu), détail en dialog, marquer lu/non lu. `GET /api/admin/contacts` existait déjà côté `synca_conf_back` (any admin, pas de permission dédiée — confirmé par le commentaire existant dans le code) mais aucun `PATCH` pour marquer lu/non lu — ajouté (`PATCH /api/admin/contacts/{id}`, même garde `get_current_admin` que le `GET`, pas de code RBAC dédié : les 8 permissions seedées en base n'incluent pas de `contacts.view`, contrairement à ce que laisse penser ROADMAP_ADMIN.md — suivi la réalité du code plutôt que le roadmap).
+- Fait : Phase D3 (gestion des rôles) — `AdminRolesPage` : matrice rôles × permissions (checkbox par cellule, bouton "Enregistrer" par rôle actif seulement si modifié), gardée derrière `roles.manage`. Backend n'avait que le `PATCH /api/admin/roles/{id}` (déjà présent) — aucun moyen de lister les rôles/permissions existants pour construire la matrice. Ajouté `GET /api/admin/roles` et `GET /api/admin/permissions` (mêmes schémas Pydantic déjà présents, juste jamais montés en lecture), côté `synca_conf_back`.

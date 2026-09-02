@@ -325,3 +325,30 @@ export function updateContactReadStatus(id: number, is_read: boolean) {
     body: { is_read },
   });
 }
+
+export type Role = {
+  id: number;
+  name: string;
+  permission_codes: string[];
+};
+
+export type Permission = {
+  id: number;
+  code: string;
+};
+
+export function listRoles() {
+  return apiFetch<Role[]>("/api/admin/roles", { auth: "admin" });
+}
+
+export function listPermissions() {
+  return apiFetch<Permission[]>("/api/admin/permissions", { auth: "admin" });
+}
+
+export function updateRolePermissions(roleId: number, permission_codes: string[]) {
+  return apiFetch<Role>(`/api/admin/roles/${roleId}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { permission_codes },
+  });
+}
