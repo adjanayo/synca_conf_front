@@ -10,7 +10,7 @@
 | A4 | Gating RBAC UI (rôle/permissions) | ✅ fait |
 | B1 | Dashboard KPI (inscriptions, revenu, paiements, candidatures) | ✅ fait |
 | B2 | Listes récentes (inscriptions/paiements) | ✅ fait |
-| C1 | Modération speakers | ⬜ pas commencé |
+| C1 | Modération speakers | ✅ fait |
 | C2 | Modération ambassadeurs | ⬜ pas commencé |
 | C3 | Modération partenaires | ⬜ pas commencé |
 | C4 | Modération exposants | ⬜ pas commencé |
@@ -29,7 +29,7 @@
 - [x] Tester login admin end-to-end sur chemin randomisé
 - [x] Phase B2+ : intercepteur 401 global (E3)
 - [x] RBAC UI (A4)
-- [ ] Phase C1 : modération speakers (prochaine étape logique — cœur du métier, aucun blocage connu)
+- [x] Phase C1 : modération speakers
 - [ ] Phase C2 : modération ambassadeurs
 - [ ] Phase C3 : modération partenaires
 - [ ] Phase C4 : modération exposants
@@ -52,4 +52,5 @@
 - Fait : ajout tableau statut des phases (ROADMAP_ADMIN.md) dans ce journal pour suivi planning.
 - Fait : Phase A4 (RBAC UI) — `GET /api/admin/me` ajouté côté back, `AdminAuthContext` charge rôle+permissions après login, `AdminRequireAuth` distingue 401 (redirection login) et 403/permission manquante (message métier) ; dashboard gardé derrière `payments.view`.
 - Fait : fix session admin perdue au refresh — token mirroré en sessionStorage (client.ts) et revalidé via `GET /api/admin/me` au montage d'`AdminAuthProvider` ; `AdminRequireAuth` attend la fin de cette vérification (`isLoading`) avant de rediriger vers le login.
-- À suivre : Phase C (modération speakers/ambassadors/partners/exhibitors) prochaine étape, aucun blocage connu.
+- Fait : Phase C1 (modération speakers) — `AdminSpeakersPage` : liste filtrable (statut/thème/format), détail complet en dialog (PII incluses, jamais loggées), actions accepter/rejeter via `PATCH /api/admin/speakers/{id}` gardé derrière `speakers.approve`. `GET /api/admin/speakers` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
+- À suivre : Phase C2-C4 (ambassadeurs/partenaires/exposants), même patron que C1.
