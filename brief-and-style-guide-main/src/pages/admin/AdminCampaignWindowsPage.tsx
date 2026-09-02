@@ -26,6 +26,10 @@ const KEY_LABELS: Record<CampaignWindowKey, string> = {
   event: "Dates de l'événement",
 };
 
+// "Dates de l'événement" vit dans Réglages événement (AdminEventSettingsPage),
+// pas ici — cette page n'affiche que les fenêtres de campagne à proprement parler.
+const HIDDEN_KEYS: CampaignWindowKey[] = ["event"];
+
 // datetime-local n'accepte ni le "Z" ni les secondes/microsecondes ISO renvoyées par l'API.
 function toLocalInputValue(iso: string): string {
   const d = new Date(iso);
@@ -151,9 +155,11 @@ export function AdminCampaignWindowsPage() {
 
       {windowsQuery.data && (
         <div className="grid gap-4">
-          {windowsQuery.data.map((w) => (
-            <WindowCard key={w.key} window={w} />
-          ))}
+          {windowsQuery.data
+            .filter((w) => !HIDDEN_KEYS.includes(w.key))
+            .map((w) => (
+              <WindowCard key={w.key} window={w} />
+            ))}
         </div>
       )}
     </div>
