@@ -48,7 +48,8 @@
 - [x] Phase I : CRUD admin pass types, réglages événement (nom+lieu), CRUD admin programme
 - [x] Phase K : dashboard — création directe candidatures + pagination inscrits/waitlist
 - [x] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
-- [ ] Phase N (découvert, demandé par l'utilisateur) : CRUD admin codes promo + validation live dans `inscription.tsx`
+- [x] Phase N (découvert, demandé par l'utilisateur) : CRUD admin codes promo + validation live dans `inscription.tsx`
+- [ ] Amélioration waitlist/notifications (demandé, en todo) : rappels récurrents à fréquence(s) fixée(s) auprès des inscrits *après* l'ouverture de la fenêtre `ticketing` — aujourd'hui l'email est envoyé une seule fois à l'ouverture (J3, pas de cron, pas de rappel). À prévoir quand un scheduler/tâche périodique existera côté `synca_conf_back`.
 - [x] CRUD comptes admin dashboard (hors plan, demandé par l'utilisateur) : créer/activer/désactiver/archiver
 
 ## Journal
@@ -117,3 +118,9 @@
   - `PARTNER_TIERS` (noms de palier en dur, sans lien avec la table `partner_levels`) remplacé par un select alimenté par un nouvel endpoint public **`GET /api/partner-levels`** (n'existait pas — ajouté côté back, `app/api/public.py`, même schéma `PartnerLevelRead` déjà utilisé côté admin).
 - Fait : M2 — champ upload photo existait déjà dans `candidature-speaker.tsx` sans être branché ; le backend gérait déjà l'upload (`upload_file`/`MAX_PHOTO_BYTES`, `speakers/apply` exige déjà un `UploadFile`) — seul le câblage manquait, fait avec le reste de M1. Affichage : `SpeakersView.tsx` interrogeait uniquement des données statiques (`data/speaker.ts`) ; branché sur `GET /api/speakers` (`photo_url` inclus), avec repli sur les données statiques tant qu'aucun speaker n'est `is_public=true` (aucune approbation admin encore faite en usage réel).
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : `ruff check .` clean sur tout le repo. Pas de test end-to-end réel (formulaires non soumis en conditions réelles faute d'environnement de test fonctionnel, cf. régression pytest-asyncio notée en suite précédente côté back).
+
+### 2026-09-02 (suite 6) — Phase N : CRUD admin codes promo + validation live inscription
+- Fait : N1 (back) — `GET/POST/PATCH /api/admin/promo-codes` (`app/api/admin_promo_codes.py`), schémas `PromoCodeCreate`/`PromoCodeUpdate` ajoutés (`app/schemas/payments.py`, le modèle `PromoCode` et `PromoCodeRead` existaient déjà). Nouvelle permission `promo_codes.manage` (migration `c2d3e4f5a6b7`, seedée sur `superadmin` — même patron que la migration `547ad7a3ad02` de la Phase I). Pas de DELETE dur, comme prévu au plan (`is_active` seul — FK `payments.promo_code_id`/`ambassadors.promo_code_id`).
+- Fait : N2 (front) — `AdminPromoCodesPage.tsx` (liste + création + édition inline, patron repris d'`AdminPassTypesPage`), route `promo-codes` sous `AdminRequireAuth permission="promo_codes.manage"`, lien "Codes promo" ajouté au dropdown "Référentiels" du dashboard.
+- Fait : N3 (front) — le champ "Code promo" d'`inscription.tsx` était décoratif (transmis à `/api/register` sans jamais avoir été vérifié côté UI). Ajouté bouton "Vérifier" qui appelle `POST /api/promo/validate` (déjà existant, jamais consommé côté front avant ce jour — `validatePromoCode`, `lib/api/registration.ts`) et affiche la remise (pourcentage ou montant fixe) ou un message d'erreur ; l'état de vérification se réinitialise à chaque frappe pour éviter d'afficher une remise obsolète. Flow paiement (`/api/payments`) non touché, hors périmètre comme prévu au plan.
+- Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). Backend : migration appliquée (`upgrade head` réussi), `ruff check .` clean sur tout le repo.

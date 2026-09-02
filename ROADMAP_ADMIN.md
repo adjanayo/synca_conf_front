@@ -155,10 +155,10 @@ Ordre retenu : G → H → L → I → K → J.
   - `speakers/apply` et `partners/apply` sont multipart côté backend (upload photo/logo) — ajout de `apiFetchForm` (`lib/api/client.ts`, `FormData`, pas de header `Content-Type` explicite) à côté de l'`apiFetch` JSON existant. `ambassadors/apply` reste JSON classique.
 - M2. Photo speaker — FAIT. Le champ upload existait déjà dans `candidature-speaker.tsx` (jamais branché) et le backend gérait déjà l'upload (`upload_file`/`MAX_PHOTO_BYTES`) — seul le branchement manquait. Affichage : `SpeakersView` interrogeait des données statiques (`data/speaker.ts`) ; branché sur `GET /api/speakers` (retourne `photo_url`), avec repli sur les données statiques tant qu'aucun speaker n'est public (`is_public=True`, jamais vrai avant la première approbation admin).
 
-## Phase N — Codes promo : CRUD admin + usage inscription (découvert, demandé par l'utilisateur)
-- N1. Backend `PromoCode` (`app/models/payments.py`) déjà existant + `POST /api/promo/validate` déjà fonctionnel + génération auto ambassadeur déjà en place. Aucun CRUD admin. À ajouter : `GET/POST/PATCH /api/admin/promo-codes` (pas de DELETE dur — `is_active` seul, FK payments/ambassadors). Permission `promo_codes.manage`.
-- N2. Dashboard : page admin liste/création/édition codes promo.
-- N3. `inscription.tsx` : champ "Code promo" existant est aujourd'hui décoratif (transmis à `/api/register` mais juste gate-checké, jamais appliqué). Brancher validation live via `POST /api/promo/validate` (déjà existant) : afficher valide/invalide + remise. Ne PAS toucher au flow paiement (`/api/payments`, hors périmètre — non consommable en prod).
+## Phase N — Codes promo : CRUD admin + usage inscription — FAIT
+- N1. FAIT. `PromoCode` déjà existant côté modèle + `POST /api/promo/validate` déjà fonctionnel + génération auto ambassadeur déjà en place, mais aucun CRUD admin. Ajouté `GET/POST/PATCH /api/admin/promo-codes` (`app/api/admin_promo_codes.py`, pas de DELETE dur — `is_active` seul). Nouvelle permission `promo_codes.manage` (migration `c2d3e4f5a6b7`, seedée sur `superadmin`). Schémas `PromoCodeCreate`/`PromoCodeUpdate` ajoutés (`app/schemas/payments.py`).
+- N2. FAIT. `AdminPromoCodesPage.tsx` (liste + création + édition inline, même patron que `AdminPassTypesPage`), route `promo-codes` sous `AdminRequireAuth permission="promo_codes.manage"`, lien ajouté au dropdown "Référentiels" du dashboard.
+- N3. FAIT. `inscription.tsx` : champ "Code promo" était décoratif (transmis à `/api/register`, jamais validé côté UI). Ajouté bouton "Vérifier" appelant `POST /api/promo/validate` (`validatePromoCode`, `lib/api/registration.ts`) — affiche la remise (% ou montant fixe) si valide, message d'erreur sinon ; état réinitialisé à chaque frappe. Flow paiement (`/api/payments`) non touché, comme prévu.
 
 ## Hors périmètre (ne pas faire sans instruction)
 
