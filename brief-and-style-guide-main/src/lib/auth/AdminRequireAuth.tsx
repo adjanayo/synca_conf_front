@@ -16,7 +16,11 @@ export function AdminRequireAuth({
   permission?: string;
   children: ReactNode;
 }) {
-  const { isAuthenticated, hasPermission } = useAdminAuth();
+  const { isAuthenticated, isLoading, hasPermission } = useAdminAuth();
+
+  if (isLoading) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to={loginPath} replace />;

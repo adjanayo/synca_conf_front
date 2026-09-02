@@ -2,6 +2,7 @@ import { createContext } from "react";
 
 export type AdminAuthContextValue = {
   isAuthenticated: boolean;
+  isLoading: boolean;
   role: string | null;
   permissions: string[];
   hasPermission: (code: string) => boolean;

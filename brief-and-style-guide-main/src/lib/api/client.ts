@@ -15,16 +15,30 @@ export class ApiError extends Error {
 
 type AuthScope = "participant" | "admin";
 
-const tokens: Record<AuthScope, string | null> = { participant: null, admin: null };
+const ADMIN_TOKEN_KEY = "admin_token";
 
 /**
- * Central place each JWT lives in memory — never localStorage/cookie (XSS
- * risk). Participant and admin tokens are separate slots: a browser tab
- * could plausibly hold both (participant self-service + admin backoffice),
- * and they must never be sent on the other's requests.
+ * Central place each JWT lives in memory — never localStorage (XSS risk,
+ * plus survives across browser restarts). The admin token also mirrors to
+ * sessionStorage so a page refresh doesn't force a re-login; sessionStorage
+ * is cleared when the tab closes, same exposure window as before, just
+ * surviving F5.
  */
+const tokens: Record<AuthScope, string | null> = {
+  participant: null,
+  admin: typeof sessionStorage !== "undefined" ? sessionStorage.getItem(ADMIN_TOKEN_KEY) : null,
+};
+
+export function getAuthToken(scope: AuthScope) {
+  return tokens[scope];
+}
+
 export function setAuthToken(scope: AuthScope, token: string | null) {
   tokens[scope] = token;
+  if (scope === "admin") {
+    if (token) sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+    else sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+  }
 }
 
 const unauthorizedHandlers: Record<AuthScope, (() => void) | null> = {
