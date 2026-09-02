@@ -45,9 +45,10 @@
 - [x] Phase H : dashboard admin — menu "Candidatures" en dropdown (speakers/ambassadeurs/exposants/partenaires)
 - [x] Phase L : liste des pays passée de 24 pays curatés à liste ISO complète (~195)
 - [ ] Phase M (découvert, pas dans la todo initiale) : formulaires candidature speaker/ambassadeur/partenaire non branchés à l'API (stubs, `toast.success` sans appel réseau)
-- [ ] Phase I : CRUD admin pass types, réglages événement (nom+lieu), CRUD admin programme
+- [x] Phase I : CRUD admin pass types, réglages événement (nom+lieu), CRUD admin programme
 - [ ] Phase K : dashboard — création directe candidatures + pagination inscrits/waitlist
 - [ ] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
+- [ ] Phase N (découvert, demandé par l'utilisateur) : CRUD admin codes promo + validation live dans `inscription.tsx`
 
 ## Journal
 
@@ -94,3 +95,6 @@
 - Fait : Phase L — en creusant la question "liste de pays", découvert qu'une constante `COUNTRIES` existait déjà et était déjà branchée en `<select>` sur `inscription.tsx` et `candidature-speaker.tsx` (24 pays curatés + "Autre"). Sur demande utilisateur, remplacée par une liste ISO complète (~195 pays) dans `src/lib/forms/constants.ts`. `ambassadeur.tsx`/`partenaires.tsx` utilisent un champ combiné "Pays & Ville" en texte libre, non touché (hors scope, formulaires stubs — voir Phase M).
 - Découvert (pas demandé, signalé à l'utilisateur) : `candidature-speaker.tsx`, `ambassadeur.tsx` (AmbassadeurForm) et `partenaires.tsx` (PartnerForm) ne font *aucun* appel API — juste un `toast.success` factice. Les endpoints backend existent (`speaker_apply.py`/`ambassador_apply.py`/`partner_apply.py`) mais ne sont jamais consommés : aucune candidature n'est réellement enregistrée aujourd'hui. Utilisateur a choisi de noter (Phase M) et continuer le plan plutôt que de corriger immédiatement.
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean après chaque étape (0 erreur, 1 warning pré-existant hors scope).
+- Fait : dashboard élargi une 2e fois sur demande (`max-w-7xl` → `max-w-[90rem]`).
+- Fait : Phase I — CRUD admin `PassType` (`AdminPassTypesPage`), réglages événement nom+lieu (`AdminEventSettingsPage`, nouveau modèle `EventSettings` côté back, singleton seedé "Synca Cyber"/"Dakar, Sénégal"), CRUD admin programme jours+sessions (`AdminProgramPage`). Backend : 3 nouveaux routers (`admin_pass_types.py`, `admin_event_settings.py`, `admin_program.py`), migration `547ad7a3ad02` (table `event_settings` + 3 permissions `pass_types.manage`/`event_settings.manage`/`sessions.manage`), testée end-to-end (upgrade/downgrade/upgrade + appels HTTP réels). Dropdown "Référentiels" ajouté au dashboard à côté de "Candidatures".
+- Découvert (signalé, pas encore traité) : côté codes promo, le backend a déjà tout (`PromoCode`, `POST /api/promo/validate`, génération auto ambassadeur) mais aucun CRUD admin ; le champ "Code promo" d'`inscription.tsx` existe mais est décoratif (transmis à `/api/register`, jamais validé en direct ni appliqué). Ajouté en Phase N.

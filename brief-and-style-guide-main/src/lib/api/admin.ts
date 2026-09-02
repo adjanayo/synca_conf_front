@@ -380,6 +380,211 @@ export function listAuditLogs(filters: AuditLogFilters = {}) {
   });
 }
 
+export type PassType = {
+  id: number;
+  name: string;
+  price: number;
+  description: string | null;
+  inclusions: string | null;
+  max_days: number;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type PassTypeCreate = {
+  name: string;
+  price: number;
+  description?: string;
+  inclusions?: string;
+  max_days?: number;
+  is_active?: boolean;
+};
+
+export type PassTypeUpdate = {
+  name?: string;
+  price?: number;
+  description?: string;
+  inclusions?: string;
+  max_days?: number;
+  is_active?: boolean;
+};
+
+export function listPassTypes() {
+  return apiFetch<PassType[]>("/api/admin/pass-types", { auth: "admin" });
+}
+
+export function createPassType(body: PassTypeCreate) {
+  return apiFetch<PassType>("/api/admin/pass-types", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updatePassType(id: number, body: PassTypeUpdate) {
+  return apiFetch<PassType>(`/api/admin/pass-types/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export type EventSettings = {
+  id: number;
+  name: string;
+  venue: string;
+  updated_at: string;
+};
+
+export type EventSettingsUpdate = {
+  name?: string;
+  venue?: string;
+};
+
+export function getEventSettings() {
+  return apiFetch<EventSettings>("/api/admin/event-settings", { auth: "admin" });
+}
+
+export function updateEventSettings(body: EventSettingsUpdate) {
+  return apiFetch<EventSettings>("/api/admin/event-settings", {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export type Day = {
+  id: number;
+  date: string;
+  label: string;
+  created_at: string;
+};
+
+export type DayCreate = {
+  date: string;
+  label: string;
+};
+
+export type DayUpdate = {
+  date?: string;
+  label?: string;
+};
+
+export function listDays() {
+  return apiFetch<Day[]>("/api/admin/days", { auth: "admin" });
+}
+
+export function createDay(body: DayCreate) {
+  return apiFetch<Day>("/api/admin/days", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updateDay(id: number, body: DayUpdate) {
+  return apiFetch<Day>(`/api/admin/days/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deleteDay(id: number) {
+  return apiFetch<void>(`/api/admin/days/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export type SessionCategory =
+  | "panel"
+  | "workshop"
+  | "competition"
+  | "keynote"
+  | "lightning_talk"
+  | "fireside_chat"
+  | "b2b"
+  | "job_fair"
+  | "networking"
+  | "after_party";
+
+export type Session = {
+  id: number;
+  day_id: number;
+  title: string;
+  description: string | null;
+  category: string;
+  start_time: string;
+  end_time: string;
+  room: string | null;
+  speaker_id: number | null;
+  is_public: boolean;
+  created_at: string;
+};
+
+export type SessionFilters = {
+  day_id?: number;
+  category?: string;
+};
+
+export type SessionCreate = {
+  day_id: number;
+  title: string;
+  description?: string;
+  category: string;
+  start_time: string;
+  end_time: string;
+  room?: string;
+  speaker_id?: number;
+  is_public?: boolean;
+};
+
+export type SessionUpdate = {
+  day_id?: number;
+  title?: string;
+  description?: string;
+  category?: string;
+  start_time?: string;
+  end_time?: string;
+  room?: string;
+  speaker_id?: number;
+  is_public?: boolean;
+};
+
+export function listSessions(filters: SessionFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.day_id !== undefined) params.set("day_id", String(filters.day_id));
+  if (filters.category) params.set("category", filters.category);
+  const query = params.toString();
+  return apiFetch<Session[]>(`/api/admin/sessions${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function createSession(body: SessionCreate) {
+  return apiFetch<Session>("/api/admin/sessions", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updateSession(id: number, body: SessionUpdate) {
+  return apiFetch<Session>(`/api/admin/sessions/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deleteSession(id: number) {
+  return apiFetch<void>(`/api/admin/sessions/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
 export function exportRegistrationsCsv() {
   return apiDownload("/api/admin/export/registrations", "admin", "registrations.csv");
 }

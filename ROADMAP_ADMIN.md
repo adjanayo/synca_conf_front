@@ -148,6 +148,11 @@ Ordre retenu : G → H → L → I → K → J.
 ## Phase M — Formulaires de candidature non branchés (découvert en L, à traiter après J)
 - M1. `candidature-speaker.tsx`, `ambassadeur.tsx` (AmbassadeurForm), `partenaires.tsx` (PartnerForm) : stubs, `toast.success` sans aucun appel API. Endpoints backend existants (`speaker_apply.py`/`ambassador_apply.py`/`partner_apply.py`) jamais consommés — aucune candidature réelle n'est enregistrée aujourd'hui. Seul le flow inscription participant est réellement branché.
 
+## Phase N — Codes promo : CRUD admin + usage inscription (découvert, demandé par l'utilisateur)
+- N1. Backend `PromoCode` (`app/models/payments.py`) déjà existant + `POST /api/promo/validate` déjà fonctionnel + génération auto ambassadeur déjà en place. Aucun CRUD admin. À ajouter : `GET/POST/PATCH /api/admin/promo-codes` (pas de DELETE dur — `is_active` seul, FK payments/ambassadors). Permission `promo_codes.manage`.
+- N2. Dashboard : page admin liste/création/édition codes promo.
+- N3. `inscription.tsx` : champ "Code promo" existant est aujourd'hui décoratif (transmis à `/api/register` mais juste gate-checké, jamais appliqué). Brancher validation live via `POST /api/promo/validate` (déjà existant) : afficher valide/invalide + remise. Ne PAS toucher au flow paiement (`/api/payments`, hors périmètre — non consommable en prod).
+
 ## Hors périmètre (ne pas faire sans instruction)
 
 - Site public (index, programme, speakers, partenaires, FAQ, contact) — déjà en place, ne pas modifier (skill `change-control`).

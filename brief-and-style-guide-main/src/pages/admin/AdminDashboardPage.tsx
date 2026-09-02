@@ -73,7 +73,7 @@ export function AdminDashboardPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-16">
+    <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display font-bold text-2xl text-ink">Tableau de bord</h1>
         <div className="flex items-center gap-4">
@@ -93,6 +93,22 @@ export function AdminDashboardPage() {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="partners">Partenaires</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition outline-none">
+              Référentiels <ChevronDown className="w-3.5 h-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem asChild>
+                <Link to="pass-types">Types de pass</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="event-settings">Réglages événement</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="programme">Programme</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
