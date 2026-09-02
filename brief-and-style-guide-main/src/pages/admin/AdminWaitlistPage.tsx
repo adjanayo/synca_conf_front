@@ -60,6 +60,11 @@ export function AdminWaitlistPage() {
         </div>
       </div>
 
+      <p className="text-sm text-muted-foreground mb-6">
+        Une fois la billetterie ouverte, chaque inscrit non encore enregistré reçoit un rappel
+        automatique tous les 3 jours, jusqu'à son inscription.
+      </p>
+
       <div className="flex flex-wrap gap-3 mb-6">
         <Select
           value={notified}
