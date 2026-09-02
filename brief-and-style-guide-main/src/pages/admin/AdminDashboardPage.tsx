@@ -127,29 +127,27 @@ export function AdminDashboardPage() {
           >
             Messages contact
           </Link>
-          <Link
-            to="roles"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Rôles
-          </Link>
-          <Link
-            to="users"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Comptes admin
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition outline-none">
+              Administration <ChevronDown className="w-3.5 h-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem asChild>
+                <Link to="roles">Rôles</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="users">Comptes admin</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="audit-logs">Journal d'audit</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link
             to="exports"
             className="text-sm text-muted-foreground hover:text-foreground transition"
           >
             Exports CSV
-          </Link>
-          <Link
-            to="audit-logs"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Journal d'audit
           </Link>
           <Link
             to="waitlist"
