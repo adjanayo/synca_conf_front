@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function FormShell({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-cream py-16">
+    <div className="bg-cream pt-32 pb-16">
       <div className="mx-auto max-w-3xl px-6">
         <div className="rounded-3xl bg-white border border-border shadow-card p-8 md:p-10">
           {children}

@@ -59,7 +59,7 @@ export function EspacePage() {
   };
 
   return (
-    <div className="bg-cream py-16">
+    <div className="bg-cream pt-32 pb-16">
       <div className="mx-auto max-w-3xl px-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="font-display font-bold text-2xl text-ink">Mon espace</h1>

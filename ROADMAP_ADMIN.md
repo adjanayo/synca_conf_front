@@ -116,6 +116,38 @@ Pour chaque entité : **liste filtrable + détail + action approuver/rejeter + t
 
 ---
 
+## Phase G — Fixes UI rapides (CSS uniquement)
+- G1. Formulaire de connexion (espace participant) collé au menu — espacement top.
+- G2. Menu espace participant trop collé au contenu — espacement.
+- G3. Dashboard admin trop étroit — élargir le container.
+
+## Phase H — Dashboard admin : menu Candidatures
+- H1. Regrouper les 4 liens Speakers/Ambassadeurs/Exposants/Partenaires du header `AdminDashboardPage.tsx` en un dropdown "Candidatures" (`ui/dropdown-menu`).
+
+## Phase L — Liste des pays (front uniquement) — FAIT
+- L1. `<select>` déjà branché sur `COUNTRIES` (`inscription.tsx`, `candidature-speaker.tsx`) — liste passée de 24 pays curatés à liste ISO complète (~195 pays + "Autre"). `ambassadeur.tsx`/`partenaires.tsx` utilisent un champ combiné "Pays & Ville" en texte libre, non touché ici (hors scope, ces formulaires sont des stubs — voir Phase M).
+
+## Phase I — Référentiels admin (backend + front)
+- I1. CRUD admin `PassType` (aucun endpoint admin existant, seulement lecture publique + seed manuel).
+- I2. Réglages événement : nom + lieu éditables (dates déjà faites via `campaign_windows` clé `event`).
+- I3. CRUD admin programme (`Session`/`Day` — modèles existants, aucune route/écran admin).
+
+## Phase K — Dashboard : actions directes
+- K1. Création directe speaker/ambassadeur/exposant/partenaire depuis le dashboard.
+- K2. Actions sur les listes existantes (au-delà d'approuver/rejeter, si besoin).
+- K3. Pagination sur inscrits et waiting list.
+
+## Phase J — Waiting list + notifications (backend + front, le plus gros)
+- J1. Endpoint admin liste waitlist (`Waitlist` model existe, seul `POST /waitlist` public existe).
+- J2. Logique : fenêtre billetterie fermée/pas encore ouverte → proposer waiting list.
+- J3. Notification email automatique à l'ouverture d'une fenêtre (définir les périodes d'envoi).
+- J4. Vue waiting list sur le dashboard (dépend de J1).
+
+Ordre retenu : G → H → L → I → K → J.
+
+## Phase M — Formulaires de candidature non branchés (découvert en L, à traiter après J)
+- M1. `candidature-speaker.tsx`, `ambassadeur.tsx` (AmbassadeurForm), `partenaires.tsx` (PartnerForm) : stubs, `toast.success` sans aucun appel API. Endpoints backend existants (`speaker_apply.py`/`ambassador_apply.py`/`partner_apply.py`) jamais consommés — aucune candidature réelle n'est enregistrée aujourd'hui. Seul le flow inscription participant est réellement branché.
+
 ## Hors périmètre (ne pas faire sans instruction)
 
 - Site public (index, programme, speakers, partenaires, FAQ, contact) — déjà en place, ne pas modifier (skill `change-control`).

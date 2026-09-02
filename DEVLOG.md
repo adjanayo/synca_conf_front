@@ -41,6 +41,13 @@
 - [x] Phase E2 : audit logs (tentatives connexion)
 - [x] Phase F : lint front à zéro erreur (37 erreurs pré-existantes nettoyées, hors travail admin)
 - [x] Dates de l'événement pilotables au back-office (fenêtre de campagne `event`)
+- [x] Phase G : fixes UI (formulaire connexion/espace collé au menu, dashboard trop étroit)
+- [x] Phase H : dashboard admin — menu "Candidatures" en dropdown (speakers/ambassadeurs/exposants/partenaires)
+- [x] Phase L : liste des pays passée de 24 pays curatés à liste ISO complète (~195)
+- [ ] Phase M (découvert, pas dans la todo initiale) : formulaires candidature speaker/ambassadeur/partenaire non branchés à l'API (stubs, `toast.success` sans appel réseau)
+- [ ] Phase I : CRUD admin pass types, réglages événement (nom+lieu), CRUD admin programme
+- [ ] Phase K : dashboard — création directe candidatures + pagination inscrits/waitlist
+- [ ] Phase J : waiting list admin + notifications automatiques à l'ouverture des fenêtres
 
 ## Journal
 
@@ -79,3 +86,11 @@
 ### 2026-09-02 (suite 3) — dates de l'événement pilotables au back-office
 - Fait : demande explicite — pouvoir définir début/fin de l'événement au back-office. Les dates de la conférence (18-20 août 2027) étaient codées en dur (`Hero.tsx` : `TARGET` pour le compte à rebours, `PARAMETER.date` pour l'affichage), aucune fenêtre de campagne ne les couvrait (D1 ne gérait que candidatures/billetterie). Réutilisé `AdminCampaignWindowsPage` (nouvelle clé `event` ajoutée côté `synca_conf_back`, voir DEVLOG backend) — aucun nouvel écran, juste un libellé ajouté ("Dates de l'événement").
 - Fait : `src/hooks/useEventWindow.ts` — récupère la fenêtre `event` via `GET /api/campaign-windows` (déjà utilisé par le flow d'inscription), calcule la cible du compte à rebours et un libellé de date formaté (repli sur `PARAMETER.date` tant que la fenêtre n'a pas chargé). Branché sur `Hero.tsx` (countdown + date affichée) et `FinalCTA.tsx` (date affichée).
+
+### 2026-09-02 (suite 4) — liste de 13 demandes, plan défini avec l'utilisateur
+- Fait : plan en 6 phases (G→H→L→I→K→J) ajouté dans `ROADMAP_ADMIN.md`, ordre validé avec l'utilisateur.
+- Fait : Phase G — `FormShell.tsx` et `EspacePage.tsx` avaient `py-16` sous la Nav publique `fixed` (h-16) : padding top égal à la hauteur de la nav = zéro respiration, contenu collé au menu. Passé à `pt-32`. `AdminDashboardPage.tsx` élargi `max-w-5xl` → `max-w-7xl` (seule cette page, pas les autres écrans admin qui gardent `max-w-5xl` en liste).
+- Fait : Phase H — le "menu Candidatures" demandé visait le header du dashboard admin (pas la Nav publique, clarifié par l'utilisateur après une première tentative sur la mauvaise page). 4 liens plats ("Candidatures speakers/ambassadeurs/exposants/partenaires") regroupés en un seul `DropdownMenu` (`ui/dropdown-menu`, radix, déjà dans le repo).
+- Fait : Phase L — en creusant la question "liste de pays", découvert qu'une constante `COUNTRIES` existait déjà et était déjà branchée en `<select>` sur `inscription.tsx` et `candidature-speaker.tsx` (24 pays curatés + "Autre"). Sur demande utilisateur, remplacée par une liste ISO complète (~195 pays) dans `src/lib/forms/constants.ts`. `ambassadeur.tsx`/`partenaires.tsx` utilisent un champ combiné "Pays & Ville" en texte libre, non touché (hors scope, formulaires stubs — voir Phase M).
+- Découvert (pas demandé, signalé à l'utilisateur) : `candidature-speaker.tsx`, `ambassadeur.tsx` (AmbassadeurForm) et `partenaires.tsx` (PartnerForm) ne font *aucun* appel API — juste un `toast.success` factice. Les endpoints backend existent (`speaker_apply.py`/`ambassador_apply.py`/`partner_apply.py`) mais ne sont jamais consommés : aucune candidature n'est réellement enregistrée aujourd'hui. Utilisateur a choisi de noter (Phase M) et continuer le plan plutôt que de corriger immédiatement.
+- Vérification : `rtk tsc --noEmit` et `rtk lint` clean après chaque étape (0 erreur, 1 warning pré-existant hors scope).

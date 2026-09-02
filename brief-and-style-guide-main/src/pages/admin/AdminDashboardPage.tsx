@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { useAdminAuth } from "../../lib/auth/useAdminAuth";
 import { getAdminStats, listRegistrations } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
@@ -7,6 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 import { Skeleton } from "../../components/ui/skeleton";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -66,34 +73,29 @@ export function AdminDashboardPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
+    <div className="mx-auto max-w-7xl px-6 py-16">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display font-bold text-2xl text-ink">Tableau de bord</h1>
         <div className="flex items-center gap-4">
-          <Link
-            to="speakers"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Candidatures speakers
-          </Link>
-          <Link
-            to="ambassadors"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Candidatures ambassadeurs
-          </Link>
-          <Link
-            to="exhibitors"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Candidatures exposants
-          </Link>
-          <Link
-            to="partners"
-            className="text-sm text-muted-foreground hover:text-foreground transition"
-          >
-            Candidatures partenaires
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition outline-none">
+              Candidatures <ChevronDown className="w-3.5 h-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem asChild>
+                <Link to="speakers">Speakers</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="ambassadors">Ambassadeurs</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="exhibitors">Exposants</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="partners">Partenaires</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link
             to="campaign-windows"
             className="text-sm text-muted-foreground hover:text-foreground transition"
