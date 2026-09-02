@@ -112,3 +112,52 @@ export function updateSpeakerStatus(id: number, status: SpeakerApplicationStatus
     body: { status },
   });
 }
+
+export type Ambassador = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  age: number;
+  country: string;
+  city: string;
+  email: string;
+  phone_whatsapp: string;
+  current_profile: string | null;
+  institution_company: string | null;
+  linkedin_url: string | null;
+  social_handles: Record<string, string> | null;
+  followers_range: string | null;
+  motivation: string;
+  mobilization_plan: string;
+  estimated_reach: string | null;
+  previous_synca: boolean;
+  preferred_channels: string;
+  availability_pre: string | null;
+  gdpr_consent: boolean;
+  promo_code_id: number | null;
+  status: SpeakerApplicationStatus;
+  created_at: string;
+};
+
+export type AmbassadorFilters = {
+  status?: SpeakerApplicationStatus;
+  current_profile?: string;
+};
+
+export function listAmbassadors(filters: AmbassadorFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.status) params.set("status", filters.status);
+  if (filters.current_profile) params.set("current_profile", filters.current_profile);
+  const query = params.toString();
+  return apiFetch<Ambassador[]>(`/api/admin/ambassadors${query ? `?${query}` : ""}`, {
+    auth: "admin",
+  });
+}
+
+export function updateAmbassadorStatus(id: number, status: SpeakerApplicationStatus) {
+  return apiFetch<Ambassador>(`/api/admin/ambassadors/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status },
+  });
+}

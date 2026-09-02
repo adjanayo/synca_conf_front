@@ -76,6 +76,12 @@ export function AdminDashboardPage() {
           >
             Candidatures speakers
           </Link>
+          <Link
+            to="ambassadors"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Candidatures ambassadeurs
+          </Link>
           <Button variant="destructive" size="sm" onClick={logout}>
             Se déconnecter
           </Button>

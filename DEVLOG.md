@@ -11,7 +11,7 @@
 | B1 | Dashboard KPI (inscriptions, revenu, paiements, candidatures) | ✅ fait |
 | B2 | Listes récentes (inscriptions/paiements) | ✅ fait |
 | C1 | Modération speakers | ✅ fait |
-| C2 | Modération ambassadeurs | ⬜ pas commencé |
+| C2 | Modération ambassadeurs | ✅ fait |
 | C3 | Modération partenaires | ⬜ pas commencé |
 | C4 | Modération exposants | ⬜ pas commencé |
 | D1 | Gestion fenêtres de campagne (écriture admin) | ⬜ pas commencé |
@@ -30,7 +30,7 @@
 - [x] Phase B2+ : intercepteur 401 global (E3)
 - [x] RBAC UI (A4)
 - [x] Phase C1 : modération speakers
-- [ ] Phase C2 : modération ambassadeurs
+- [x] Phase C2 : modération ambassadeurs
 - [ ] Phase C3 : modération partenaires
 - [ ] Phase C4 : modération exposants
 - [ ] Phase D1 : gestion fenêtres de campagne (écriture admin)
@@ -53,4 +53,6 @@
 - Fait : Phase A4 (RBAC UI) — `GET /api/admin/me` ajouté côté back, `AdminAuthContext` charge rôle+permissions après login, `AdminRequireAuth` distingue 401 (redirection login) et 403/permission manquante (message métier) ; dashboard gardé derrière `payments.view`.
 - Fait : fix session admin perdue au refresh — token mirroré en sessionStorage (client.ts) et revalidé via `GET /api/admin/me` au montage d'`AdminAuthProvider` ; `AdminRequireAuth` attend la fin de cette vérification (`isLoading`) avant de rediriger vers le login.
 - Fait : Phase C1 (modération speakers) — `AdminSpeakersPage` : liste filtrable (statut/thème/format), détail complet en dialog (PII incluses, jamais loggées), actions accepter/rejeter via `PATCH /api/admin/speakers/{id}` gardé derrière `speakers.approve`. `GET /api/admin/speakers` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
-- À suivre : Phase C2-C4 (ambassadeurs/partenaires/exposants), même patron que C1.
+- Fait : bouton "Se déconnecter" en rouge (`variant="destructive"`) sur le dashboard admin et l'espace inscrit — était en texte gris discret, demande explicite pour le rendre visible.
+- Fait : Phase C2 (modération ambassadeurs) — `AdminAmbassadorsPage`, même patron que C1 : liste filtrable (statut/profil), détail complet en dialog, actions accepter/rejeter via `PATCH /api/admin/ambassadors/{id}` gardé derrière `ambassadors.approve`. `GET /api/admin/ambassadors` manquant côté backend (seul le PATCH existait) — ajouté (`synca_conf_back`), smoke testé via curl.
+- À suivre : Phase C3-C4 (partenaires/exposants), même patron que C1/C2.
