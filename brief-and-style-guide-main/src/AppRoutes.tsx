@@ -24,6 +24,7 @@ import { AdminPartnersPage } from "./pages/admin/AdminPartnersPage";
 import { AdminCampaignWindowsPage } from "./pages/admin/AdminCampaignWindowsPage";
 import { AdminContactsPage } from "./pages/admin/AdminContactsPage";
 import { AdminRolesPage } from "./pages/admin/AdminRolesPage";
+import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
 import { AdminExportsPage } from "./pages/admin/AdminExportsPage";
 import { AdminAuditLogsPage } from "./pages/admin/AdminAuditLogsPage";
 import { AdminPassTypesPage } from "./pages/admin/AdminPassTypesPage";
@@ -143,6 +144,14 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="roles.manage">
                 <AdminRolesPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="users"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="admin_users.manage">
+                <AdminUsersPage />
               </AdminRequireAuth>
             }
           />

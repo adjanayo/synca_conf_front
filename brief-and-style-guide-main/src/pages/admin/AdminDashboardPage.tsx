@@ -131,6 +131,12 @@ export function AdminDashboardPage() {
             Rôles
           </Link>
           <Link
+            to="users"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Comptes admin
+          </Link>
+          <Link
             to="exports"
             className="text-sm text-muted-foreground hover:text-foreground transition"
           >

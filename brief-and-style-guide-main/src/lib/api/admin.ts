@@ -749,6 +749,61 @@ export function listWaitlist({ limit = 50, offset = 0, notified, registered }: W
   });
 }
 
+export type AdminUserStatus = "active" | "disabled" | "archived";
+
+export type AdminUserAccount = {
+  id: number;
+  email: string;
+  role_id: number;
+  role_name: string;
+  status: AdminUserStatus;
+  last_login: string | null;
+  created_at: string;
+};
+
+export type AdminUserFilters = {
+  limit?: number;
+  offset?: number;
+};
+
+export function listAdminUsers({ limit = 50, offset = 0 }: AdminUserFilters = {}) {
+  const params = new URLSearchParams();
+  params.set("limit", String(limit));
+  params.set("offset", String(offset));
+  return apiFetch<AdminUserAccount[]>(`/api/admin/users?${params.toString()}`, {
+    auth: "admin",
+  });
+}
+
+export type AdminUserCreate = {
+  email: string;
+  password: string;
+  role_id: number;
+};
+
+export function createAdminUser(body: AdminUserCreate) {
+  return apiFetch<AdminUserAccount>("/api/admin/users", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export type AdminUserUpdate = {
+  email?: string;
+  role_id?: number;
+  status?: AdminUserStatus;
+  password?: string;
+};
+
+export function updateAdminUser(id: number, body: AdminUserUpdate) {
+  return apiFetch<AdminUserAccount>(`/api/admin/users/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
 export function exportRegistrationsCsv() {
   return apiDownload("/api/admin/export/registrations", "admin", "registrations.csv");
 }
