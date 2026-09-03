@@ -22,6 +22,7 @@ import {
 } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
+import { useBrandedPageMeta } from "@/hooks/usePageMeta";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
 import { zodErrors } from "@/lib/forms/validation";
 import { z } from "zod";
@@ -68,6 +69,10 @@ const WHY_PARTNER = [
 export function PartenairesPage() {
   const { year } = useEventWindow();
   const yearSuffix = year != null ? ` ${year}` : "";
+  useBrandedPageMeta(
+    "Partenaires",
+    "Quatre niveaux de partenariat pour aligner votre marque sur l'écosystème tech le plus dynamique du continent.",
+  );
   return (
     <>
       <PageHeader

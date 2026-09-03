@@ -4,8 +4,13 @@ import { Mic } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getSpeakers } from "../../lib/api/applications";
 import { useCampaignWindow, formatMonthYear } from "../../hooks/useEventWindow";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function SpeakersView() {
+  useBrandedPageMeta(
+    "Speakers",
+    "Les voix qui font bouger le continent — découvre les speakers confirmés de la conférence.",
+  );
   const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
   const speakers = useQuery({ queryKey: ["public", "speakers"], queryFn: getSpeakers });
 

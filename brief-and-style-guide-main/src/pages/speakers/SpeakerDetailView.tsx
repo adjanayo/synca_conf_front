@@ -4,11 +4,16 @@ import { ArrowLeft, Globe, Linkedin } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getSpeaker, type SpeakerPublic } from "../../lib/api/applications";
 import { ApiError } from "../../lib/api/client";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function SpeakerDetailView() {
   const { id } = useParams<{ id: string }>();
   const [speaker, setSpeaker] = useState<SpeakerPublic | null>(null);
   const [notFound, setNotFound] = useState(false);
+  useBrandedPageMeta(
+    speaker ? `${speaker.first_name} ${speaker.last_name}` : "Speaker",
+    speaker?.summary,
+  );
 
   useEffect(() => {
     if (!id) return;

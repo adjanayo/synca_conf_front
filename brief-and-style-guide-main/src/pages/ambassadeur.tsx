@@ -14,12 +14,17 @@ import {
 import { applyAsAmbassador } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
+import { useBrandedPageMeta } from "@/hooks/usePageMeta";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
 import { zodErrors } from "@/lib/forms/validation";
 
 export function AmbassadeurPage() {
   const { year } = useEventWindow();
   const yearSuffix = year != null ? ` ${year}` : "";
+  useBrandedPageMeta(
+    "Devenir ambassadeur",
+    "Étudiants, devs, leaders communauté : aide-nous à faire rayonner la conférence dans ta région et dans ton université.",
+  );
   return (
     <>
       <PageHeader

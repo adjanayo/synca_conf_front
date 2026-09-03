@@ -46,6 +46,7 @@ import {
 } from "../../lib/api/registration";
 import { useAuth } from "../../lib/auth/useAuth";
 import { useEventWindow } from "@/hooks/useEventWindow";
+import { useBrandedPageMeta } from "@/hooks/usePageMeta";
 
 const currency = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -137,6 +138,10 @@ export function InscriptionPage() {
     queryFn: getCampaignWindows,
   });
   const { year } = useEventWindow();
+  useBrandedPageMeta(
+    "Inscription",
+    "Remplis le formulaire d'inscription pour réserver ton pass et recevoir ton billet.",
+  );
   const ticketing = windowsQuery.data?.find((w) => w.key === "ticketing");
   const closed = ticketing && (!ticketing.is_active || new Date(ticketing.end_at) < new Date());
 

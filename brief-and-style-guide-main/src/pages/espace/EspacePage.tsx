@@ -6,8 +6,10 @@ import { ApiError } from "../../lib/api/client";
 import { deleteMyAccount, getMyProfile, getMyTickets } from "../../lib/api/participant";
 import { useAuth } from "../../lib/auth/useAuth";
 import { Button } from "../../components/ui/button";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function EspacePage() {
+  useBrandedPageMeta("Mon espace");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { logout } = useAuth();

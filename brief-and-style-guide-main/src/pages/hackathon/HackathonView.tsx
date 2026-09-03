@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getHackathonTeams, type HackathonTeam } from "../../lib/api/hackathon";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 function groupByUniversity(teams: HackathonTeam[]) {
   const groups = new Map<string, HackathonTeam[]>();
@@ -13,6 +14,10 @@ function groupByUniversity(teams: HackathonTeam[]) {
 }
 
 export function HackathonView() {
+  useBrandedPageMeta(
+    "Hackathon universitaire",
+    "Le Hackathon universitaire réunit des équipes de plusieurs universités, sélectionnées via le programme Synca Community Certified.",
+  );
   const teams = useQuery({ queryKey: ["public", "hackathon-teams"], queryFn: getHackathonTeams });
 
   const isEmpty = teams.isSuccess && teams.data.length === 0;

@@ -3,8 +3,13 @@ import { Link } from "react-router-dom";
 import { Megaphone } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getAmbassadors, type AmbassadorPublic } from "../../lib/api/applications";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function AmbassadeursView() {
+  useBrandedPageMeta(
+    "Ambassadeurs",
+    "Étudiants, professionnels et créateurs de contenu qui mobilisent leur communauté pour l'édition à venir.",
+  );
   const [ambassadors, setAmbassadors] = useState<AmbassadorPublic[] | null>(null);
 
   useEffect(() => {

@@ -83,6 +83,7 @@ export function useEventWindow() {
 
   return {
     startAt: eventWindow ? new Date(eventWindow.start_at) : null,
+    endAt: eventWindow ? new Date(eventWindow.end_at) : null,
     dateLabel: eventWindow ? formatRange(eventWindow.start_at, eventWindow.end_at) : PARAMETER.date,
     name: settingsQuery.data?.name ?? PARAMETER.title,
     venue: settingsQuery.data?.venue ?? PARAMETER.lieu,

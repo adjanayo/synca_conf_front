@@ -17,6 +17,7 @@ import {
 } from "../lib/forms/constants";
 import { applyAsExhibitor } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
+import { useBrandedPageMeta } from "@/hooks/usePageMeta";
 
 type Form = {
   denomination: string;
@@ -61,6 +62,10 @@ const empty: Form = {
 };
 
 export function ExposantsPage() {
+  useBrandedPageMeta(
+    "Exposants",
+    "Réservez votre stand et rencontrez en direct entreprises, talents et décideurs de la tech africaine.",
+  );
   return (
     <>
       <PageHeader

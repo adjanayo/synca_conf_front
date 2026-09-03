@@ -6,10 +6,12 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "../../components/ui/input
 import { ApiError } from "../../lib/api/client";
 import { requestOtp, verifyOtp } from "../../lib/api/participant";
 import { useAuth } from "../../lib/auth/useAuth";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 type Step = "email" | "code";
 
 export function ConnexionPage() {
+  useBrandedPageMeta("Connexion");
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();

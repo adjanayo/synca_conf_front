@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "../../components/site/PageHeader";
 import { DB_CATEGORY_LABELS, DB_CATEGORY_COLORS } from "../../data/programme";
 import { useEventWindow, formatDayLabel } from "../../hooks/useEventWindow";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 import { getDays, getSessions } from "../../lib/api/programme";
 
 type DisplaySlot = { h: string; t: string; catLabel: string; catColor: string; lieu?: string };
@@ -11,6 +12,10 @@ type DisplayDay = { id: string; tabLabel: string; headerLabel: string; theme?: s
 export function ProgrammeView() {
   const [active, setActive] = useState<string | "all">("all");
   const { dateLabel, venue } = useEventWindow();
+  useBrandedPageMeta(
+    "Programme",
+    `Le programme complet de la conférence — keynotes, panels, workshops, hackathon IA, CTF, Job Fair et After Party, du ${dateLabel} à ${venue}.`,
+  );
 
   const days = useQuery({ queryKey: ["public", "days"], queryFn: getDays });
   const sessions = useQuery({ queryKey: ["public", "sessions"], queryFn: getSessions, enabled: days.isSuccess });

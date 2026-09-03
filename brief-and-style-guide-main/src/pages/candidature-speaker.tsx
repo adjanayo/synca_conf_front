@@ -15,11 +15,16 @@ import {
 import { applyAsSpeaker } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useCampaignWindow, useEventWindow, formatMonthYear } from "../hooks/useEventWindow";
+import { useBrandedPageMeta } from "../hooks/usePageMeta";
 import { CampaignWindowGate } from "../components/site/CampaignWindowGate";
 import { zodErrors } from "../lib/forms/validation";
 
 export function SpeakerPage() {
   const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
+  useBrandedPageMeta(
+    "Candidature speaker",
+    "Partage ton expertise sur scène à Dakar — candidate pour devenir speaker de la conférence.",
+  );
   return (
     <>
       <PageHeader

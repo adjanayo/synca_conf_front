@@ -24,6 +24,11 @@ dist-ssr
 .env
 .env.local
 
+# Générés à chaque build par scripts/generate-seo-files.mjs (dépendent de
+# VITE_SITE_URL dans .env, jamais commité) -- ROADMAP_PUBLIC_SEO.md S1.3/S1.4
+public/robots.txt
+public/sitemap.xml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

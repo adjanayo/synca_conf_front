@@ -4,11 +4,15 @@ import { ArrowLeft, Linkedin } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getAmbassador, type AmbassadorPublic } from "../../lib/api/applications";
 import { ApiError } from "../../lib/api/client";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function AmbassadeurDetailView() {
   const { id } = useParams<{ id: string }>();
   const [ambassador, setAmbassador] = useState<AmbassadorPublic | null>(null);
   const [notFound, setNotFound] = useState(false);
+  useBrandedPageMeta(
+    ambassador ? `${ambassador.first_name} ${ambassador.last_name}` : "Ambassadeur",
+  );
 
   useEffect(() => {
     if (!id) return;

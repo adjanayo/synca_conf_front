@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "../../components/site/PageHeader";
 import { getFaqCategories, getFaqs } from "../../lib/api/faq";
+import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 type DisplayCategory = { id: string; label: string; items: { q: string; a: string }[] };
 
 export function FAQView() {
+  useBrandedPageMeta("FAQ", "Trouve les réponses aux questions les plus fréquentes, classées par catégorie.");
   const categories = useQuery({ queryKey: ["public", "faq-categories"], queryFn: getFaqCategories });
   const faqs = useQuery({ queryKey: ["public", "faqs"], queryFn: getFaqs, enabled: categories.isSuccess });
 

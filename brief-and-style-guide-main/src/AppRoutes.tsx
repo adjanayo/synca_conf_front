@@ -1,8 +1,7 @@
-import { useEffect } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "./components/site/Footer";
 import { Nav } from "./components/site/Nav";
-import { useEventWindow } from "./hooks/useEventWindow";
+import { useBrandedPageMeta } from "./hooks/usePageMeta";
 import { AmbassadeurPage } from "./pages/ambassadeur";
 import { ContactView } from "./pages/contacts/ContactView";
 import { FAQView } from "./pages/Faq/FAQView";
@@ -51,18 +50,10 @@ const ADMIN_PATH = import.meta.env.VITE_ADMIN_PATH as string | undefined;
 const ADMIN_BASE = ADMIN_PATH ? `/${ADMIN_PATH}` : null;
 
 function AppLayout() {
-  const { name, year } = useEventWindow();
-
-  // index.html porte un <title> statique en dur (seul ce qu'un crawler qui
-  // n'exécute pas le JS verra -- pas de pré-rendu/SSR sur ce site, cf.
-  // ROADMAP_PUBLIC_SEO.md S1) ; ceci le met à jour au chargement côté
-  // client une fois EventSettings récupéré, pour tout onglet réellement
-  // ouvert dans un navigateur. Un <title> par route (usePageMeta) reste à
-  // faire séparément (S1, hors périmètre admin en cours).
-  useEffect(() => {
-    document.title = year != null ? `${name} ${year}` : name;
-  }, [name, year]);
-
+  // Le titre/meta par route vit désormais dans chaque page (useBrandedPageMeta,
+  // ROADMAP_PUBLIC_SEO.md S1.2) -- rien à faire ici. index.html porte un
+  // <title>/meta statiques en dur, seul ce qu'un crawler qui n'exécute pas le
+  // JS verra (pas de pré-rendu/SSR sur ce site, S1.6).
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Nav />
@@ -75,6 +66,7 @@ function AppLayout() {
 }
 
 function NotFoundPage() {
+  useBrandedPageMeta("Page introuvable");
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
