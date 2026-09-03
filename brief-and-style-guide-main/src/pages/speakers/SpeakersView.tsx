@@ -4,9 +4,11 @@ import { Mic } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { SPEAKERS } from "../../data/speaker";
 import { getSpeakers, type SpeakerPublic } from "../../lib/api/applications";
+import { useCampaignWindow, formatMonthYear } from "../../hooks/useEventWindow";
 
 export function SpeakersView() {
   const [speakers, setSpeakers] = useState<SpeakerPublic[] | null>(null);
+  const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
 
   useEffect(() => {
     getSpeakers()
@@ -21,7 +23,7 @@ export function SpeakersView() {
       <PageHeader
         eyebrow="Speakers"
         title={<>Les voix qui font bouger <span className="text-primary">le continent</span>.</>}
-        description="Les profils confirmés seront dévoilés progressivement à partir d'avril 2027. Candidatures ouvertes dès mars 2027."
+        description={`Les profils confirmés seront dévoilés progressivement au fil des sélections. Candidatures ouvertes dès ${speakersOpenAt ? formatMonthYear(speakersOpenAt) : "l'ouverture des candidatures"}.`}
       >
         <div className="mt-8">
           <Link to="/candidature-speaker" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3 hover:brightness-110 transition">

@@ -7,6 +7,17 @@ const MONTHS_FR = [
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 
+const WEEKDAYS_FR = [
+  "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi",
+];
+
+// Libellé complet d'un jour donné ("Lundi 18 Août 2027") -- utilisé pour les
+// en-têtes de jour du programme, calculés depuis la date de début de
+// l'événement plutôt que codés en dur (data/programme.ts).
+export function formatDayLabel(date: Date): string {
+  return `${WEEKDAYS_FR[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]} ${date.getFullYear()}`;
+}
+
 function formatRange(startAt: string, endAt: string): string {
   const start = new Date(startAt);
   const end = new Date(endAt);
@@ -16,6 +27,30 @@ function formatRange(startAt: string, endAt: string): string {
     return `${start.getDate()}–${end.getDate()} ${month} ${year}`;
   }
   return `${start.getDate()} ${MONTHS_FR[start.getMonth()]} – ${end.getDate()} ${month} ${year}`;
+}
+
+// "mars 2027" -- utilisé pour les phrases "candidatures ouvertes dès..."
+// plutôt qu'une date de jour complète.
+export function formatMonthYear(date: Date): string {
+  return `${MONTHS_FR[date.getMonth()].toLowerCase()} ${date.getFullYear()}`;
+}
+
+// Accès générique à une fenêtre de campagne par clé (call_for_speaker,
+// call_for_partner, call_for_ambassador, call_for_exhibitor, ticketing) --
+// réutilise le même cache que useEventWindow (clé "event"), pas de requête
+// réseau supplémentaire.
+export function useCampaignWindow(key: string) {
+  const query = useQuery({
+    queryKey: ["public", "campaign-windows"],
+    queryFn: getCampaignWindows,
+    staleTime: 5 * 60 * 1000,
+  });
+  const w = query.data?.find((x) => x.key === key);
+  return {
+    startAt: w ? new Date(w.start_at) : null,
+    endAt: w ? new Date(w.end_at) : null,
+    isActive: w?.is_active ?? false,
+  };
 }
 
 // Dates + nom/lieu de l'événement pilotés par le back-office (fenêtre de

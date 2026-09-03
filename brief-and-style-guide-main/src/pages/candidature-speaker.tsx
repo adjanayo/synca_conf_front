@@ -13,8 +13,10 @@ import {
 } from "../lib/forms/constants";
 import { applyAsSpeaker } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
+import { useCampaignWindow, useEventWindow, formatMonthYear } from "../hooks/useEventWindow";
 
 export function SpeakerPage() {
+  const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
   return (
     <>
       <PageHeader
@@ -24,7 +26,7 @@ export function SpeakerPage() {
             Partage ton expertise sur scène <span className="text-primary">à Dakar</span>.
           </>
         }
-        description="Candidature ouverte dès mars 2027 — formats keynote, panel, workshop, lightning talk ou fireside chat. Sélection sur dossier."
+        description={`Candidature ouverte dès ${speakersOpenAt ? formatMonthYear(speakersOpenAt) : "l'ouverture des candidatures"} — formats keynote, panel, workshop, lightning talk ou fireside chat. Sélection sur dossier.`}
       />
       <SpeakerForm />
       {/*<DateGate opensAt={OPENS_AT} label="Les candidatures speakers ouvrent en mars 2027.">
@@ -93,6 +95,7 @@ function countWords(s: string) {
 }
 
 function SpeakerForm() {
+  const { dateLabel } = useEventWindow();
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
@@ -358,7 +361,7 @@ function SpeakerForm() {
         </FormSection>
 
         <FormSection title="Logistique & motivation">
-          <Field label="Disponibilité 18–20 août 2027" required error={errors.dispo}>
+          <Field label={`Disponibilité ${dateLabel}`} required error={errors.dispo}>
             <select
               className={inputCls}
               value={f.dispo}

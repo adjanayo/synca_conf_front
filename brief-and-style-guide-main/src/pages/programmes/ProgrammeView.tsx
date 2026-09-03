@@ -1,23 +1,39 @@
 import { useState } from "react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { DAYS, CAT_COLORS } from "../../data/programme";
+import { useEventWindow, formatDayLabel } from "../../hooks/useEventWindow";
 
 
 export function ProgrammeView() {
   const [active, setActive] = useState<string | "all">("j1");
   const visible = active === "all" ? DAYS : DAYS.filter((d) => d.id === active);
+  const { startAt, dateLabel, venue } = useEventWindow();
+
+  // Libellés de jour ("Lundi 18 Août 2027") calculés depuis le début de
+  // l'événement (fenêtre `event`) plutôt que codés en dur -- repli sur le
+  // libellé statique de data/programme.ts tant que la fenêtre n'a pas chargé.
+  const dayLabel = (index: number, fallback: string) =>
+    startAt
+      ? formatDayLabel(new Date(startAt.getTime() + index * 86400000))
+      : fallback;
 
   return (
     <>
       <PageHeader
         eyebrow="Programme"
         title={<>3 jours, une cadence <span className="text-primary">intense</span>.</>}
-        description="Du 18 au 20 août 2027 à Dakar — keynotes, panels, workshops, hackathon IA, CTF, Job Fair et After Party."
+        description={`Du ${dateLabel} à ${venue} — keynotes, panels, workshops, hackathon IA, CTF, Job Fair et After Party.`}
       />
       <section className="py-16 bg-cream">
         <div className="mx-auto max-w-5xl px-6">
           <div className="flex flex-wrap gap-2 mb-10">
-            {[{ id: "all", l: "Tout" }, ...DAYS.map((d) => ({ id: d.id, l: d.date.split(" ").slice(0, 2).join(" ") }))].map((b) => (
+            {[
+              { id: "all", l: "Tout" },
+              ...DAYS.map((d, i) => ({
+                id: d.id,
+                l: dayLabel(i, d.date).split(" ").slice(0, 2).join(" "),
+              })),
+            ].map((b) => (
               <button
                 key={b.id}
                 onClick={() => setActive(b.id as typeof active)}
@@ -33,7 +49,9 @@ export function ProgrammeView() {
           {visible.map((day) => (
             <article key={day.id} className="mb-10 rounded-3xl bg-white border border-border shadow-card overflow-hidden">
               <header className="px-6 py-5 bg-ink text-white flex items-center justify-between flex-wrap gap-2">
-                <h2 className="font-display font-bold text-2xl">{day.date}</h2>
+                <h2 className="font-display font-bold text-2xl">
+                  {dayLabel(DAYS.findIndex((d) => d.id === day.id), day.date)}
+                </h2>
                 <span className="text-xs uppercase tracking-widest text-primary">{day.theme}</span>
               </header>
               <ul className="divide-y divide-border">

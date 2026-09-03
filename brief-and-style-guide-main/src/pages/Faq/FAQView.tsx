@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { PageHeader } from "../../components/site/PageHeader";
-import { CATS } from "../../data/faq";
+import { buildFaqCategories } from "../../data/faq";
+import { useEventWindow } from "../../hooks/useEventWindow";
 
 
 export function FAQView() {
+  const { name, year, dateLabel, venue } = useEventWindow();
+  const CATS = buildFaqCategories({ name, year, dateLabel, venue });
   const [active, setActive] = useState(CATS[0].id);
-  const cat = CATS.find((c) => c.id === active)!;
+  const cat = CATS.find((c) => c.id === active) ?? CATS[0];
   return (
     <>
       <PageHeader

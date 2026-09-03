@@ -1,47 +1,15 @@
+export type FaqVars = { name: string; year: number | null; dateLabel: string; venue: string };
 
-{/*type Item = { q: string; a: string };
-type Cat = { id: string; label: string; items: Item[] };
-
-const CATS: Cat[] = [
-  {
-    id: "participants", label: "Participants",
-    items: [
-      { q: "Quand et où se tient la Synca Conf 2027 ?", a: "Du 18 au 20 août 2027 à Dakar, Sénégal. Le lieu exact est communiqué aux participants confirmés." },
-      { q: "Quels moyens de paiement sont acceptés ?", a: "Carte bancaire, Wave, Orange Money, MTN Mobile Money, virement bancaire." },
-      { q: "Y a-t-il un tarif Early Bird ?", a: "Oui — jusqu'à -30% via les codes Early Bird et codes ambassadeurs jusqu'à une date limite annoncée." },
-      { q: "Puis-je participer en ligne ?", a: "Oui, un pass Online permet de suivre les keynotes et panels principaux à distance." },
-      { q: "Les pass sont-ils remboursables ?", a: "Annulations remboursées à 100% jusqu'à 60 jours avant l'événement, 50% jusqu'à 30 jours, non remboursables ensuite." },
-    ],
-  },
-  {
-    id: "sponsors", label: "Sponsors",
-    items: [
-      { q: "Quels niveaux de partenariat proposez-vous ?", a: "Six niveaux : Title, Platinum, Gold, Silver, Bronze, et Partenaire média." },
-      { q: "Puis-je avoir un pack sur-mesure ?", a: "Oui, écris à partenariats@sync-africa.com pour un dossier personnalisé." },
-      { q: "Recevons-nous un rapport post-event ?", a: "Oui, à partir du niveau Gold — données d'engagement, audience, retombées presse." },
-    ],
-  },
-  {
-    id: "speakers", label: "Speakers",
-    items: [
-      { q: "Comment candidater ?", a: "Via le formulaire dédié, ouvert dès mars 2027." },
-      { q: "Quels formats d'intervention sont possibles ?", a: "Keynote (30 min), Panel (45 min), Workshop (90 min), Lightning Talk (10 min), Fireside Chat (30 min)." },
-      { q: "Les frais de déplacement sont-ils pris en charge ?", a: "Pour les keynote speakers internationaux : vol + hébergement. Pour les autres formats, étudié au cas par cas." },
-      { q: "Quand recevrai-je une réponse ?", a: "Sous 4 semaines après la clôture des candidatures." },
-    ],
-  },
-];
-
-
-export { CATS }*/}
-export const CATS = [
+export function buildFaqCategories(v: FaqVars) {
+  const yearSuffix = v.year != null ? ` ${v.year}` : "";
+  return [
   {
     id: "general",
     label: "Général",
     items: [
       {
-        q: "Qu'est-ce que Synca Conf Dakar 2027 ?",
-        a: "Synca Conf 2027 est l'une des principales conférences technologiques d'Afrique, organisée par Synca. Elle réunit décideurs institutionnels, dirigeants d'entreprises, investisseurs, chercheurs, formateurs et jeunes talents autour de la Cybersécurité, du Cloud, de la Fintech et de l'Edtech.",
+        q: `Qu'est-ce que ${v.name} Dakar${yearSuffix} ?`,
+        a: `${v.name}${yearSuffix} est l'une des principales conférences technologiques d'Afrique, organisée par Synca. Elle réunit décideurs institutionnels, dirigeants d'entreprises, investisseurs, chercheurs, formateurs et jeunes talents autour de la Cybersécurité, du Cloud, de la Fintech et de l'Edtech.`,
       },
       {
         q: "Quel est le thème de cette édition ?",
@@ -49,11 +17,11 @@ export const CATS = [
       },
       {
         q: "Quand et où se déroule l'événement ?",
-        a: "Du 16 au 18 mars 2027, au Grand Théâtre de Dakar, au Sénégal.",
+        a: `Du ${v.dateLabel}, à ${v.venue}.`,
       },
       {
         q: "Qui organise Synca Conf ?",
-        a: "Synca Conf est organisée par Synca, un écosystème panafricain dédié à la technologie, aux compétences numériques et à l'innovation, mis en place par des jeunes convaincus que l'Afrique doit construire elle-même les solutions à ses propres défis. L'édition 2027 est co-organisée avec Women In Tech Sénégal.",
+        a: `Synca Conf est organisée par Synca, un écosystème panafricain dédié à la technologie, aux compétences numériques et à l'innovation, mis en place par des jeunes convaincus que l'Afrique doit construire elle-même les solutions à ses propres défis. L'édition${yearSuffix} est co-organisée avec Women In Tech Sénégal.`,
       },
       {
         q: "Quels sont les objectifs chiffrés de cette édition ?",
@@ -312,4 +280,5 @@ export const CATS = [
       },
     ],
   },
-];
+  ];
+}

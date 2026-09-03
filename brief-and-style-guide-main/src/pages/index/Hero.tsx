@@ -3,7 +3,7 @@ import { Calendar, MapPin, Users } from "lucide-react";
 import { PARAMETER } from "@/data/parameter";
 import { useEventWindow } from "@/hooks/useEventWindow";
 
-const FALLBACK_TARGET = new Date("2027-03-16T09:00:00+00:00").getTime();
+const FALLBACK_TARGET = new Date("2027-08-18T09:00:00+00:00").getTime();
 
 function useCountdown(target: number) {
   const [now, setNow] = useState(() => Date.now());

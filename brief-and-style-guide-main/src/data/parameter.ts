@@ -43,7 +43,7 @@ const PARAMETER = {
   title: "Synca Conf",
   slogan:
     "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
-  date: "16–18 Mars 2027",
+  date: "18–20 Août 2027",
   lieu: "Dakar, Sénégal",
   participants: "+2 000 participants",
 };
