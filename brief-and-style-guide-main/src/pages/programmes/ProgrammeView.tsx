@@ -1,21 +1,64 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "../../components/site/PageHeader";
-import { DAYS, CAT_COLORS } from "../../data/programme";
+import { DAYS, CAT_COLORS, DB_CATEGORY_LABELS, DB_CATEGORY_COLORS } from "../../data/programme";
 import { useEventWindow, formatDayLabel } from "../../hooks/useEventWindow";
+import { getDays, getSessions, type PublicDay, type PublicSession } from "../../lib/api/programme";
 
+type DisplaySlot = { h: string; t: string; catLabel: string; catColor: string; lieu?: string };
+type DisplayDay = { id: string; tabLabel: string; headerLabel: string; theme?: string; slots: DisplaySlot[] };
 
 export function ProgrammeView() {
-  const [active, setActive] = useState<string | "all">("j1");
-  const visible = active === "all" ? DAYS : DAYS.filter((d) => d.id === active);
+  const [active, setActive] = useState<string | "all">("all");
   const { startAt, dateLabel, venue } = useEventWindow();
+  const [remoteDays, setRemoteDays] = useState<PublicDay[] | null>(null);
+  const [remoteSessions, setRemoteSessions] = useState<PublicSession[]>([]);
+
+  useEffect(() => {
+    Promise.all([getDays(), getSessions()])
+      .then(([days, sessions]) => {
+        setRemoteDays(days);
+        setRemoteSessions(sessions);
+      })
+      .catch(() => setRemoteDays([]));
+  }, []);
 
   // Libellés de jour ("Lundi 18 Août 2027") calculés depuis le début de
   // l'événement (fenêtre `event`) plutôt que codés en dur -- repli sur le
   // libellé statique de data/programme.ts tant que la fenêtre n'a pas chargé.
   const dayLabel = (index: number, fallback: string) =>
-    startAt
-      ? formatDayLabel(new Date(startAt.getTime() + index * 86400000))
-      : fallback;
+    startAt ? formatDayLabel(new Date(startAt.getTime() + index * 86400000)) : fallback;
+
+  const displayDays: DisplayDay[] =
+    remoteDays && remoteDays.length > 0
+      ? remoteDays.map((d) => ({
+          id: String(d.id),
+          tabLabel: d.label,
+          headerLabel: formatDayLabel(new Date(`${d.date}T00:00:00`)),
+          slots: remoteSessions
+            .filter((s) => s.day_id === d.id)
+            .map((s) => ({
+              h: s.start_time.slice(0, 5),
+              t: s.title,
+              catLabel: DB_CATEGORY_LABELS[s.category] ?? s.category,
+              catColor: DB_CATEGORY_COLORS[s.category] ?? "bg-muted text-muted-foreground border-border",
+              lieu: s.room ?? undefined,
+            })),
+        }))
+      : DAYS.map((d, i) => ({
+          id: d.id,
+          tabLabel: dayLabel(i, d.date).split(" ").slice(0, 2).join(" "),
+          headerLabel: dayLabel(i, d.date),
+          theme: d.theme,
+          slots: d.slots.map((s) => ({
+            h: s.h,
+            t: s.t,
+            catLabel: s.cat,
+            catColor: CAT_COLORS[s.cat],
+            lieu: s.lieu,
+          })),
+        }));
+
+  const visible = active === "all" ? displayDays : displayDays.filter((d) => d.id === active);
 
   return (
     <>
@@ -27,13 +70,7 @@ export function ProgrammeView() {
       <section className="py-16 bg-cream">
         <div className="mx-auto max-w-5xl px-6">
           <div className="flex flex-wrap gap-2 mb-10">
-            {[
-              { id: "all", l: "Tout" },
-              ...DAYS.map((d, i) => ({
-                id: d.id,
-                l: dayLabel(i, d.date).split(" ").slice(0, 2).join(" "),
-              })),
-            ].map((b) => (
+            {[{ id: "all", l: "Tout" }, ...displayDays.map((d) => ({ id: d.id, l: d.tabLabel }))].map((b) => (
               <button
                 key={b.id}
                 onClick={() => setActive(b.id as typeof active)}
@@ -49,10 +86,8 @@ export function ProgrammeView() {
           {visible.map((day) => (
             <article key={day.id} className="mb-10 rounded-3xl bg-white border border-border shadow-card overflow-hidden">
               <header className="px-6 py-5 bg-ink text-white flex items-center justify-between flex-wrap gap-2">
-                <h2 className="font-display font-bold text-2xl">
-                  {dayLabel(DAYS.findIndex((d) => d.id === day.id), day.date)}
-                </h2>
-                <span className="text-xs uppercase tracking-widest text-primary">{day.theme}</span>
+                <h2 className="font-display font-bold text-2xl">{day.headerLabel}</h2>
+                {day.theme && <span className="text-xs uppercase tracking-widest text-primary">{day.theme}</span>}
               </header>
               <ul className="divide-y divide-border">
                 {day.slots.map((s, i) => (
@@ -62,8 +97,8 @@ export function ProgrammeView() {
                       <div className="font-medium text-foreground">{s.t}</div>
                       {s.lieu && <div className="text-xs text-muted-foreground mt-0.5">📍 {s.lieu}</div>}
                     </div>
-                    <span className={`text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 rounded-full border ${CAT_COLORS[s.cat]}`}>
-                      {s.cat}
+                    <span className={`text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 rounded-full border ${s.catColor}`}>
+                      {s.catLabel}
                     </span>
                   </li>
                 ))}

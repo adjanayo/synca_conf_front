@@ -54,6 +54,35 @@ const CAT_COLORS: Record<Slot["cat"], string> = {
 };
 
 
-export { DAYS, CAT_COLORS }
+// Catégories réelles du backend (`Session.category`, voir AdminProgramPage.tsx
+// CATEGORY_LABELS) -- distinctes de l'union `Slot["cat"]` ci-dessus, gardée
+// pour le programme statique de repli tant que l'API n'a rien à afficher.
+const DB_CATEGORY_LABELS: Record<string, string> = {
+  panel: "Panel",
+  workshop: "Atelier",
+  competition: "Compétition",
+  keynote: "Keynote",
+  lightning_talk: "Lightning Talk",
+  fireside_chat: "Fireside Chat",
+  b2b: "B2B",
+  job_fair: "Job Fair",
+  networking: "Networking",
+  after_party: "After Party",
+};
+
+const DB_CATEGORY_COLORS: Record<string, string> = {
+  panel: "bg-blue-100 text-blue-700 border-blue-200",
+  workshop: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  competition: "bg-purple-100 text-purple-700 border-purple-200",
+  keynote: "bg-primary/15 text-primary border-primary/30",
+  lightning_talk: "bg-primary/15 text-primary border-primary/30",
+  fireside_chat: "bg-blue-100 text-blue-700 border-blue-200",
+  b2b: "bg-purple-100 text-purple-700 border-purple-200",
+  job_fair: "bg-purple-100 text-purple-700 border-purple-200",
+  networking: "bg-peach text-ink border-primary/20",
+  after_party: "bg-peach text-ink border-primary/20",
+};
+
+export { DAYS, CAT_COLORS, DB_CATEGORY_LABELS, DB_CATEGORY_COLORS }
 
 export type { Slot, Day }
