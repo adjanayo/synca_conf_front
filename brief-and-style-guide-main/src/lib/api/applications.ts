@@ -59,39 +59,45 @@ export function applyAsSpeaker(formData: FormData) {
   return apiFetchForm<SpeakerApplyResponse>("/api/speakers/apply", formData);
 }
 
-export type AmbassadorApplyPayload = {
-  first_name: string;
-  last_name: string;
-  age: number;
-  country: string;
-  city: string;
-  email: string;
-  phone_whatsapp: string;
-  current_profile?: string;
-  institution_company?: string;
-  linkedin_url?: string;
-  social_handles?: Record<string, string>;
-  followers_range?: string;
-  motivation: string;
-  mobilization_plan: string;
-  estimated_reach?: string;
-  previous_synca: boolean;
-  preferred_channels: string[];
-  availability_pre?: string;
-  gdpr_consent: boolean;
-};
-
 export type AmbassadorApplyResponse = { id: number };
 
-export function applyAsAmbassador(payload: AmbassadorApplyPayload) {
-  return apiFetch<AmbassadorApplyResponse>("/api/ambassadors/apply", {
-    method: "POST",
-    body: payload,
-  });
+export function applyAsAmbassador(formData: FormData) {
+  return apiFetchForm<AmbassadorApplyResponse>("/api/ambassadors/apply", formData);
 }
 
 export type PartnerApplyResponse = { id: number };
 
 export function applyAsPartner(formData: FormData) {
   return apiFetchForm<PartnerApplyResponse>("/api/partners/apply", formData);
+}
+
+export type ExhibitorApplyPayload = {
+  organization_name: string;
+  sector: string;
+  country: string;
+  city: string;
+  website_url?: string;
+  contact_name: string;
+  contact_position: string;
+  contact_email: string;
+  contact_phone: string;
+  stand_type: string;
+  reps_count: number;
+  linked_partner_level?: string;
+  products_services: string;
+  equipment_needs?: string[];
+  side_activities?: string[];
+  visuals_url?: string;
+  payment_method?: string;
+  rules_accepted: boolean;
+  gdpr_consent: boolean;
+};
+
+export type ExhibitorApplyResponse = { id: number };
+
+export function applyAsExhibitor(payload: ExhibitorApplyPayload) {
+  return apiFetch<ExhibitorApplyResponse>("/api/exhibitors/apply", {
+    method: "POST",
+    body: payload,
+  });
 }

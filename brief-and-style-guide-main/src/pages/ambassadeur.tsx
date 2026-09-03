@@ -133,6 +133,7 @@ type Form = {
   ville: string;
   email: string;
   phone: string;
+  photo: File | null;
   profil: string;
   etablissement: string;
   linkedin: string;
@@ -155,6 +156,7 @@ const empty: Form = {
   ville: "",
   email: "",
   phone: "",
+  photo: null,
   profil: "",
   etablissement: "",
   linkedin: "",
@@ -196,6 +198,7 @@ function AmbassadeurForm() {
     if (!f.ville.trim()) e.ville = "Requis";
     if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
     if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
+    if (!f.photo) e.photo = "Photo requise";
     if (!f.profil) e.profil = "Requis";
     if (!f.motivation.trim()) e.motivation = "Requis";
     else if (countWords(f.motivation) > 150) e.motivation = "150 mots max";
@@ -207,29 +210,31 @@ function AmbassadeurForm() {
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs.");
 
+    const fd = new FormData();
+    fd.set("first_name", f.prenom.trim());
+    fd.set("last_name", f.nom.trim());
+    fd.set("age", String(Number(f.age)));
+    fd.set("country", f.pays);
+    fd.set("city", f.ville.trim());
+    fd.set("email", f.email.trim());
+    fd.set("phone_whatsapp", f.phone.trim());
+    fd.set("photo", f.photo as File);
+    if (f.profil) fd.set("current_profile", f.profil);
+    if (f.etablissement.trim()) fd.set("institution_company", f.etablissement.trim());
+    if (f.linkedin.trim()) fd.set("linkedin_url", f.linkedin.trim());
+    if (f.reseaux.trim()) fd.set("social_handles", JSON.stringify({ reseaux: f.reseaux.trim() }));
+    if (f.followers) fd.set("followers_range", f.followers);
+    fd.set("motivation", f.motivation.trim());
+    fd.set("mobilization_plan", f.mobilisation.trim());
+    if (f.reach) fd.set("estimated_reach", f.reach);
+    fd.set("previous_synca", f.dejaParticipe === "Oui" ? "true" : "false");
+    for (const canal of f.canaux) fd.append("preferred_channels", canal);
+    if (f.dispo) fd.set("availability_pre", f.dispo);
+    fd.set("gdpr_consent", "true");
+
     setPending(true);
     try {
-      await applyAsAmbassador({
-        first_name: f.prenom.trim(),
-        last_name: f.nom.trim(),
-        age: Number(f.age),
-        country: f.pays,
-        city: f.ville.trim(),
-        email: f.email.trim(),
-        phone_whatsapp: f.phone.trim(),
-        current_profile: f.profil || undefined,
-        institution_company: f.etablissement.trim() || undefined,
-        linkedin_url: f.linkedin.trim() || undefined,
-        social_handles: f.reseaux.trim() ? { reseaux: f.reseaux.trim() } : undefined,
-        followers_range: f.followers || undefined,
-        motivation: f.motivation.trim(),
-        mobilization_plan: f.mobilisation.trim(),
-        estimated_reach: f.reach || undefined,
-        previous_synca: f.dejaParticipe === "Oui",
-        preferred_channels: f.canaux,
-        availability_pre: f.dispo || undefined,
-        gdpr_consent: true,
-      });
+      await applyAsAmbassador(fd);
       toast.success("Candidature envoyée !", { description: "Réponse sous 2 semaines." });
       setF(empty);
       setErrors({});
@@ -303,6 +308,14 @@ function AmbassadeurForm() {
               className={inputCls}
               value={f.phone}
               onChange={(e) => set("phone", e.target.value)}
+            />
+          </Field>
+          <Field label="Photo" required error={errors.photo} hint="JPG/PNG" full>
+            <input
+              type="file"
+              accept="image/jpeg,image/png"
+              onChange={(e) => set("photo", e.target.files?.[0] ?? null)}
+              className="text-sm"
             />
           </Field>
         </FormSection>

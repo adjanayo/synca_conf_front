@@ -90,3 +90,14 @@ export const PARTNER_OBJECTIFS = [
   "Impact / RSE",
   "Networking VIP",
 ] as const;
+
+// Exposant — valeurs alignées à l'identique sur les enums backend (app/models/applications.py)
+export const EXHIBITOR_STAND_TYPES = ["Standard", "Premium", "Mutualisé"] as const;
+export const EXHIBITOR_PAYMENT_METHODS = [
+  "Virement bancaire",
+  "Mobile Money",
+  "Chèque",
+  "À définir avec l'équipe Synca",
+] as const;
+export const EXHIBITOR_EQUIPMENT = ["Table", "Chaises", "Électricité", "Wifi dédié", "Écran/TV", "Autre"] as const;
+export const EXHIBITOR_ACTIVITIES = ["Démo produit", "Jeu concours", "Atelier", "Networking", "Autre"] as const;

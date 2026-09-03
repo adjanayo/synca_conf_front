@@ -8,6 +8,7 @@ import { ContactView } from "./pages/contacts/ContactView";
 import { FAQView } from "./pages/Faq/FAQView";
 import { InscriptionPage } from "./pages/inscriptions/inscription";
 import { PartenairesPage } from "./pages/partenaires";
+import { ExposantsPage } from "./pages/exposants";
 import { ProgrammeView } from "./pages/programmes/ProgrammeView";
 import { SpeakersView } from "./pages/speakers/SpeakersView";
 import { SpeakerPage } from "./pages/candidature-speaker";
@@ -253,6 +254,7 @@ export default function AppRoutes() {
         <Route path="programme" element={<ProgrammeView />} />
         <Route path="speakers" element={<SpeakersView />} />
         <Route path="partenaires" element={<PartenairesPage />} />
+        <Route path="exposants" element={<ExposantsPage />} />
         <Route path="ambassadeur" element={<AmbassadeurPage />} />
         <Route path="faq" element={<FAQView />} />
         <Route path="contact" element={<ContactView />} />

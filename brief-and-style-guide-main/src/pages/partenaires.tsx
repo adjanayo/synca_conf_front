@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { PageHeader } from "../components/site/PageHeader";
@@ -279,6 +280,11 @@ function PartnersShowcase() {
             Espace exposition
           </div>
           <h2 className="mt-3 font-display font-bold text-3xl text-center">Nos exposants</h2>
+          <div className="mt-3 text-center">
+            <Link to="/exposants" className="text-sm font-semibold text-primary hover:underline">
+              Devenir exposant →
+            </Link>
+          </div>
 
           {exhibitors.length === 0 ? (
             <p className="mt-6 mx-auto max-w-xl text-center text-muted-foreground">

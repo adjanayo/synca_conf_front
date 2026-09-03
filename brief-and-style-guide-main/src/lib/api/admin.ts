@@ -167,6 +167,7 @@ export type Ambassador = {
   city: string;
   email: string;
   phone_whatsapp: string;
+  photo_url: string | null;
   current_profile: string | null;
   institution_company: string | null;
   linkedin_url: string | null;
