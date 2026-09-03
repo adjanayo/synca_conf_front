@@ -69,6 +69,7 @@
 - [x] ROADMAP_PUBLIC_SEO.md Partie 2/P1 : migration TanStack Query + validation zod des réponses pour les lectures publiques restantes (days/sessions/speakers/partners/exhibitors/faqs) — voir suite 11
 - [x] Fix : `TicketsPreview.tsx` (accueil) affichait les tickets statiques à prix factices "** ***" dès que la liste des pass actifs API était vide — remplacé par message "seront annoncés prochainement" (repéré par l'utilisateur, backend avait l'air débranché)
 - [x] ROADMAP_PUBLIC_SEO.md Partie 3 (choisi par l'utilisateur) : validation zod sur les 7 formulaires publics existants (waitlist, contact, inscription, candidature speaker/ambassadeur/partenaire/exposant) — voir suite 9
+- [x] ROADMAP_PUBLIC_SEO.md Partie 2/P2 : pagination réelle `limit`/`offset` sur les lectures publiques paginées côté backend — voir suite 12
 
 ## À faire plus tard — ROADMAP_PUBLIC_SEO.md (hors périmètre admin, pas à exécuter sans instruction explicite)
 
@@ -83,7 +84,7 @@
 
 ### Partie 2 — Reprise des données réelles (pages publiques)
 - [x] P1. Lectures `GET /api/days`, `/sessions`, `/pass-types`, `/speakers`, `/partners`, `/exhibitors`, `/faqs`, `/campaign-windows` (TanStack Query + types/zod + loading/erreur/empty) — voir suite 11
-- [ ] P2. Pagination `limit`/`offset` (max 200), pas de champ `total`
+- [x] P2. Pagination `limit`/`offset` (max 200), pas de champ `total` — voir suite 12
 - [ ] P3. Fenêtres de campagne — activer/griser les CTA selon `is_active`/dates, gérer le 403 fenêtre fermée
 
 ### Partie 3 — Formulaires publics
@@ -101,6 +102,8 @@
 ### Partie 6 — Divers
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau
 - [ ] Gestion du refresh token quand le backend l'exposera
+- [ ] Page d'accueil a un programme actuellement qui n'est pas lu depuis la DB
+- [ ] Pour generer le ticket, les informations doivent être pris pour le nom de l'evenement depuis la DB
 
 ### Partie 7 — Hackathon universitaire + Synca Community Certified
 Demande utilisateur — nouveau chantier prévu **après** les parties 1 à 6 (pas encore implémenté, planifié comme référence). Deux volets liés :
@@ -309,3 +312,10 @@ Demande utilisateur — planifié, **pas de code pour le moment** :
 - Migré vers `useQuery` (`@tanstack/react-query`) les 4 pages qui faisaient encore du `useEffect`+`useState` manuel : `ProgrammeView.tsx` (days+sessions), `SpeakersView.tsx` (speakers), `FAQView.tsx` (faqs+faq-categories), `partenaires.tsx` `PartnersShowcase` (partners+exhibitors). `TicketsPreview.tsx`/`inscription.tsx` (pass-types) et `useEventWindow.ts` (campaign-windows) étaient déjà sur TanStack Query, gagnent juste la validation zod en plus.
 - Appliqué la règle permanente (empty-state = message "revenir plus tard", jamais de contenu factice) : supprimé les fallbacks sur données statiques hardcodées (`DAYS`, `SPEAKERS`, `buildFaqCategories`) dans `ProgrammeView.tsx`/`SpeakersView.tsx`/`FAQView.tsx` qui remplaçaient silencieusement un vide/erreur API par du faux contenu — remplacés par un état loading/erreur/vide explicite avec message "pas encore disponible, reviens bientôt".
 - Vérification : `rtk tsc --noEmit` clean, `rtk lint` clean (0 nouvelle erreur, le seul warning est pré-existant et hors scope), `rtk npm run build` OK. Shapes des réponses réelles vérifiées via `curl` sur le backend local (port 8010) : `days`/`sessions`/`speakers`/`partners`/`exhibitors`/`pass-types` vides en dev (exerce le chemin "pas encore disponible" en conditions réelles), `faqs`/`faq-categories`/`campaign-windows` avec données réelles (exerce le chemin succès, zod ne rejette rien). Pas de vérification visuelle en navigateur (aucun outil de rendu disponible dans cet environnement).
+
+### 2026-09-03 (suite 12) — ROADMAP_PUBLIC_SEO.md Partie 2/P2 : vraie pagination limit/offset
+- Fait : demande utilisateur explicite — "work on partie 2 p2".
+- Audit backend (`app/api/public.py` + `app/deps/pagination.py`, repo `synca_conf_back`) : seuls 6 des 9 endpoints publics acceptent réellement `limit`/`offset` côté serveur (`sessions`, `speakers`, `ambassadors`, `partners`, `exhibitors`, `faqs` — plafond 200, défaut 50, pas de champ `total`) ; `days`, `pass-types`, `faq-categories`, `campaign-windows` ne sont pas paginés (toute la table retournée). L'implémentation de suite 8 avait fixé `?limit=200` sur ces 6 endpoints en pariant qu'aucune liste ne dépasserait 200 lignes — pari qui casse silencieusement dès que ce plafond est franchi (page tronquée sans erreur, sans moyen de savoir qu'il manque des lignes vu l'absence de `total`).
+- Ajouté `apiFetchAll<T>()` dans `lib/api/client.ts` : boucle `offset += limit` (limit=200) tant que la page reçue fait exactement `limit` éléments, s'arrête dès qu'une page plus courte arrive (seul signal de fin de liste possible sans `total`, §9 de la roadmap).
+- Remplacé `apiFetch("...?limit=200")` par `apiFetchAll("...")` dans `lib/api/programme.ts` (`getSessions`), `lib/api/applications.ts` (`getSpeakers`, `getAmbassadors`, `getPartners`, `getExhibitors`), `lib/api/faq.ts` (`getFaqs`). `getDays`/`getFaqCategories` (`pass-types`/`campaign-windows` déjà sans le paramètre) laissés tels quels — non paginés côté backend, ajouter `limit`/`offset` dessus n'aurait aucun effet.
+- Vérification : `rtk tsc --noEmit` clean, `rtk lint` clean (0 nouvelle erreur), `rtk npm run build` OK.

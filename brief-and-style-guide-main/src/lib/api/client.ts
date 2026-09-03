@@ -106,6 +106,26 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
 }
 
 /**
+ * Public list endpoints paginate via limit/offset (max 200) and never return
+ * a `total` field -- the only way to know we've reached the end is a page
+ * shorter than `limit` (ROADMAP_PUBLIC_SEO.md Partie 2/P2, §9).
+ */
+export async function apiFetchAll<T>(path: string, limit = 200): Promise<T[]> {
+  const sep = path.includes("?") ? "&" : "?";
+  const results: T[] = [];
+  let offset = 0;
+
+  while (true) {
+    const page = await apiFetch<T[]>(`${path}${sep}limit=${limit}&offset=${offset}`);
+    results.push(...page);
+    if (page.length < limit) break;
+    offset += limit;
+  }
+
+  return results;
+}
+
+/**
  * Multipart submit for endpoints that accept an UploadFile alongside form
  * fields (speaker/partner applications) -- no Content-Type header so the
  * browser sets the multipart boundary itself.

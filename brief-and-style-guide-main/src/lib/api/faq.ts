@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiFetch } from "./client";
+import { apiFetch, apiFetchAll } from "./client";
 import { faqCategoryPublicSchema, faqPublicSchema } from "../schemas/public";
 
 export type FaqCategoryPublic = z.infer<typeof faqCategoryPublicSchema>;
@@ -11,6 +11,6 @@ export async function getFaqCategories() {
 }
 
 export async function getFaqs() {
-  const data = await apiFetch<unknown>("/api/faqs?limit=200");
+  const data = await apiFetchAll<unknown>("/api/faqs");
   return z.array(faqPublicSchema).parse(data);
 }

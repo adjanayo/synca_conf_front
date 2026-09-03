@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiFetch } from "./client";
+import { apiFetch, apiFetchAll } from "./client";
 import { publicDaySchema, publicSessionSchema } from "../schemas/public";
 
 export type PublicDay = z.infer<typeof publicDaySchema>;
@@ -11,6 +11,6 @@ export async function getDays() {
 }
 
 export async function getSessions() {
-  const data = await apiFetch<unknown>("/api/sessions?limit=200");
+  const data = await apiFetchAll<unknown>("/api/sessions");
   return z.array(publicSessionSchema).parse(data);
 }

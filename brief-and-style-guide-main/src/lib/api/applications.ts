@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { apiFetch, apiFetchForm } from "./client";
+import { apiFetch, apiFetchAll, apiFetchForm } from "./client";
 import { speakerPublicSchema, partnerPublicSchema, exhibitorPublicSchema } from "../schemas/public";
 
 export type SpeakerPublic = z.infer<typeof speakerPublicSchema>;
 
 export async function getSpeakers() {
-  const data = await apiFetch<unknown>("/api/speakers?limit=200");
+  const data = await apiFetchAll<unknown>("/api/speakers");
   return z.array(speakerPublicSchema).parse(data);
 }
 
@@ -27,7 +27,7 @@ export type AmbassadorPublic = {
 };
 
 export function getAmbassadors() {
-  return apiFetch<AmbassadorPublic[]>("/api/ambassadors?limit=200");
+  return apiFetchAll<AmbassadorPublic>("/api/ambassadors");
 }
 
 export function getAmbassador(id: number) {
@@ -50,14 +50,14 @@ export function getPartnerLevels() {
 export type PartnerPublic = z.infer<typeof partnerPublicSchema>;
 
 export async function getPartners() {
-  const data = await apiFetch<unknown>("/api/partners?limit=200");
+  const data = await apiFetchAll<unknown>("/api/partners");
   return z.array(partnerPublicSchema).parse(data);
 }
 
 export type ExhibitorPublic = z.infer<typeof exhibitorPublicSchema>;
 
 export async function getExhibitors() {
-  const data = await apiFetch<unknown>("/api/exhibitors?limit=200");
+  const data = await apiFetchAll<unknown>("/api/exhibitors");
   return z.array(exhibitorPublicSchema).parse(data);
 }
 
