@@ -1,4 +1,3 @@
-import { TICKETS } from "@/data/parameter";
 import { getPassTypes } from "@/lib/api/registration";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Check } from "lucide-react";
@@ -14,20 +13,19 @@ function TicketsPreview() {
   const passTypesQuery = useQuery({ queryKey: ["public", "pass-types"], queryFn: getPassTypes });
   const activePassTypes = (passTypesQuery.data ?? []).filter((p) => p.is_active);
 
-  const cards =
-    activePassTypes.length > 0
-      ? activePassTypes.map((p) => ({
-          key: `pass-${p.id}`,
-          name: p.name,
-          price: currency.format(p.price),
-          target: p.description,
-          perks: p.inclusions
-            .split("\n")
-            .map((line) => line.trim())
-            .filter(Boolean),
-          badge: "",
-        }))
-      : TICKETS.map((t) => ({ key: t.name, ...t }));
+  if (passTypesQuery.isLoading) return null;
+
+  const cards = activePassTypes.map((p) => ({
+    key: `pass-${p.id}`,
+    name: p.name,
+    price: currency.format(p.price),
+    target: p.description,
+    perks: p.inclusions
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean),
+    badge: "",
+  }));
 
   return (
     <section className="py-24 bg-peach">
@@ -41,6 +39,12 @@ function TicketsPreview() {
             Paiement par carte, Wave, Orange Money ou virement. Codes promo Early Bird disponibles.
           </p>
         </div>
+        {cards.length === 0 ? (
+          <p className="mt-8 max-w-xl text-muted-foreground">
+            Les pass seront annoncés prochainement. Suis nos pages Synca Conf pour ne rien manquer
+            de l'ouverture de la billetterie.
+          </p>
+        ) : (
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {cards.map((t) => {
             const featured = t.badge === "Populaire";
@@ -83,6 +87,7 @@ function TicketsPreview() {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );
