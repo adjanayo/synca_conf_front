@@ -5,7 +5,7 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 ## Partie 1 — SEO du site public
 - [ ] S1.6. Pré-rendu (vite-plugin-prerender / SSG) — à valider avec l'utilisateur avant (impact build/mise en ligne) ; sans ça, tout ce qui a été fait en S1.1-S1.5 (title/meta/JSON-LD) reste invisible aux crawlers qui n'exécutent pas le JS
 - [ ] S2. SEO au fil de l'eau (title/description/OG à jour à chaque nouvelle section) — pas de tracking/analytics sans accord explicite
-- [ ] **Bloquant à lever avant mise en ligne** : `VITE_SITE_URL` n'a pas de vraie valeur (placeholder `https://TODO-DOMAINE-PRODUCTION-A-DEFINIR.example` dans `.env`/`.env.example`) — tant que ça reste ainsi, canonical/OG/Twitter/sitemap.xml/robots.txt pointent tous vers ce placeholder cassé
+- Voir `SEO_A_CONFIGURER.md` (racine du repo) pour tout ce que l'utilisateur doit renseigner à la main (domaine, image OG, favicons, Search Console, données DB à vérifier avant mise en ligne) — pas du code, pas dans ce TODO.
 
 ## Partie 5 — Paiement / billetterie
 - [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
