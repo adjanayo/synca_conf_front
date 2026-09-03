@@ -101,7 +101,7 @@
 - [ ] Workflow inscription → paiement → webhook → ticket PDF+QR
 
 ### Partie 6 — Divers
-- [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau
+- [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — 1er passage fait, voir suite 14 (`FRONTEND_INTEGRATION.md` §4.5/4.6/4.7 corrigé), reste ouvert car continu
 - [ ] Gestion du refresh token quand le backend l'exposera
 - [ ] Page d'accueil a un programme actuellement qui n'est pas lu depuis la DB
 - [ ] Pour generer le ticket, les informations doivent être pris pour le nom de l'evenement depuis la DB
@@ -328,3 +328,11 @@ Demande utilisateur — planifié, **pas de code pour le moment** :
   - 403 fenêtre fermée en race condition (fenêtre qui se ferme pendant la saisie) : message métier dédié déjà présent sur les 5 formulaires (`err.status === 403`), ajouté en suite 8.
 - Aucun code changé — case cochée dans le TODO (Partie 2 intégralement complète : P1/P2/P3).
 - Vérification : aucune modification, pas de nouveau build nécessaire.
+
+### 2026-09-03 (suite 14) — ROADMAP_PUBLIC_SEO.md Partie 6 : audit shapes §12
+- Fait : demande utilisateur explicite — "work on partie 6 - divers". Sur les 3 sous-items de Partie 6, 2 non actionnables maintenant (refresh token : toujours bloqué, vérifié `app/api/auth.py` côté back, `login` admin émet bien `access_token`+`refresh_token` mais aucun endpoint `/refresh` n'existe pour le consommer ; portillon build+lint+push : déjà suivi en continu, pas une tâche ponctuelle). Confirmé avec l'utilisateur (AskUserQuestion) de faire un audit ponctuel du 3ème item (§12 FRONTEND_INTEGRATION.md, remontée de shapes/statuts inattendus).
+- Trouvé : `FRONTEND_INTEGRATION.md` §4.5/§4.6/§4.7 (exemples JSON `GET /api/speakers`, `/partners`, `/exhibitors`) montraient des champs PII (`email`, `phone_whatsapp`, `gdpr_consent`, `status`, `motivation` pour speakers ; `contact_email`, `contact_phone`, `message`, `heard_from` pour partners ; champs de contact similaires pour exhibitors) que les endpoints publics réels ne renvoient jamais — vérifié contre `SpeakerPublicRead`/`PartnerPublicRead`/`ExhibitorPublicRead` (`app/schemas/applications.py` côté back, repo `synca_conf_back`), sous-ensembles PII-safe bien plus restreints. Doc identique dans les deux repos (front et back), bug probablement présent des deux côtés.
+- Vérifié : le code front (`schemas/public.ts`, suite 11) colle déjà au vrai comportement sécurisé — le risque était uniquement dans la doc, pas dans le comportement réel de l'appli.
+- Fait (confirmé par l'utilisateur) : corrigé les 3 exemples JSON dans la copie front de `FRONTEND_INTEGRATION.md` pour refléter les vrais champs retournés, avec une note explicite listant les champs PII absents. La copie du repo back garde le même bug — hors périmètre de ce repo, à signaler séparément côté back.
+- Non fait, laissé ouvert (items déjà présents dans le TODO Partie 6 sans lien avec la demande de ce tour, non explorés) : "page d'accueil programme pas lu depuis la DB" et "génération ticket — nom événement depuis la DB".
+- Vérification : modification markdown uniquement, aucun impact code/build.

@@ -207,8 +207,6 @@ Speakers acceptés et publiés uniquement (`is_public=true` filtré côté serve
     "title_role": "CTO",
     "company": "Synca Tech",
     "country": "Côte d'Ivoire",
-    "email": "aminata@example.com",
-    "phone_whatsapp": "+2250707070707",
     "linkedin_url": "https://linkedin.com/in/aminata-diallo",
     "website_url": null,
     "photo_url": "https://b2-cdn.example.com/speakers/abc123.jpg",
@@ -217,21 +215,12 @@ Speakers acceptés et publiés uniquement (`is_public=true` filtré côté serve
     "theme": "IA",
     "summary": "Aminata partage son expérience...",
     "audience_level": "Tous",
-    "language": "Français",
-    "past_experience": "3 conférences passées",
-    "video_link": "https://youtube.com/watch?v=...",
-    "availability": "Oui confirmé",
-    "departure_city": "Abidjan",
-    "needs_accommodation": false,
-    "motivation": "Vulgariser l'IA auprès des jeunes",
-    "video_consent": "Oui sans restriction",
-    "gdpr_consent": true,
-    "status": "accepted",
-    "is_public": true,
-    "created_at": "2026-08-01T10:00:00"
+    "language": "Français"
   }
 ]
 ```
+
+> Sous-ensemble sans PII (`SpeakerPublicRead` côté back) : ni `email`, `phone_whatsapp`, `motivation`, `gdpr_consent`, `status` ni les autres champs internes de candidature — uniquement ce qui précède.
 
 ### 4.6 `GET /api/partners`
 
@@ -251,28 +240,14 @@ Partenaires confirmés et publiés uniquement (`is_public=true` filtré côté s
   {
     "id": 1,
     "organization_name": "Orange CI",
-    "sector": "Télécoms",
-    "country": "Côte d'Ivoire",
-    "city": "Abidjan",
     "website_url": "https://orange.ci",
-    "contact_name": "Kofi Asante",
-    "contact_position": "Directeur Marketing",
-    "contact_email": "kofi@orange.ci",
-    "contact_phone": "+2250707070707",
-    "level_id": 1,
-    "has_budget": "Oui — budget précis",
-    "objectives": "Visibilité, recrutement",
-    "previous_sponsor": true,
-    "message": null,
-    "heard_from": "Réseau LinkedIn",
-    "gdpr_consent": true,
-    "status": "confirmed",
     "logo_url": "https://b2-cdn.example.com/logos/orange.png",
-    "is_public": true,
-    "created_at": "2026-08-01T10:00:00"
+    "level_id": 1
   }
 ]
 ```
+
+> Sous-ensemble sans PII (`PartnerPublicRead` côté back) : ni `sector`/`country`/`city`, ni les champs de contact (`contact_name`/`contact_email`/`contact_phone`/...), ni `status`/`gdpr_consent` — uniquement ce qui précède.
 
 ### 4.7 `GET /api/exhibitors`
 
@@ -291,30 +266,13 @@ Exposants confirmés et publiés uniquement (`is_public=true` filtré côté ser
   {
     "id": 1,
     "organization_name": "TechCorp Africa",
-    "sector": "Fintech",
-    "country": "Sénégal",
-    "city": "Dakar",
     "website_url": "https://techcorp.africa",
-    "contact_name": "Fatou Ndiaye",
-    "contact_position": "CEO",
-    "contact_email": "fatou@techcorp.africa",
-    "contact_phone": "+221771234567",
-    "stand_type": "Premium",
-    "reps_count": 4,
-    "linked_partner_level": null,
-    "products_services": "Solutions de paiement mobile",
-    "equipment_needs": null,
-    "side_activities": null,
-    "visuals_url": "https://drive.google.com/...",
-    "payment_method": "Virement bancaire",
-    "rules_accepted": true,
-    "gdpr_consent": true,
-    "status": "confirmed",
-    "is_public": true,
-    "created_at": "2026-08-01T10:00:00"
+    "stand_type": "Premium"
   }
 ]
 ```
+
+> Sous-ensemble sans PII (`ExhibitorPublicRead` côté back) : ni `sector`/`country`/`city`, ni les champs de contact, ni `reps_count`/`status`/`gdpr_consent`/... — uniquement ce qui précède.
 
 ### 4.8 `GET /api/faqs`
 
