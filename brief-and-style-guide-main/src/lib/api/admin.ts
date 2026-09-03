@@ -1,4 +1,4 @@
-import { apiDownload, apiFetch } from "./client";
+import { apiDownload, apiFetch, apiFetchForm } from "./client";
 
 export type AdminTokenPair = {
   access_token: string;
@@ -955,4 +955,108 @@ export function exportRegistrationsCsv() {
 
 export function exportPaymentsCsv() {
   return apiDownload("/api/admin/export/payments", "admin", "payments.csv");
+}
+
+export type HackathonTeamMember = {
+  id: number;
+  team_id: number;
+  full_name: string;
+  study_level: string;
+  specialty: string;
+  photo_url: string | null;
+  created_at: string;
+};
+
+export type HackathonTeam = {
+  id: number;
+  university_name: string;
+  name: string;
+  project_name: string;
+  project_description: string;
+  created_at: string;
+  members: HackathonTeamMember[];
+};
+
+export type HackathonTeamCreate = {
+  university_name: string;
+  name: string;
+  project_name: string;
+  project_description: string;
+};
+
+export type HackathonTeamUpdate = Partial<HackathonTeamCreate>;
+
+export function listHackathonTeams() {
+  return apiFetch<HackathonTeam[]>("/api/admin/hackathon/teams", { auth: "admin" });
+}
+
+export function createHackathonTeam(body: HackathonTeamCreate) {
+  return apiFetch<HackathonTeam>("/api/admin/hackathon/teams", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updateHackathonTeam(id: number, body: HackathonTeamUpdate) {
+  return apiFetch<HackathonTeam>(`/api/admin/hackathon/teams/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deleteHackathonTeam(id: number) {
+  return apiFetch<void>(`/api/admin/hackathon/teams/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export type HackathonTeamMemberFields = {
+  full_name: string;
+  study_level: string;
+  specialty: string;
+};
+
+export function createHackathonTeamMember(
+  teamId: number,
+  fields: HackathonTeamMemberFields,
+  photo: File | null,
+) {
+  const formData = new FormData();
+  formData.set("full_name", fields.full_name);
+  formData.set("study_level", fields.study_level);
+  formData.set("specialty", fields.specialty);
+  if (photo) formData.set("photo", photo);
+  return apiFetchForm<HackathonTeamMember>(
+    `/api/admin/hackathon/teams/${teamId}/members`,
+    formData,
+    { auth: "admin" },
+  );
+}
+
+export function updateHackathonTeamMember(
+  teamId: number,
+  memberId: number,
+  fields: Partial<HackathonTeamMemberFields>,
+  photo: File | null,
+) {
+  const formData = new FormData();
+  if (fields.full_name !== undefined) formData.set("full_name", fields.full_name);
+  if (fields.study_level !== undefined) formData.set("study_level", fields.study_level);
+  if (fields.specialty !== undefined) formData.set("specialty", fields.specialty);
+  if (photo) formData.set("photo", photo);
+  return apiFetchForm<HackathonTeamMember>(
+    `/api/admin/hackathon/teams/${teamId}/members/${memberId}`,
+    formData,
+    { method: "PATCH", auth: "admin" },
+  );
+}
+
+export function deleteHackathonTeamMember(teamId: number, memberId: number) {
+  return apiFetch<void>(`/api/admin/hackathon/teams/${teamId}/members/${memberId}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
 }

@@ -84,3 +84,21 @@ export const campaignWindowSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
 });
+
+export const hackathonTeamMemberSchema = z.object({
+  id: z.number(),
+  team_id: z.number(),
+  full_name: z.string(),
+  study_level: z.string(),
+  specialty: z.string(),
+  photo_url: z.string().nullable(),
+});
+
+export const hackathonTeamSchema = z.object({
+  id: z.number(),
+  university_name: z.string(),
+  name: z.string(),
+  project_name: z.string(),
+  project_description: z.string(),
+  members: z.array(hackathonTeamMemberSchema),
+});

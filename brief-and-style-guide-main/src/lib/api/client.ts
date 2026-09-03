@@ -130,13 +130,25 @@ export async function apiFetchAll<T>(path: string, limit = 200): Promise<T[]> {
  * fields (speaker/partner applications) -- no Content-Type header so the
  * browser sets the multipart boundary itself.
  */
-export async function apiFetchForm<T>(path: string, formData: FormData): Promise<T> {
+export async function apiFetchForm<T>(
+  path: string,
+  formData: FormData,
+  options: { method?: "POST" | "PATCH"; auth?: AuthScope } = {},
+): Promise<T> {
   if (!API_BASE_URL) {
     throw new Error("VITE_API_URL n'est pas configuré (voir .env.example).");
   }
 
+  const headers: Record<string, string> = {};
+  if (options.auth) {
+    const token = tokens[options.auth];
+    if (!token) throw new ApiError(401, "Session expirée.");
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
+    method: options.method ?? "POST",
+    headers,
     body: formData,
   });
 
@@ -147,6 +159,9 @@ export async function apiFetchForm<T>(path: string, formData: FormData): Promise
       detail = extractErrorMessage(body.detail, detail);
     } catch {
       // response wasn't JSON -- keep the generic message
+    }
+    if (response.status === 401 && options.auth) {
+      unauthorizedHandlers[options.auth]?.();
     }
     throw new ApiError(response.status, detail);
   }

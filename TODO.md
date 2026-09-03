@@ -18,23 +18,19 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 ## Partie 6 — Divers
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
 - [ ] Gestion du refresh token quand le backend l'exposera — bloqué, `POST /api/admin/login` émet déjà `refresh_token` mais aucun endpoint `/refresh` n'existe côté back pour le consommer
-- [ ] Page d'accueil (`ProgrammePreview.tsx`) affiche un programme 100% statique (`data/programme.ts::DAYS`), jamais branché sur `GET /api/days`+`/sessions` — contrairement à `/programme` (`ProgrammeView.tsx`, déjà branché depuis suite 11)
+- [x] Page d'accueil (`ProgrammePreview.tsx`) affiche un programme 100% statique — voir suite 15
 - [ ] Génération du ticket (PDF+QR) — nom de l'événement en dur `"SYNCA CONF 2027"` dans `_render_ticket_pdf()` (`app/services/ticket_pdf.py`, **repo `synca_conf_back`**, hors périmètre de ce repo) au lieu de lire `EventSettings` (nom/année déjà en DB, déjà exposés via `GET /api/event-settings`) — à signaler/traiter côté back
 
 ## Partie 7 — Hackathon universitaire + Synca Community Certified
-Demande utilisateur — nouveau chantier prévu **après** les parties 1 à 6 (pas encore implémenté, planifié comme référence). Deux volets liés :
 
 ### Hackathon universitaire
-- S'appuie sur le modèle "Synca Community Certified" + un hackathon étudiant.
-- **Formation des équipes** : chaque université propose 1 à 2 équipes, choisies parmi 3 à 4 personnes max par équipe.
-- **Finale** : se joue entre 10 et 15 équipes, selon le nombre d'universités participantes.
-- **Contenu géré par les administrateurs** : ils mettent en ligne la liste des équipes par université, ainsi que les informations de dates du hackathon.
-- **Membre d'équipe** (par personne) : photo, nom complet, niveau d'étude, spécialité.
-- **Équipe** : un nom, un nom de projet, une description du projet.
-- Tout configurable au dashboard admin et affichable sur le site public.
+- [x] Modèles back (`HackathonTeam`/`HackathonTeamMember`, repo `synca_conf_back`), CRUD admin (`hackathon.manage`, upload photo membre), `GET /api/hackathon-teams` public — voir suite 15
+- [x] Admin dashboard (`AdminHackathonPage.tsx`, menu Référentiels) + page publique `/hackathon-universitaire` (`HackathonView.tsx`, équipes groupées par université) — voir suite 15
+- Non fait : pas de lien dans le `Nav.tsx` principal (cohérent avec exposants/candidature-speaker, pages déjà atteignables sans y être dans le menu top) — à ajouter si l'utilisateur veut plus de visibilité.
 
 ### Synca Community Certified (rappel du gap déjà signalé)
-- La deadline de candidature (31 décembre 2026 / mi-janvier 2027) et le programme lui-même restent **en dur dans la FAQ** (`data/faq.ts`) — **aucun champ DB correspondant** (gap déjà signalé en suite 9). Ce chantier devra soit ajouter une clé `CampaignWindow` dédiée (ex. `call_for_community_certified`, comme les autres fenêtres), soit créer un modèle dédié pour piloter deadline/annonce au dashboard.
+- [x] Clé `CampaignWindow` dédiée ajoutée (`call_for_community_certified`, deadline 31 déc. 2026 en seed) — voir suite 15
+- [ ] Reste ouvert : la FAQ (`answer` en base, table `faqs`) garde le texte de deadline en dur — rien ne consomme encore `call_for_community_certified` pour l'afficher dynamiquement. Éditable manuellement au dashboard FAQ existant en attendant.
 
 ## Partie 8 — Contenu des pass pilotable + offres partenaires au dashboard
 Demande utilisateur — planifié, **pas de code pour le moment** :

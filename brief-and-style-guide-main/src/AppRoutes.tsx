@@ -15,6 +15,7 @@ import { SpeakerDetailView } from "./pages/speakers/SpeakerDetailView";
 import { AmbassadeursView } from "./pages/ambassadeurs/AmbassadeursView";
 import { AmbassadeurDetailView } from "./pages/ambassadeurs/AmbassadeurDetailView";
 import { SpeakerPage } from "./pages/candidature-speaker";
+import { HackathonView } from "./pages/hackathon/HackathonView";
 import { IndexView } from "./pages/index/IndexView";
 import { ConnexionPage } from "./pages/connexion/ConnexionPage";
 import { EspacePage } from "./pages/espace/EspacePage";
@@ -38,6 +39,7 @@ import { AdminPromoCodesPage } from "./pages/admin/AdminPromoCodesPage";
 import { AdminEventSettingsPage } from "./pages/admin/AdminEventSettingsPage";
 import { AdminProgramPage } from "./pages/admin/AdminProgramPage";
 import { AdminFaqPage } from "./pages/admin/AdminFaqPage";
+import { AdminHackathonPage } from "./pages/admin/AdminHackathonPage";
 import { AdminRegistrationsPage } from "./pages/admin/AdminRegistrationsPage";
 import { AdminWaitlistPage } from "./pages/admin/AdminWaitlistPage";
 
@@ -235,6 +237,14 @@ export default function AppRoutes() {
             }
           />
           <Route
+            path="hackathon"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="hackathon.manage">
+                <AdminHackathonPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
             path="registrations"
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="payments.view">
@@ -262,6 +272,7 @@ export default function AppRoutes() {
         <Route path="ambassadeur" element={<AmbassadeurPage />} />
         <Route path="ambassadeurs" element={<AmbassadeursView />} />
         <Route path="ambassadeurs/:id" element={<AmbassadeurDetailView />} />
+        <Route path="hackathon-universitaire" element={<HackathonView />} />
         <Route path="faq" element={<FAQView />} />
         <Route path="contact" element={<ContactView />} />
         <Route path="inscription" element={<InscriptionPage />} />
