@@ -309,3 +309,8 @@ Liste complète, détails et cases à cocher désormais dans `TODO.md` (racine d
 - Trouvé en lisant la base (pas visible sans ça) : fenêtre `event` (dates conférence, utilisées dans le JSON-LD) a `is_active: false` ; fenêtre `ticketing` contient encore une plage de **test** (`2026-09-02 22:20`→`22:25`, 5 minutes) au lieu des vraies dates de billetterie — signalé dans le fichier, pas corrigé (donnée métier, pas à moi de la deviner). `pass-types`/`days`/`speakers`/`partners`/`exhibitors` toujours vides en base — remarque ajoutée mais déjà connu (les pages publiques gèrent déjà ce cas, règle "revenir plus tard").
 - `TODO.md` : remplacé la ligne "bloquant VITE_SITE_URL" par un pointeur vers `SEO_A_CONFIGURER.md` — pas de doublon entre le TODO (mon travail de code) et ce nouveau fichier (actions manuelles de l'utilisateur).
 - Vérification : aucun code changé, pas de build nécessaire.
+
+### 2026-09-03 (suite 18) — SEO_A_CONFIGURER.md : bloc récapitulatif nom/année/lieu/dates
+- Fait : demande utilisateur explicite — relire nom/année/lieu/dates de la fenêtre `event` en base et les faire apparaître clairement dans `SEO_A_CONFIGURER.md`.
+- Ajouté une section 0 en tête du fichier : tableau récapitulatif (Nom `Synca Conf`, Année `2027`, Lieu `Dakar, Sénégal`, Dates `18-20 août 2027`, fenêtre `event` `is_active: false`) — revérifié en direct sur la base (valeurs inchangées depuis suite 17). Section 5 allégée pour ne plus dupliquer ces 4 champs (pointeur vers la section 0), garde uniquement les items encore utiles (fenêtre `ticketing` test, contenus vides).
+- Vérification : fichier markdown seul, aucun code changé.

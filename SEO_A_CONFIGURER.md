@@ -2,6 +2,20 @@
 
 Généré en lisant l'état réel de la base (dev, `synca_conf_back`, 2026-09-03) et le code SEO livré (`DEVLOG.md` suite 16). Rien ici n'est du code à écrire — ce sont des données/comptes à renseigner, par toi, avant la mise en ligne. Coche au fur et à mesure.
 
+## 0. Données événement actuellement en base (lues le 2026-09-03)
+
+C'est exactement ce que le site utilise aujourd'hui pour les meta OG/Twitter et le JSON-LD `Event` de la page d'accueil (`GET /api/event-settings` + fenêtre de campagne `event` sur `GET /api/campaign-windows`) :
+
+| Champ | Valeur en base | Source |
+|---|---|---|
+| Nom | `Synca Conf` | `EventSettings.name` |
+| Année | `2027` | `EventSettings.year` |
+| Lieu | `Dakar, Sénégal` | `EventSettings.venue` |
+| Dates de l'événement | `18 août 2027` → `20 août 2027` | fenêtre de campagne `event` (`start_at`/`end_at`) |
+| Fenêtre `event` active ? | **Non** (`is_active: false`) | idem |
+
+Tout ça se modifie au dashboard admin (`Réglages événement` pour nom/lieu/année, `Fenêtres de campagne` pour les dates) — jamais dans le code. Le point à trancher : la fenêtre `event` est inactive alors que ses dates apparaissent déjà partout sur le site (Nav, Hero, JSON-LD) — si les dates du 18-20 août 2027 ne sont pas encore à annoncer publiquement, il faut le dire ; sinon, l'activer.
+
 ## 1. Domaine de production (bloquant)
 
 - [ ] Renseigner `VITE_SITE_URL` dans le `.env` de production (ex. `VITE_SITE_URL=https://syncaconf.com`, sans slash final).
@@ -28,11 +42,9 @@ Généré en lisant l'état réel de la base (dev, `synca_conf_back`, 2026-09-03
 
 ## 5. Données de la base à vérifier avant mise en ligne
 
-Lues en direct sur la base de dev — à vérifier/corriger en production via le dashboard admin (`Réglages événement` et `Fenêtres de campagne`), pas du code :
+Lues en direct sur la base de dev — à vérifier/corriger en production via le dashboard admin (`Réglages événement` et `Fenêtres de campagne`), pas du code. Nom/année/lieu/dates : voir section 0 ci-dessus.
 
-- [ ] **Fenêtre `event`** (dates de la conférence, utilisées telles quelles dans le JSON-LD `Event` de la page d'accueil) : actuellement `18-20 août 2027`, mais **`is_active: false`** en base. Le site affiche ces dates partout (Nav, Hero, JSON-LD) qu'elle soit active ou non — si `false` est volontaire (dates pas encore confirmées publiquement), très bien ; sinon, penser à l'activer avant l'annonce officielle.
 - [ ] **Fenêtre `ticketing`** : contient encore une plage de **test** (`2026-09-02 22:20` → `2026-09-02 22:25`, 5 minutes) au lieu des vraies dates d'ouverture/fermeture de la billetterie. À remplacer par les vraies dates avant d'activer les inscriptions — sinon la billetterie s'ouvrira/fermera sur ce créneau de test.
-- [ ] **`EventSettings`** (nom/lieu/année) : `"Synca Conf"` / `"Dakar, Sénégal"` / `2027` — correct au moment de la rédaction, à revalider une dernière fois avant le lancement (repris tel quel dans les meta OG/Twitter et le JSON-LD).
 - [ ] **Aucun `pass-type` actif en base** (`GET /api/pass-types` renvoie `[]`) — la page d'accueil affichera "les pass seront annoncés prochainement" tant que ce n'est pas rempli. Pas un blocage SEO en soi, mais impacte ce qu'un crawler/visiteur voit sur la page la plus indexée du site.
 - [ ] **Aucun `day`/`session`/`speaker`/`partner`/`exhibitor` en base** — même remarque : les pages `/programme`, `/speakers`, `/partenaires`, `/exposants` afficheront leurs messages "pas encore disponible" tant que le contenu n'est pas saisi au dashboard.
 
