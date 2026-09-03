@@ -300,9 +300,11 @@ function InscriptionForm() {
           ? "Cet email est déjà inscrit — connecte-toi via ton espace inscrit."
           : err instanceof ApiError && err.status === 429
             ? "Trop de tentatives — réessaie dans quelques minutes."
-            : err instanceof ApiError
-              ? err.detail
-              : "Une erreur est survenue.";
+            : err instanceof ApiError && err.status === 403
+              ? "La billetterie est fermée pour le moment."
+              : err instanceof ApiError
+                ? err.detail
+                : "Une erreur est survenue.";
       setServerError(message);
     } finally {
       setPending(false);

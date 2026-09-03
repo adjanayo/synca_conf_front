@@ -19,7 +19,7 @@ export type SpeakerPublic = {
 };
 
 export function getSpeakers() {
-  return apiFetch<SpeakerPublic[]>("/api/speakers");
+  return apiFetch<SpeakerPublic[]>("/api/speakers?limit=200");
 }
 
 export function getSpeaker(id: number) {
@@ -40,7 +40,7 @@ export type AmbassadorPublic = {
 };
 
 export function getAmbassadors() {
-  return apiFetch<AmbassadorPublic[]>("/api/ambassadors");
+  return apiFetch<AmbassadorPublic[]>("/api/ambassadors?limit=200");
 }
 
 export function getAmbassador(id: number) {
@@ -69,7 +69,7 @@ export type PartnerPublic = {
 };
 
 export function getPartners() {
-  return apiFetch<PartnerPublic[]>("/api/partners");
+  return apiFetch<PartnerPublic[]>("/api/partners?limit=200");
 }
 
 export type ExhibitorPublic = {
@@ -80,7 +80,7 @@ export type ExhibitorPublic = {
 };
 
 export function getExhibitors() {
-  return apiFetch<ExhibitorPublic[]>("/api/exhibitors");
+  return apiFetch<ExhibitorPublic[]>("/api/exhibitors?limit=200");
 }
 
 export type SpeakerApplyResponse = { id: number };

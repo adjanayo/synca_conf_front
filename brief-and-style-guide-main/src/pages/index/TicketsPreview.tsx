@@ -1,8 +1,34 @@
 import { TICKETS } from "@/data/parameter";
+import { getPassTypes } from "@/lib/api/registration";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const currency = new Intl.NumberFormat("fr-FR", {
+  style: "currency",
+  currency: "XOF",
+  maximumFractionDigits: 0,
+});
+
 function TicketsPreview() {
+  const passTypesQuery = useQuery({ queryKey: ["public", "pass-types"], queryFn: getPassTypes });
+  const activePassTypes = (passTypesQuery.data ?? []).filter((p) => p.is_active);
+
+  const cards =
+    activePassTypes.length > 0
+      ? activePassTypes.map((p) => ({
+          key: `pass-${p.id}`,
+          name: p.name,
+          price: currency.format(p.price),
+          target: p.description,
+          perks: p.inclusions
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean),
+          badge: "",
+        }))
+      : TICKETS.map((t) => ({ key: t.name, ...t }));
+
   return (
     <section className="py-24 bg-peach">
       <div className="mx-auto max-w-7xl px-6">
@@ -16,11 +42,11 @@ function TicketsPreview() {
           </p>
         </div>
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {TICKETS.map((t) => {
+          {cards.map((t) => {
             const featured = t.badge === "Populaire";
             return (
               <article
-                key={t.name}
+                key={t.key}
                 className={`relative rounded-3xl p-7 flex flex-col ${featured ? "bg-ink text-white shadow-glow" : "bg-white text-ink border border-border"}`}
               >
                 {t.badge && (
@@ -38,11 +64,6 @@ function TicketsPreview() {
                 </div>
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="font-display font-bold text-4xl">{t.price}</span>
-                  <span
-                    className={`text-sm ${featured ? "text-white/60" : "text-muted-foreground"}`}
-                  >
-                    F CFA
-                  </span>
                 </div>
                 <ul className="mt-6 space-y-2.5 text-sm flex-1">
                   {t.perks.map((p) => (

@@ -239,7 +239,11 @@ function AmbassadeurForm() {
       setF(empty);
       setErrors({});
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.detail : "Une erreur est survenue.");
+      if (err instanceof ApiError && err.status === 403) {
+        toast.error("Les candidatures ambassadeur sont fermées pour le moment.");
+      } else {
+        toast.error(err instanceof ApiError ? err.detail : "Une erreur est survenue.");
+      }
     } finally {
       setPending(false);
     }
