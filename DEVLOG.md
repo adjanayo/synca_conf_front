@@ -109,13 +109,13 @@ Demande utilisateur — nouveau chantier prévu **après** les parties 1 à 6 (p
 Demande utilisateur — planifié, **pas de code pour le moment** :
 
 #### Contenu des pass pilotable au dashboard
-- Pouvoir **définir le contenu des pass** depuis le dashboard.
-- À la **création d'un pass**, on fait uniquement le check des contenus de ces pass (sélection des bénéfices/inclusions).
+- **CRUD sur les pass** (créer/lire/modifier/supprimer).
+- **CRUD sur les contenus de pass** (les bénéfices/inclusions) — à la **création d'un pass**, on fait uniquement le check des contenus de ces pass (sélection des bénéfices/inclusions).
 - Le **site web** ne lit que ces contenus (checkés) pour **afficher sur la page d'accueil**.
 - Sur le **formulaire d'inscription**, **seul le nom des pass** est affiché (pas le détail des contenus).
 
 #### Offres partenaires pilotables au dashboard
-- Pouvoir **définir les offres souhaitées** depuis le dashboard (les paliers/offres de partenariat).
+- **CRUD sur les offres souhaitées** (les paliers/offres de partenariat) depuis le dashboard.
 - Les candidats font **leur choix parmi ces offres lors du remplissage du formulaire** de partenaires.
 
 ## Journal
