@@ -37,7 +37,7 @@ export function SpeakersView() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {confirmed.length > 0
               ? confirmed.map((s) => (
-                  <div key={s.id} className="group">
+                  <Link key={s.id} to={`/speakers/${s.id}`} className="group">
                     <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-ink/20">
                       {s.photo_url ? (
                         <img
@@ -57,7 +57,7 @@ export function SpeakersView() {
                       {s.first_name} {s.last_name}
                     </div>
                     <div className="text-sm text-muted-foreground">{s.title_role}</div>
-                  </div>
+                  </Link>
                 ))
               : SPEAKERS.map((s, i) => (
                   <div key={i} className="group">

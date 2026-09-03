@@ -7,14 +7,44 @@ export type SpeakerPublic = {
   title_role: string;
   company: string | null;
   country: string;
+  linkedin_url: string | null;
+  website_url: string | null;
   photo_url: string | null;
   intervention_format: string;
   intervention_title: string;
   theme: string;
+  summary: string;
+  audience_level: string | null;
+  language: string | null;
 };
 
 export function getSpeakers() {
   return apiFetch<SpeakerPublic[]>("/api/speakers");
+}
+
+export function getSpeaker(id: number) {
+  return apiFetch<SpeakerPublic>(`/api/speakers/${id}`);
+}
+
+export type AmbassadorPublic = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  country: string;
+  city: string;
+  photo_url: string | null;
+  current_profile: string | null;
+  institution_company: string | null;
+  linkedin_url: string | null;
+  social_handles: Record<string, string> | null;
+};
+
+export function getAmbassadors() {
+  return apiFetch<AmbassadorPublic[]>("/api/ambassadors");
+}
+
+export function getAmbassador(id: number) {
+  return apiFetch<AmbassadorPublic>(`/api/ambassadors/${id}`);
 }
 
 export type PartnerLevel = {

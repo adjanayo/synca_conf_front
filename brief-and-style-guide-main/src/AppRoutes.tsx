@@ -11,6 +11,9 @@ import { PartenairesPage } from "./pages/partenaires";
 import { ExposantsPage } from "./pages/exposants";
 import { ProgrammeView } from "./pages/programmes/ProgrammeView";
 import { SpeakersView } from "./pages/speakers/SpeakersView";
+import { SpeakerDetailView } from "./pages/speakers/SpeakerDetailView";
+import { AmbassadeursView } from "./pages/ambassadeurs/AmbassadeursView";
+import { AmbassadeurDetailView } from "./pages/ambassadeurs/AmbassadeurDetailView";
 import { SpeakerPage } from "./pages/candidature-speaker";
 import { IndexView } from "./pages/index/IndexView";
 import { ConnexionPage } from "./pages/connexion/ConnexionPage";
@@ -253,9 +256,12 @@ export default function AppRoutes() {
         <Route index element={<IndexView />} />
         <Route path="programme" element={<ProgrammeView />} />
         <Route path="speakers" element={<SpeakersView />} />
+        <Route path="speakers/:id" element={<SpeakerDetailView />} />
         <Route path="partenaires" element={<PartenairesPage />} />
         <Route path="exposants" element={<ExposantsPage />} />
         <Route path="ambassadeur" element={<AmbassadeurPage />} />
+        <Route path="ambassadeurs" element={<AmbassadeursView />} />
+        <Route path="ambassadeurs/:id" element={<AmbassadeurDetailView />} />
         <Route path="faq" element={<FAQView />} />
         <Route path="contact" element={<ContactView />} />
         <Route path="inscription" element={<InscriptionPage />} />
