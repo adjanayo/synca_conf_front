@@ -13,6 +13,7 @@ import {
 import { applyAsAmbassador } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
+import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
 
 export function AmbassadeurPage() {
   const { year } = useEventWindow();
@@ -117,10 +118,9 @@ export function AmbassadeurPage() {
           </div>
         </div>
       </section>
-      <AmbassadeurForm />
-      {/*} <DateGate opensAt={OPENS_AT} label="Le programme ambassadeur ouvre en mars 2027.">
-        
-      </DateGate>*/}
+      <CampaignWindowGate windowKey="call_for_ambassador" label="Les candidatures ambassadeur">
+        <AmbassadeurForm />
+      </CampaignWindowGate>
     </>
   );
 }

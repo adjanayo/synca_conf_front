@@ -14,6 +14,7 @@ import {
 import { applyAsPartner, getPartnerLevels, type PartnerLevel } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
+import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
 
 const WHY_PARTNER = [
   {
@@ -204,7 +205,11 @@ export function PartenairesPage() {
         </div>
       </section>
 
-      <PartnerForm />
+      <div id="form">
+        <CampaignWindowGate windowKey="call_for_partner" label="Les candidatures partenaires">
+          <PartnerForm />
+        </CampaignWindowGate>
+      </div>
     </>
   );
 }
@@ -360,7 +365,7 @@ function PartnerForm() {
   };
 
   return (
-    <div id="form" className="bg-background py-4">
+    <div className="bg-background py-4">
       {/* Intro formulaire */}
       <div className="mx-auto max-w-3xl px-6 pt-10">
         <div className="text-center mb-6">

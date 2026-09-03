@@ -46,10 +46,20 @@ export function useCampaignWindow(key: string) {
     staleTime: 5 * 60 * 1000,
   });
   const w = query.data?.find((x) => x.key === key);
+  const startAt = w ? new Date(w.start_at) : null;
+  const endAt = w ? new Date(w.end_at) : null;
+  const isActive = w?.is_active ?? false;
+  const now = Date.now();
+
   return {
-    startAt: w ? new Date(w.start_at) : null,
-    endAt: w ? new Date(w.end_at) : null,
-    isActive: w?.is_active ?? false,
+    startAt,
+    endAt,
+    isActive,
+    isLoading: query.isLoading,
+    // Reprend exactement la règle serveur (`require_open_campaign`) : actif +
+    // dans la plage [début, fin]. Les formulaires publics s'alignent dessus
+    // pour ne jamais afficher un formulaire que le backend rejettera en 403.
+    isOpen: isActive && startAt !== null && endAt !== null && now >= startAt.getTime() && now <= endAt.getTime(),
   };
 }
 

@@ -14,6 +14,7 @@ import {
 import { applyAsSpeaker } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useCampaignWindow, useEventWindow, formatMonthYear } from "../hooks/useEventWindow";
+import { CampaignWindowGate } from "../components/site/CampaignWindowGate";
 
 export function SpeakerPage() {
   const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
@@ -28,10 +29,9 @@ export function SpeakerPage() {
         }
         description={`Candidature ouverte dès ${speakersOpenAt ? formatMonthYear(speakersOpenAt) : "l'ouverture des candidatures"} — formats keynote, panel, workshop, lightning talk ou fireside chat. Sélection sur dossier.`}
       />
-      <SpeakerForm />
-      {/*<DateGate opensAt={OPENS_AT} label="Les candidatures speakers ouvrent en mars 2027.">
-        
-      </DateGate>*/}
+      <CampaignWindowGate windowKey="call_for_speaker" label="Les candidatures speakers">
+        <SpeakerForm />
+      </CampaignWindowGate>
     </>
   );
 }
