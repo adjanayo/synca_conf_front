@@ -105,6 +105,9 @@ export function AdminDashboardPage() {
                 <Link to="pass-types">Types de pass</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <Link to="partner-levels">Paliers de partenariat</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to="promo-codes">Codes promo</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

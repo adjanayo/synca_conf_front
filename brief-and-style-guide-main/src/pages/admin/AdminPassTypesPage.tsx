@@ -3,9 +3,14 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  createPassContent,
   createPassType,
+  deletePassContent,
+  deletePassType,
+  listPassContents,
   listPassTypes,
   updatePassType,
+  type PassContent,
   type PassType,
 } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
@@ -15,15 +20,127 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Switch } from "../../components/ui/switch";
 import { Button } from "../../components/ui/button";
+import { Checkbox } from "../../components/ui/checkbox";
 import { Textarea } from "../../components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 
-function PassTypeCard({ passType: p }: { passType: PassType }) {
+function toggleId(ids: number[], id: number, checked: boolean): number[] {
+  return checked ? [...ids, id] : ids.filter((x) => x !== id);
+}
+
+function ContentCheckboxList({
+  contents,
+  selectedIds,
+  onToggle,
+  idPrefix,
+}: {
+  contents: PassContent[];
+  selectedIds: number[];
+  onToggle: (id: number, checked: boolean) => void;
+  idPrefix: string;
+}) {
+  if (contents.length === 0) {
+    return <p className="text-sm text-muted-foreground">Aucun contenu dans le catalogue pour l'instant.</p>;
+  }
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {contents.map((c) => (
+        <label key={c.id} htmlFor={`${idPrefix}-content-${c.id}`} className="flex items-center gap-2 text-sm">
+          <Checkbox
+            id={`${idPrefix}-content-${c.id}`}
+            checked={selectedIds.includes(c.id)}
+            onCheckedChange={(checked) => onToggle(c.id, checked === true)}
+          />
+          {c.label}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function PassContentCatalog({ contents }: { contents: PassContent[] }) {
+  const queryClient = useQueryClient();
+  const [label, setLabel] = useState("");
+
+  const createMutation = useMutation({
+    mutationFn: () => createPassContent(label),
+    onSuccess: () => {
+      toast.success("Contenu ajouté au catalogue.");
+      setLabel("");
+      queryClient.invalidateQueries({ queryKey: ["admin", "pass-contents"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deletePassContent(id),
+    onSuccess: () => {
+      toast.success("Contenu supprimé du catalogue.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "pass-contents"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "pass-types"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  return (
+    <Card className="mb-8">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-medium text-ink">Catalogue des contenus de pass</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Bénéfices/inclusions réutilisables — coche ceux qui s'appliquent à chaque pass ci-dessous.
+        </p>
+        {contents.length > 0 && (
+          <ul className="space-y-1.5">
+            {contents.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-2 text-sm">
+                <span>{c.label}</span>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={deleteMutation.isPending}
+                  onClick={() => {
+                    if (window.confirm(`Supprimer "${c.label}" du catalogue ?`)) {
+                      deleteMutation.mutate(c.id);
+                    }
+                  }}
+                >
+                  Supprimer
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="flex gap-2">
+          <Input
+            placeholder="Nouveau contenu (ex : Déjeuner inclus)"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+          />
+          <Button
+            size="sm"
+            disabled={label.trim() === "" || createMutation.isPending}
+            onClick={() => createMutation.mutate()}
+          >
+            Ajouter
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PassTypeCard({ passType: p, contents }: { passType: PassType; contents: PassContent[] }) {
   const queryClient = useQueryClient();
   const [name, setName] = useState(p.name);
   const [price, setPrice] = useState(String(p.price));
   const [description, setDescription] = useState(p.description ?? "");
-  const [inclusions, setInclusions] = useState(p.inclusions ?? "");
+  const [contentIds, setContentIds] = useState(p.contents.map((c) => c.id));
   const [maxDays, setMaxDays] = useState(String(p.max_days));
   const [isActive, setIsActive] = useState(p.is_active);
 
@@ -31,18 +148,18 @@ function PassTypeCard({ passType: p }: { passType: PassType }) {
     setName(p.name);
     setPrice(String(p.price));
     setDescription(p.description ?? "");
-    setInclusions(p.inclusions ?? "");
+    setContentIds(p.contents.map((c) => c.id));
     setMaxDays(String(p.max_days));
     setIsActive(p.is_active);
-  }, [p.name, p.price, p.description, p.inclusions, p.max_days, p.is_active]);
+  }, [p.name, p.price, p.description, p.contents, p.max_days, p.is_active]);
 
-  const mutation = useMutation({
+  const updateMutation = useMutation({
     mutationFn: () =>
       updatePassType(p.id, {
         name,
         price: Number(price),
         description: description || undefined,
-        inclusions: inclusions || undefined,
+        content_ids: contentIds,
         max_days: Number(maxDays),
         is_active: isActive,
       }),
@@ -55,11 +172,25 @@ function PassTypeCard({ passType: p }: { passType: PassType }) {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePassType(p.id),
+    onSuccess: () => {
+      toast.success(`${p.name} supprimé.`);
+      queryClient.invalidateQueries({ queryKey: ["admin", "pass-types"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const sameContentIds =
+    contentIds.length === p.contents.length &&
+    contentIds.every((id) => p.contents.some((c) => c.id === id));
   const dirty =
     name !== p.name ||
     price !== String(p.price) ||
     description !== (p.description ?? "") ||
-    inclusions !== (p.inclusions ?? "") ||
+    !sameContentIds ||
     maxDays !== String(p.max_days) ||
     isActive !== p.is_active;
 
@@ -96,11 +227,12 @@ function PassTypeCard({ passType: p }: { passType: PassType }) {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor={`inclusions-${p.id}`}>Inclusions</Label>
-          <Textarea
-            id={`inclusions-${p.id}`}
-            value={inclusions}
-            onChange={(e) => setInclusions(e.target.value)}
+          <Label>Contenus inclus</Label>
+          <ContentCheckboxList
+            contents={contents}
+            selectedIds={contentIds}
+            onToggle={(id, checked) => setContentIds((ids) => toggleId(ids, id, checked))}
+            idPrefix={`pass-${p.id}`}
           />
         </div>
         <div className="grid grid-cols-2 gap-4 items-end">
@@ -119,11 +251,21 @@ function PassTypeCard({ passType: p }: { passType: PassType }) {
             <Label htmlFor={`active-${p.id}`}>Pass actif</Label>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-between">
           <Button
             size="sm"
-            disabled={!dirty || mutation.isPending}
-            onClick={() => mutation.mutate()}
+            variant="destructive"
+            disabled={deleteMutation.isPending}
+            onClick={() => {
+              if (window.confirm(`Supprimer le pass "${p.name}" ?`)) deleteMutation.mutate();
+            }}
+          >
+            Supprimer
+          </Button>
+          <Button
+            size="sm"
+            disabled={!dirty || updateMutation.isPending}
+            onClick={() => updateMutation.mutate()}
           >
             Enregistrer
           </Button>
@@ -133,12 +275,12 @@ function PassTypeCard({ passType: p }: { passType: PassType }) {
   );
 }
 
-function NewPassTypeForm() {
+function NewPassTypeForm({ contents }: { contents: PassContent[] }) {
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [inclusions, setInclusions] = useState("");
+  const [contentIds, setContentIds] = useState<number[]>([]);
   const [maxDays, setMaxDays] = useState("1");
   const [isActive, setIsActive] = useState(true);
 
@@ -148,7 +290,7 @@ function NewPassTypeForm() {
         name,
         price: Number(price),
         description: description || undefined,
-        inclusions: inclusions || undefined,
+        content_ids: contentIds,
         max_days: Number(maxDays),
         is_active: isActive,
       }),
@@ -157,7 +299,7 @@ function NewPassTypeForm() {
       setName("");
       setPrice("");
       setDescription("");
-      setInclusions("");
+      setContentIds([]);
       setMaxDays("1");
       setIsActive(true);
       queryClient.invalidateQueries({ queryKey: ["admin", "pass-types"] });
@@ -199,11 +341,12 @@ function NewPassTypeForm() {
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="new-inclusions">Inclusions</Label>
-          <Textarea
-            id="new-inclusions"
-            value={inclusions}
-            onChange={(e) => setInclusions(e.target.value)}
+          <Label>Contenus inclus</Label>
+          <ContentCheckboxList
+            contents={contents}
+            selectedIds={contentIds}
+            onToggle={(id, checked) => setContentIds((ids) => toggleId(ids, id, checked))}
+            idPrefix="new-pass"
           />
         </div>
         <div className="grid grid-cols-2 gap-4 items-end">
@@ -243,6 +386,13 @@ export function AdminPassTypesPage() {
     retry: (failureCount, error) =>
       error instanceof ApiError && error.status !== 401 && failureCount < 2,
   });
+  const passContentsQuery = useQuery({
+    queryKey: ["admin", "pass-contents"],
+    queryFn: listPassContents,
+    retry: (failureCount, error) =>
+      error instanceof ApiError && error.status !== 401 && failureCount < 2,
+  });
+  const contents = passContentsQuery.data ?? [];
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
@@ -255,7 +405,9 @@ export function AdminPassTypesPage() {
         </div>
       </div>
 
-      <NewPassTypeForm />
+      <PassContentCatalog contents={contents} />
+
+      <NewPassTypeForm contents={contents} />
 
       {passTypesQuery.isPending && (
         <div className="grid gap-4">
@@ -277,7 +429,7 @@ export function AdminPassTypesPage() {
       {passTypesQuery.data && (
         <div className="grid gap-4">
           {passTypesQuery.data.map((p) => (
-            <PassTypeCard key={p.id} passType={p} />
+            <PassTypeCard key={p.id} passType={p} contents={contents} />
           ))}
         </div>
       )}

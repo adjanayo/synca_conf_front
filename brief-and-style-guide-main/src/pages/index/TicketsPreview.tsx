@@ -20,10 +20,7 @@ function TicketsPreview() {
     name: p.name,
     price: currency.format(p.price),
     target: p.description,
-    perks: p.inclusions
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean),
+    perks: p.contents.map((c) => c.label),
     badge: "",
   }));
 

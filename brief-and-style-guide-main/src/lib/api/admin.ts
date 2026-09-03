@@ -519,33 +519,39 @@ export function listAuditLogs(filters: AuditLogFilters = {}) {
   });
 }
 
+export type PassContent = {
+  id: number;
+  label: string;
+  created_at: string;
+};
+
 export type PassType = {
   id: number;
   name: string;
   price: number;
   description: string | null;
-  inclusions: string | null;
   max_days: number;
   is_active: boolean;
   created_at: string;
+  contents: PassContent[];
 };
 
 export type PassTypeCreate = {
   name: string;
   price: number;
   description?: string;
-  inclusions?: string;
   max_days?: number;
   is_active?: boolean;
+  content_ids?: number[];
 };
 
 export type PassTypeUpdate = {
   name?: string;
   price?: number;
   description?: string;
-  inclusions?: string;
   max_days?: number;
   is_active?: boolean;
+  content_ids?: number[];
 };
 
 export function listPassTypes() {
@@ -565,6 +571,82 @@ export function updatePassType(id: number, body: PassTypeUpdate) {
     method: "PATCH",
     auth: "admin",
     body,
+  });
+}
+
+export function deletePassType(id: number) {
+  return apiFetch<void>(`/api/admin/pass-types/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export function listPassContents() {
+  return apiFetch<PassContent[]>("/api/admin/pass-contents", { auth: "admin" });
+}
+
+export function createPassContent(label: string) {
+  return apiFetch<PassContent>("/api/admin/pass-contents", {
+    method: "POST",
+    auth: "admin",
+    body: { label },
+  });
+}
+
+export function deletePassContent(id: number) {
+  return apiFetch<void>(`/api/admin/pass-contents/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export type PartnerLevel = {
+  id: number;
+  name: string;
+  price: number;
+  benefits: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type PartnerLevelCreate = {
+  name: string;
+  price: number;
+  benefits?: string;
+  sort_order?: number;
+};
+
+export type PartnerLevelUpdate = {
+  name?: string;
+  price?: number;
+  benefits?: string;
+  sort_order?: number;
+};
+
+export function listPartnerLevelsAdmin() {
+  return apiFetch<PartnerLevel[]>("/api/admin/partner-levels", { auth: "admin" });
+}
+
+export function createPartnerLevel(body: PartnerLevelCreate) {
+  return apiFetch<PartnerLevel>("/api/admin/partner-levels", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updatePartnerLevel(id: number, body: PartnerLevelUpdate) {
+  return apiFetch<PartnerLevel>(`/api/admin/partner-levels/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deletePartnerLevel(id: number) {
+  return apiFetch<void>(`/api/admin/partner-levels/${id}`, {
+    method: "DELETE",
+    auth: "admin",
   });
 }
 

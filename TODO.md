@@ -15,15 +15,3 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
 - [ ] Gestion du refresh token quand le backend l'exposera — bloqué, `POST /api/admin/login` émet déjà `refresh_token` mais aucun endpoint `/refresh` n'existe côté back pour le consommer
 
-## Partie 8 — Contenu des pass pilotable + offres partenaires au dashboard
-Demande utilisateur — planifié, **pas de code pour le moment** :
-
-### Contenu des pass pilotable au dashboard
-- **CRUD sur les pass** (créer/lire/modifier/supprimer).
-- **CRUD sur les contenus de pass** (les bénéfices/inclusions) — à la **création d'un pass**, on fait uniquement le check des contenus de ces pass (sélection des bénéfices/inclusions).
-- Le **site web** ne lit que ces contenus (checkés) pour **afficher sur la page d'accueil**.
-- Sur le **formulaire d'inscription**, **seul le nom des pass** est affiché (pas le détail des contenus).
-
-### Offres partenaires pilotables au dashboard
-- **CRUD sur les offres souhaitées** (les paliers/offres de partenariat) depuis le dashboard.
-- Les candidats font **leur choix parmi ces offres lors du remplissage du formulaire** de partenaires.

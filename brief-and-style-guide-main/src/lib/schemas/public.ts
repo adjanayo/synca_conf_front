@@ -64,15 +64,20 @@ export const faqPublicSchema = z.object({
   sort_order: z.number(),
 });
 
+export const passContentSchema = z.object({
+  id: z.number(),
+  label: z.string(),
+});
+
 export const passTypeSchema = z.object({
   id: z.number(),
   name: z.string(),
   price: z.number(),
-  description: z.string(),
-  inclusions: z.string(),
+  description: z.string().nullable(),
   max_days: z.number(),
   is_active: z.boolean(),
   created_at: z.string(),
+  contents: z.array(passContentSchema),
 });
 
 export const campaignWindowSchema = z.object({
