@@ -14,7 +14,6 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 ## Partie 6 — Divers
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
 - [ ] Gestion du refresh token quand le backend l'exposera — bloqué, `POST /api/admin/login` émet déjà `refresh_token` mais aucun endpoint `/refresh` n'existe côté back pour le consommer
-- [ ] Génération du ticket (PDF+QR) — nom de l'événement en dur `"SYNCA CONF 2027"` dans `_render_ticket_pdf()` (`app/services/ticket_pdf.py`, **repo `synca_conf_back`**, hors périmètre de ce repo) au lieu de lire `EventSettings` (nom/année déjà en DB, déjà exposés via `GET /api/event-settings`) — à signaler/traiter côté back
 
 ## Partie 7 — Hackathon universitaire + Synca Community Certified
 - [ ] Lien vers `/hackathon-universitaire` dans le `Nav.tsx` principal (pas fait — cohérent avec exposants/candidature-speaker, pages déjà atteignables sans être dans le menu top ; à ajouter si l'utilisateur veut plus de visibilité)
