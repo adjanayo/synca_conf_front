@@ -31,7 +31,7 @@ type Form = {
   produits: string;
   equipements: string[];
   activites: string[];
-  visuelUrl: string;
+  visuel: File | null;
   paiement: string;
   reglement: boolean;
   rgpd: boolean;
@@ -52,7 +52,7 @@ const empty: Form = {
   produits: "",
   equipements: [],
   activites: [],
-  visuelUrl: "",
+  visuel: null,
   paiement: "",
   reglement: false,
   rgpd: false,
@@ -123,28 +123,29 @@ function ExhibitorForm() {
       return;
     }
 
+    const fd = new FormData();
+    fd.set("organization_name", f.denomination.trim());
+    fd.set("sector", f.secteur);
+    fd.set("country", f.pays);
+    fd.set("city", f.ville.trim());
+    if (f.siteWeb.trim()) fd.set("website_url", f.siteWeb.trim());
+    fd.set("contact_name", f.contactNom.trim());
+    fd.set("contact_position", f.contactPoste.trim());
+    fd.set("contact_email", f.email.trim());
+    fd.set("contact_phone", f.phone.trim());
+    fd.set("stand_type", f.standType);
+    fd.set("reps_count", String(reps));
+    fd.set("products_services", f.produits.trim());
+    for (const eq of f.equipements) fd.append("equipment_needs", eq);
+    for (const act of f.activites) fd.append("side_activities", act);
+    if (f.paiement) fd.set("payment_method", f.paiement);
+    fd.set("rules_accepted", String(f.reglement));
+    fd.set("gdpr_consent", String(f.rgpd));
+    if (f.visuel) fd.set("visuals", f.visuel);
+
     setPending(true);
     try {
-      await applyAsExhibitor({
-        organization_name: f.denomination.trim(),
-        sector: f.secteur,
-        country: f.pays,
-        city: f.ville.trim(),
-        website_url: f.siteWeb.trim() || undefined,
-        contact_name: f.contactNom.trim(),
-        contact_position: f.contactPoste.trim(),
-        contact_email: f.email.trim(),
-        contact_phone: f.phone.trim(),
-        stand_type: f.standType,
-        reps_count: reps,
-        products_services: f.produits.trim(),
-        equipment_needs: f.equipements.length ? f.equipements : undefined,
-        side_activities: f.activites.length ? f.activites : undefined,
-        visuals_url: f.visuelUrl.trim() || undefined,
-        payment_method: f.paiement || undefined,
-        rules_accepted: f.reglement,
-        gdpr_consent: f.rgpd,
-      });
+      await applyAsExhibitor(fd);
       toast.success("Demande envoyée !", {
         description: "L'équipe exposition te recontacte sous 48h.",
       });
@@ -347,13 +348,12 @@ function ExhibitorForm() {
               </div>
             </Field>
 
-            <Field label="Lien logo / visuel (optionnel)" full>
+            <Field label="Logo / visuel du stand (optionnel)" full>
               <input
-                type="url"
+                type="file"
+                accept="image/jpeg,image/png"
                 className={inputCls}
-                value={f.visuelUrl}
-                onChange={(e) => set("visuelUrl", e.target.value)}
-                placeholder="https://…"
+                onChange={(e) => set("visuel", e.target.files?.[0] ?? null)}
               />
             </Field>
 

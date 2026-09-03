@@ -71,33 +71,8 @@ export function applyAsPartner(formData: FormData) {
   return apiFetchForm<PartnerApplyResponse>("/api/partners/apply", formData);
 }
 
-export type ExhibitorApplyPayload = {
-  organization_name: string;
-  sector: string;
-  country: string;
-  city: string;
-  website_url?: string;
-  contact_name: string;
-  contact_position: string;
-  contact_email: string;
-  contact_phone: string;
-  stand_type: string;
-  reps_count: number;
-  linked_partner_level?: string;
-  products_services: string;
-  equipment_needs?: string[];
-  side_activities?: string[];
-  visuals_url?: string;
-  payment_method?: string;
-  rules_accepted: boolean;
-  gdpr_consent: boolean;
-};
-
 export type ExhibitorApplyResponse = { id: number };
 
-export function applyAsExhibitor(payload: ExhibitorApplyPayload) {
-  return apiFetch<ExhibitorApplyResponse>("/api/exhibitors/apply", {
-    method: "POST",
-    body: payload,
-  });
+export function applyAsExhibitor(formData: FormData) {
+  return apiFetchForm<ExhibitorApplyResponse>("/api/exhibitors/apply", formData);
 }
