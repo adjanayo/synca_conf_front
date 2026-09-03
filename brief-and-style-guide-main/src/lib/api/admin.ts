@@ -777,6 +777,96 @@ export function deleteSession(id: number) {
   });
 }
 
+export type FaqCategory = {
+  id: number;
+  name: string;
+};
+
+export type FaqCategoryCreate = { name: string };
+export type FaqCategoryUpdate = { name?: string };
+
+export function listFaqCategories() {
+  return apiFetch<FaqCategory[]>("/api/admin/faq-categories", { auth: "admin" });
+}
+
+export function createFaqCategory(body: FaqCategoryCreate) {
+  return apiFetch<FaqCategory>("/api/admin/faq-categories", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updateFaqCategory(id: number, body: FaqCategoryUpdate) {
+  return apiFetch<FaqCategory>(`/api/admin/faq-categories/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deleteFaqCategory(id: number) {
+  return apiFetch<void>(`/api/admin/faq-categories/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export type Faq = {
+  id: number;
+  category_id: number;
+  question: string;
+  answer: string;
+  sort_order: number;
+  created_at: string;
+};
+
+export type FaqFilters = { category_id?: number };
+
+export type FaqCreate = {
+  category_id: number;
+  question: string;
+  answer: string;
+  sort_order?: number;
+};
+
+export type FaqUpdate = {
+  category_id?: number;
+  question?: string;
+  answer?: string;
+  sort_order?: number;
+};
+
+export function listFaqs(filters: FaqFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.category_id !== undefined) params.set("category_id", String(filters.category_id));
+  const query = params.toString();
+  return apiFetch<Faq[]>(`/api/admin/faqs${query ? `?${query}` : ""}`, { auth: "admin" });
+}
+
+export function createFaq(body: FaqCreate) {
+  return apiFetch<Faq>("/api/admin/faqs", {
+    method: "POST",
+    auth: "admin",
+    body,
+  });
+}
+
+export function updateFaq(id: number, body: FaqUpdate) {
+  return apiFetch<Faq>(`/api/admin/faqs/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body,
+  });
+}
+
+export function deleteFaq(id: number) {
+  return apiFetch<void>(`/api/admin/faqs/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
 export type Waitlist = {
   id: number;
   email: string;

@@ -33,6 +33,7 @@ import { AdminPassTypesPage } from "./pages/admin/AdminPassTypesPage";
 import { AdminPromoCodesPage } from "./pages/admin/AdminPromoCodesPage";
 import { AdminEventSettingsPage } from "./pages/admin/AdminEventSettingsPage";
 import { AdminProgramPage } from "./pages/admin/AdminProgramPage";
+import { AdminFaqPage } from "./pages/admin/AdminFaqPage";
 import { AdminRegistrationsPage } from "./pages/admin/AdminRegistrationsPage";
 import { AdminWaitlistPage } from "./pages/admin/AdminWaitlistPage";
 
@@ -218,6 +219,14 @@ export default function AppRoutes() {
             element={
               <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="sessions.manage">
                 <AdminProgramPage />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="faq"
+            element={
+              <AdminRequireAuth loginPath={`${ADMIN_BASE}/login`} permission="faqs.manage">
+                <AdminFaqPage />
               </AdminRequireAuth>
             }
           />

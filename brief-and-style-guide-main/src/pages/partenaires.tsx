@@ -11,7 +11,15 @@ import {
   PARTNER_OBJECTIFS,
   SOURCES,
 } from "../lib/forms/constants";
-import { applyAsPartner, getPartnerLevels, type PartnerLevel } from "../lib/api/applications";
+import {
+  applyAsPartner,
+  getPartnerLevels,
+  getPartners,
+  getExhibitors,
+  type PartnerLevel,
+  type PartnerPublic,
+  type ExhibitorPublic,
+} from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
@@ -205,12 +213,96 @@ export function PartenairesPage() {
         </div>
       </section>
 
+      <PartnersShowcase />
+
       <div id="form">
         <CampaignWindowGate windowKey="call_for_partner" label="Les candidatures partenaires">
           <PartnerForm />
         </CampaignWindowGate>
       </div>
     </>
+  );
+}
+
+function PartnersShowcase() {
+  const [partners, setPartners] = useState<PartnerPublic[] | null>(null);
+  const [exhibitors, setExhibitors] = useState<ExhibitorPublic[] | null>(null);
+
+  useEffect(() => {
+    getPartners()
+      .then(setPartners)
+      .catch(() => setPartners([]));
+    getExhibitors()
+      .then(setExhibitors)
+      .catch(() => setExhibitors([]));
+  }, []);
+
+  if (partners === null || exhibitors === null) return null;
+
+  return (
+    <section className="py-16 bg-cream">
+      <div className="mx-auto max-w-7xl px-6 space-y-14">
+        <div>
+          <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold text-center">
+            Ils nous soutiennent
+          </div>
+          <h2 className="mt-3 font-display font-bold text-3xl text-center">Nos partenaires</h2>
+
+          {partners.length === 0 ? (
+            <p className="mt-6 mx-auto max-w-xl text-center text-muted-foreground">
+              Nos partenaires seront annoncés prochainement. Suis nos pages Synca Conf pour ne rien
+              manquer de l'annonce.
+            </p>
+          ) : (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              {partners.map((p) => (
+                <a
+                  key={p.id}
+                  href={p.website_url ?? undefined}
+                  target={p.website_url ? "_blank" : undefined}
+                  rel={p.website_url ? "noopener noreferrer" : undefined}
+                  className="flex h-20 w-40 items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-card"
+                >
+                  {p.logo_url ? (
+                    <img src={p.logo_url} alt={p.organization_name} className="max-h-full max-w-full object-contain" />
+                  ) : (
+                    <span className="text-sm font-semibold text-ink text-center">{p.organization_name}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold text-center">
+            Espace exposition
+          </div>
+          <h2 className="mt-3 font-display font-bold text-3xl text-center">Nos exposants</h2>
+
+          {exhibitors.length === 0 ? (
+            <p className="mt-6 mx-auto max-w-xl text-center text-muted-foreground">
+              Nos exposants seront annoncés prochainement. Suis nos pages Synca Conf pour ne rien
+              manquer de l'annonce.
+            </p>
+          ) : (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              {exhibitors.map((e) => (
+                <a
+                  key={e.id}
+                  href={e.website_url ?? undefined}
+                  target={e.website_url ? "_blank" : undefined}
+                  rel={e.website_url ? "noopener noreferrer" : undefined}
+                  className="flex h-20 w-40 items-center justify-center rounded-2xl border border-border bg-white p-4 shadow-card"
+                >
+                  <span className="text-sm font-semibold text-ink text-center">{e.organization_name}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 

@@ -30,6 +30,29 @@ export function getPartnerLevels() {
   return apiFetch<PartnerLevel[]>("/api/partner-levels");
 }
 
+export type PartnerPublic = {
+  id: number;
+  organization_name: string;
+  website_url: string | null;
+  logo_url: string | null;
+  level_id: number;
+};
+
+export function getPartners() {
+  return apiFetch<PartnerPublic[]>("/api/partners");
+}
+
+export type ExhibitorPublic = {
+  id: number;
+  organization_name: string;
+  website_url: string | null;
+  stand_type: string;
+};
+
+export function getExhibitors() {
+  return apiFetch<ExhibitorPublic[]>("/api/exhibitors");
+}
+
 export type SpeakerApplyResponse = { id: number };
 
 export function applyAsSpeaker(formData: FormData) {

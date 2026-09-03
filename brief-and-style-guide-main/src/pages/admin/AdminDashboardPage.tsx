@@ -113,6 +113,9 @@ export function AdminDashboardPage() {
               <DropdownMenuItem asChild>
                 <Link to="programme">Programme</Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="faq">FAQ</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Link
