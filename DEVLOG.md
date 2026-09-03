@@ -72,67 +72,9 @@
 - [x] ROADMAP_PUBLIC_SEO.md Partie 2/P2 : pagination réelle `limit`/`offset` sur les lectures publiques paginées côté backend — voir suite 12
 - [x] ROADMAP_PUBLIC_SEO.md Partie 2/P3 : audit fenêtres de campagne (CTA + 403) — déjà complet, voir suite 13
 
-## À faire plus tard — ROADMAP_PUBLIC_SEO.md (hors périmètre admin, pas à exécuter sans instruction explicite)
+## À faire plus tard
 
-### Partie 1 — SEO du site public
-- [ ] S1.1. `index.html` complet (meta description, Open Graph, Twitter cards, canonical, favicon/apple-touch-icon, theme-color)
-- [ ] S1.2. Titre/meta par route (`usePageMeta` ou react-helmet-async), une par route publique
-- [ ] S1.3. `public/robots.txt` (public autorisé, admin jamais mentionné — discrétion via token random + noindex + auth)
-- [ ] S1.4. `public/sitemap.xml` (routes publiques réelles, maintenu à jour)
-- [ ] S1.5. JSON-LD `Event` sur l'index (nom, dates, lieu, image, admission), synchronisé avec les vraies dates
-- [ ] S1.6. Pré-rendu (vite-plugin-prerender / SSG) — à valider avec l'utilisateur avant (impact build/mise en ligne)
-- [ ] S2. SEO au fil de l'eau (title/description/OG à jour à chaque nouvelle section) — pas de tracking/analytics sans accord explicite
-
-### Partie 2 — Reprise des données réelles (pages publiques)
-- [x] P1. Lectures `GET /api/days`, `/sessions`, `/pass-types`, `/speakers`, `/partners`, `/exhibitors`, `/faqs`, `/campaign-windows` (TanStack Query + types/zod + loading/erreur/empty) — voir suite 11
-- [x] P2. Pagination `limit`/`offset` (max 200), pas de champ `total` — voir suite 12
-- [x] P3. Fenêtres de campagne — activer/griser les CTA selon `is_active`/dates, gérer le 403 fenêtre fermée — voir suite 13
-
-### Partie 3 — Formulaires publics
-- [x] Validation zod + gestion erreurs (`detail` string / tableau 422) + 401 vs 403 + état "Envoi…" sur chaque formulaire public restant — voir TODO principale, suite 9. 401 non applicable (endpoints tous publics, sans token) ; newsletter non fait (aucun composant n'existe, endpoint jamais consommé — hors périmètre validation)
-
-### Partie 4 — Espace participant
-- [x] Stockage token one-time (mémoire/sessionStorage uniquement), `Authorization: Bearer` centralisé — déjà fait (`AuthContext.tsx`, `client.ts`), constaté à l'audit, aucun code à ajouter
-- [x] `GET /api/user/me`, `GET /api/user/me/tickets` (téléchargement `pdf_url` fourni par l'API, jamais construit à la main) — déjà fait (`EspacePage.tsx`, `participant.ts`)
-- [x] `DELETE /api/user/me` (RGPD, irréversible, usage unique → 401 ensuite) — déjà fait (`EspacePage.tsx`, confirmation en deux temps)
-
-### Partie 5 — Paiement / billetterie
-- [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
-- [ ] Workflow inscription → paiement → webhook → ticket PDF+QR
-
-### Partie 6 — Divers
-- [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — 1er passage fait, voir suite 14 (`FRONTEND_INTEGRATION.md` §4.5/4.6/4.7 corrigé), reste ouvert car continu
-- [ ] Gestion du refresh token quand le backend l'exposera
-- [ ] Page d'accueil a un programme actuellement qui n'est pas lu depuis la DB
-- [ ] Pour generer le ticket, les informations doivent être pris pour le nom de l'evenement depuis la DB
-
-### Partie 7 — Hackathon universitaire + Synca Community Certified
-Demande utilisateur — nouveau chantier prévu **après** les parties 1 à 6 (pas encore implémenté, planifié comme référence). Deux volets liés :
-
-#### Hackathon universitaire
-- S'appuie sur le modèle "Synca Community Certified" + un hackathon étudiant.
-- **Formation des équipes** : chaque université propose 1 à 2 équipes, choisies parmi 3 à 4 personnes max par équipe.
-- **Finale** : se joue entre 10 et 15 équipes, selon le nombre d'universités participantes.
-- **Contenu géré par les administrateurs** : ils mettent en ligne la liste des équipes par université, ainsi que les informations de dates du hackathon.
-- **Membre d'équipe** (par personne) : photo, nom complet, niveau d'étude, spécialité.
-- **Équipe** : un nom, un nom de projet, une description du projet.
-- Tout configurable au dashboard admin et affichable sur le site public.
-
-#### Synca Community Certified (rappel du gap déjà signalé)
-- La deadline de candidature (31 décembre 2026 / mi-janvier 2027) et le programme lui-même restent **en dur dans la FAQ** (`data/faq.ts`) — **aucun champ DB correspondant** (gap déjà signalé en suite 9). Ce chantier devra soit ajouter une clé `CampaignWindow` dédiée (ex. `call_for_community_certified`, comme les autres fenêtres), soit créer un modèle dédié pour piloter deadline/annonce au dashboard.
-
-### Partie 8 — Contenu des pass pilotable + offres partenaires au dashboard
-Demande utilisateur — planifié, **pas de code pour le moment** :
-
-#### Contenu des pass pilotable au dashboard
-- **CRUD sur les pass** (créer/lire/modifier/supprimer).
-- **CRUD sur les contenus de pass** (les bénéfices/inclusions) — à la **création d'un pass**, on fait uniquement le check des contenus de ces pass (sélection des bénéfices/inclusions).
-- Le **site web** ne lit que ces contenus (checkés) pour **afficher sur la page d'accueil**.
-- Sur le **formulaire d'inscription**, **seul le nom des pass** est affiché (pas le détail des contenus).
-
-#### Offres partenaires pilotables au dashboard
-- **CRUD sur les offres souhaitées** (les paliers/offres de partenariat) depuis le dashboard.
-- Les candidats font **leur choix parmi ces offres lors du remplissage du formulaire** de partenaires.
+Liste complète, détails et cases à cocher désormais dans `TODO.md` (racine du repo) — ce fichier garde uniquement le statut des phases, l'historique (TODO ci-dessus, tout coché) et le Journal. Parties 2/3/4 de `ROADMAP_PUBLIC_SEO.md` sont intégralement terminées (voir TODO ci-dessus, suites 4-13) ; restent dans `TODO.md` : Partie 1 (SEO), Partie 5 (paiement), Partie 6 (divers), Partie 7 (hackathon universitaire), Partie 8 (pass/offres partenaires pilotables).
 
 ## Journal
 
