@@ -90,9 +90,9 @@
 - [x] Validation zod + gestion erreurs (`detail` string / tableau 422) + 401 vs 403 + état "Envoi…" sur chaque formulaire public restant — voir TODO principale, suite 9. 401 non applicable (endpoints tous publics, sans token) ; newsletter non fait (aucun composant n'existe, endpoint jamais consommé — hors périmètre validation)
 
 ### Partie 4 — Espace participant
-- [ ] Stockage token one-time (mémoire/sessionStorage uniquement), `Authorization: Bearer` centralisé
-- [ ] `GET /api/user/me`, `GET /api/user/me/tickets` (téléchargement `pdf_url` fourni par l'API, jamais construit à la main)
-- [ ] `DELETE /api/user/me` (RGPD, irréversible, usage unique → 401 ensuite)
+- [x] Stockage token one-time (mémoire/sessionStorage uniquement), `Authorization: Bearer` centralisé — déjà fait (`AuthContext.tsx`, `client.ts`), constaté à l'audit, aucun code à ajouter
+- [x] `GET /api/user/me`, `GET /api/user/me/tickets` (téléchargement `pdf_url` fourni par l'API, jamais construit à la main) — déjà fait (`EspacePage.tsx`, `participant.ts`)
+- [x] `DELETE /api/user/me` (RGPD, irréversible, usage unique → 401 ensuite) — déjà fait (`EspacePage.tsx`, confirmation en deux temps)
 
 ### Partie 5 — Paiement / billetterie
 - [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
@@ -296,3 +296,8 @@ Demande utilisateur — planifié, **pas de code pour le moment** :
 - Fait : nouveau `lib/forms/validation.ts` (`zodErrors()`, convertit un `safeParse` en `Record<champ, message>`, même forme que les objets d'erreurs manuels historiques — pas de changement d'affichage `<Field error=...>` nécessaire). Migré les validations manuelles (`if` en cascade) vers des schémas zod sur les 7 formulaires publics existants : `ContactForm.tsx`, `WaitlistSignup`/`InscriptionForm` (`inscription.tsx`), `candidature-speaker.tsx`, `ambassadeur.tsx`, `partenaires.tsx`, `exposants.tsx`. Champs fichier (photo/visuel) et calculs post-validation (ex. `Number(f.repsCount)`) restés en JS classique — zod ne gagne rien dessus.
 - Non fait, hors scope : newsletter (aucun composant existant — créer le formulaire est une fonctionnalité nouvelle, pas de la validation) ; distinction 401 (aucun des 8 endpoints n'est authentifié, non applicable en l'état).
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope). `rtk npm run build` : OK, seul le warning pré-existant de taille de chunk.
+
+### 2026-09-03 (suite 10) — audit ROADMAP_PUBLIC_SEO.md Partie 4 (espace participant)
+- Fait : demande utilisateur — TODO priorisé de nouveau vidé, choix entre TanStack/zod (P1)/Partie 1 (SEO)/Partie 4 (espace participant) proposé, l'utilisateur a choisi Partie 4.
+- Audit (lecture directe, pas d'agent nécessaire) : les 3 items de Partie 4 sont déjà entièrement implémentés, aucune trace dans le TODO ni le journal. `AuthContext.tsx` stocke le token participant en `sessionStorage` uniquement (jamais `localStorage`/cookie), synchronisé de façon synchrone (pas via `useEffect`) avec `client.ts` pour éviter une requête avec token stale juste après login. `ConnexionPage.tsx` (flow OTP email→code, `/connexion`) et `EspacePage.tsx` (`/espace`, protégée par `RequireAuth`) consomment déjà `GET /api/user/me`, `GET /api/user/me/tickets` (lien direct vers `pdf_url` fourni par l'API, jamais reconstruit) et `DELETE /api/user/me` (confirmation en deux temps, logout + `queryClient.clear()` après suppression, message RGPD explicite sur l'anonymisation).
+- Aucun code changé — 3 cases cochées dans le TODO (Partie 4 complète). Refresh token (Partie 6) reste hors scope, backend ne l'expose pas encore.
