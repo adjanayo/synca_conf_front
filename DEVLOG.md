@@ -70,6 +70,7 @@
 - [x] Fix : `TicketsPreview.tsx` (accueil) affichait les tickets statiques à prix factices "** ***" dès que la liste des pass actifs API était vide — remplacé par message "seront annoncés prochainement" (repéré par l'utilisateur, backend avait l'air débranché)
 - [x] ROADMAP_PUBLIC_SEO.md Partie 3 (choisi par l'utilisateur) : validation zod sur les 7 formulaires publics existants (waitlist, contact, inscription, candidature speaker/ambassadeur/partenaire/exposant) — voir suite 9
 - [x] ROADMAP_PUBLIC_SEO.md Partie 2/P2 : pagination réelle `limit`/`offset` sur les lectures publiques paginées côté backend — voir suite 12
+- [x] ROADMAP_PUBLIC_SEO.md Partie 2/P3 : audit fenêtres de campagne (CTA + 403) — déjà complet, voir suite 13
 
 ## À faire plus tard — ROADMAP_PUBLIC_SEO.md (hors périmètre admin, pas à exécuter sans instruction explicite)
 
@@ -85,7 +86,7 @@
 ### Partie 2 — Reprise des données réelles (pages publiques)
 - [x] P1. Lectures `GET /api/days`, `/sessions`, `/pass-types`, `/speakers`, `/partners`, `/exhibitors`, `/faqs`, `/campaign-windows` (TanStack Query + types/zod + loading/erreur/empty) — voir suite 11
 - [x] P2. Pagination `limit`/`offset` (max 200), pas de champ `total` — voir suite 12
-- [ ] P3. Fenêtres de campagne — activer/griser les CTA selon `is_active`/dates, gérer le 403 fenêtre fermée
+- [x] P3. Fenêtres de campagne — activer/griser les CTA selon `is_active`/dates, gérer le 403 fenêtre fermée — voir suite 13
 
 ### Partie 3 — Formulaires publics
 - [x] Validation zod + gestion erreurs (`detail` string / tableau 422) + 401 vs 403 + état "Envoi…" sur chaque formulaire public restant — voir TODO principale, suite 9. 401 non applicable (endpoints tous publics, sans token) ; newsletter non fait (aucun composant n'existe, endpoint jamais consommé — hors périmètre validation)
@@ -319,3 +320,11 @@ Demande utilisateur — planifié, **pas de code pour le moment** :
 - Ajouté `apiFetchAll<T>()` dans `lib/api/client.ts` : boucle `offset += limit` (limit=200) tant que la page reçue fait exactement `limit` éléments, s'arrête dès qu'une page plus courte arrive (seul signal de fin de liste possible sans `total`, §9 de la roadmap).
 - Remplacé `apiFetch("...?limit=200")` par `apiFetchAll("...")` dans `lib/api/programme.ts` (`getSessions`), `lib/api/applications.ts` (`getSpeakers`, `getAmbassadors`, `getPartners`, `getExhibitors`), `lib/api/faq.ts` (`getFaqs`). `getDays`/`getFaqCategories` (`pass-types`/`campaign-windows` déjà sans le paramètre) laissés tels quels — non paginés côté backend, ajouter `limit`/`offset` dessus n'aurait aucun effet.
 - Vérification : `rtk tsc --noEmit` clean, `rtk lint` clean (0 nouvelle erreur), `rtk npm run build` OK.
+
+### 2026-09-03 (suite 13) — ROADMAP_PUBLIC_SEO.md Partie 2/P3 : audit fenêtres de campagne
+- Fait : demande utilisateur explicite — "work on partie 2 p3".
+- Audit (lecture directe des 5 pages concernées, pas d'agent nécessaire) : les deux volets de P3 sont déjà entièrement couverts, sans trace dans le journal sous ce libellé exact.
+  - CTA activé/masqué selon `is_active`/dates : `CampaignWindowGate.tsx` (compte à rebours si ouverture future connue, sinon message "pas encore ouvert") monte les 4 formulaires de candidature (`candidature-speaker.tsx`, `ambassadeur.tsx`, `exposants.tsx`, `partenaires.tsx`) ; `inscription.tsx` a son propre `DateGate` + bannière "inscriptions closes" (bascule vers liste d'attente) branchés sur la fenêtre `ticketing`.
+  - 403 fenêtre fermée en race condition (fenêtre qui se ferme pendant la saisie) : message métier dédié déjà présent sur les 5 formulaires (`err.status === 403`), ajouté en suite 8.
+- Aucun code changé — case cochée dans le TODO (Partie 2 intégralement complète : P1/P2/P3).
+- Vérification : aucune modification, pas de nouveau build nécessaire.
