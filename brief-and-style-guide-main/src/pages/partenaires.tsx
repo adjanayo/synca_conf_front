@@ -24,6 +24,8 @@ import {
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
+import { zodErrors } from "@/lib/forms/validation";
+import { z } from "zod";
 
 const WHY_PARTNER = [
   {
@@ -352,6 +354,20 @@ const empty: Form = {
   rgpd: false,
 };
 
+const partnerSchema = z.object({
+  denomination: z.string().trim().min(1, "Requis"),
+  secteur: z.string().min(1, "Requis"),
+  pays: z.string().min(1, "Requis"),
+  ville: z.string().trim().min(1, "Requis"),
+  contactNom: z.string().trim().min(1, "Requis"),
+  contactPoste: z.string().trim().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  phone: z.string().regex(/^\+?[0-9 -]{7,}$/, "Numéro invalide"),
+  tier: z.string().min(1, "Requis"),
+  objectifs: z.array(z.string()).min(1, "Sélectionne au moins un objectif"),
+  rgpd: z.boolean().refine((v) => v === true, "Consentement requis"),
+});
+
 function PartnerForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -376,55 +392,11 @@ function PartnerForm() {
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
 
-    const e: Record<string, string> = {};
-
-    if (!f.denomination.trim()) {
-      e.denomination = "Requis";
-    }
-
-    if (!f.secteur) {
-      e.secteur = "Requis";
-    }
-
-    if (!f.pays) {
-      e.pays = "Requis";
-    }
-
-    if (!f.ville.trim()) {
-      e.ville = "Requis";
-    }
-
-    if (!f.contactNom.trim()) {
-      e.contactNom = "Requis";
-    }
-
-    if (!f.contactPoste.trim()) {
-      e.contactPoste = "Requis";
-    }
-
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) {
-      e.email = "Email invalide";
-    }
-
-    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) {
-      e.phone = "Numéro invalide";
-    }
-
-    if (!f.tier) {
-      e.tier = "Requis";
-    }
-
-    if (f.objectifs.length === 0) {
-      e.objectifs = "Sélectionne au moins un objectif";
-    }
-
-    if (!f.rgpd) {
-      e.rgpd = "Consentement requis";
-    }
-
+    const parsed = partnerSchema.safeParse(f);
+    const e = zodErrors(parsed);
     setErrors(e);
 
-    if (Object.keys(e).length) {
+    if (!parsed.success) {
       toast.error("Merci de corriger les champs.");
       return;
     }

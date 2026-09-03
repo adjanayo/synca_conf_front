@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
@@ -15,6 +16,7 @@ import { applyAsSpeaker } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useCampaignWindow, useEventWindow, formatMonthYear } from "../hooks/useEventWindow";
 import { CampaignWindowGate } from "../components/site/CampaignWindowGate";
+import { zodErrors } from "../lib/forms/validation";
 
 export function SpeakerPage() {
   const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
@@ -94,6 +96,35 @@ function countWords(s: string) {
   return s.trim().split(/\s+/).filter(Boolean).length;
 }
 
+const schema = z.object({
+  prenom: z.string().trim().min(1, "Requis"),
+  nom: z.string().trim().min(1, "Requis"),
+  titre: z.string().trim().min(1, "Requis"),
+  entreprise: z.string().trim().min(1, "Requis"),
+  pays: z.string().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  phone: z.string().regex(/^\+?[0-9 -]{7,}$/, "Numéro invalide"),
+  linkedin: z.string().regex(/^https?:\/\//, "URL LinkedIn requise"),
+  format: z.string().min(1, "Requis"),
+  titreIntervention: z.string().trim().min(1, "Requis").max(100, "Max 100 caractères"),
+  thematique: z.string().min(1, "Requis"),
+  resume: z
+    .string()
+    .trim()
+    .min(1, "Requis")
+    .refine((s) => countWords(s) <= 200, "Max 200 mots"),
+  audience: z.string().min(1, "Requis"),
+  langue: z.string().min(1, "Requis"),
+  dispo: z.string().min(1, "Requis"),
+  motivation: z
+    .string()
+    .trim()
+    .min(1, "Requis")
+    .refine((s) => countWords(s) <= 150, "Max 150 mots"),
+  diffusion: z.string().min(1, "Requis"),
+  rgpd: z.boolean().refine((v) => v === true, "Consentement requis"),
+});
+
 function SpeakerForm() {
   const { dateLabel } = useEventWindow();
   const [f, setF] = useState<Form>(empty);
@@ -103,30 +134,10 @@ function SpeakerForm() {
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    const e: Record<string, string> = {};
-    if (!f.prenom.trim()) e.prenom = "Requis";
-    if (!f.nom.trim()) e.nom = "Requis";
-    if (!f.titre.trim()) e.titre = "Requis";
-    if (!f.entreprise.trim()) e.entreprise = "Requis";
-    if (!f.pays) e.pays = "Requis";
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
-    if (!/^https?:\/\//.test(f.linkedin)) e.linkedin = "URL LinkedIn requise";
+    const parsed = schema.safeParse(f);
+    const e = zodErrors(parsed);
     if (!f.photo) e.photo = "Photo HD requise";
     else if (f.photo.size < 1024 * 1024) e.photo = "Minimum 1 MB";
-    if (!f.format) e.format = "Requis";
-    if (!f.titreIntervention.trim()) e.titreIntervention = "Requis";
-    else if (f.titreIntervention.length > 100) e.titreIntervention = "Max 100 caractères";
-    if (!f.thematique) e.thematique = "Requis";
-    if (!f.resume.trim()) e.resume = "Requis";
-    else if (countWords(f.resume) > 200) e.resume = "Max 200 mots";
-    if (!f.audience) e.audience = "Requis";
-    if (!f.langue) e.langue = "Requis";
-    if (!f.dispo) e.dispo = "Requis";
-    if (!f.motivation.trim()) e.motivation = "Requis";
-    else if (countWords(f.motivation) > 150) e.motivation = "Max 150 mots";
-    if (!f.diffusion) e.diffusion = "Requis";
-    if (!f.rgpd) e.rgpd = "Consentement requis";
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs en erreur.");
 

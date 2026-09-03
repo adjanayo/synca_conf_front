@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
@@ -14,6 +15,7 @@ import { applyAsAmbassador } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
+import { zodErrors } from "@/lib/forms/validation";
 
 export function AmbassadeurPage() {
   const { year } = useEventWindow();
@@ -175,6 +177,30 @@ function countWords(s: string) {
   return s.trim() ? s.trim().split(/\s+/).length : 0;
 }
 
+const schema = z.object({
+  prenom: z.string().trim().min(1, "Requis"),
+  nom: z.string().trim().min(1, "Requis"),
+  age: z.string().refine((v) => Number(v) >= 15 && Number(v) <= 99, "Âge invalide"),
+  pays: z.string().min(1, "Requis"),
+  ville: z.string().trim().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  phone: z.string().regex(/^\+?[0-9 -]{7,}$/, "Numéro invalide"),
+  profil: z.string().min(1, "Requis"),
+  motivation: z
+    .string()
+    .trim()
+    .min(1, "Requis")
+    .refine((s) => countWords(s) <= 150, "150 mots max"),
+  mobilisation: z
+    .string()
+    .trim()
+    .min(1, "Requis")
+    .refine((s) => countWords(s) <= 100, "100 mots max"),
+  canaux: z.array(z.string()).min(1, "Sélectionne au moins un canal"),
+  dispo: z.string().min(1, "Requis"),
+  rgpd: z.boolean().refine((v) => v === true, "Consentement requis"),
+});
+
 function AmbassadeurForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -190,23 +216,9 @@ function AmbassadeurForm() {
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    const e: Record<string, string> = {};
-    if (!f.prenom.trim()) e.prenom = "Requis";
-    if (!f.nom.trim()) e.nom = "Requis";
-    if (!f.age || Number(f.age) < 15 || Number(f.age) > 99) e.age = "Âge invalide";
-    if (!f.pays) e.pays = "Requis";
-    if (!f.ville.trim()) e.ville = "Requis";
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
+    const parsed = schema.safeParse(f);
+    const e = zodErrors(parsed);
     if (!f.photo) e.photo = "Photo requise";
-    if (!f.profil) e.profil = "Requis";
-    if (!f.motivation.trim()) e.motivation = "Requis";
-    else if (countWords(f.motivation) > 150) e.motivation = "150 mots max";
-    if (!f.mobilisation.trim()) e.mobilisation = "Requis";
-    else if (countWords(f.mobilisation) > 100) e.mobilisation = "100 mots max";
-    if (f.canaux.length === 0) e.canaux = "Sélectionne au moins un canal";
-    if (!f.dispo) e.dispo = "Requis";
-    if (!f.rgpd) e.rgpd = "Consentement requis";
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs.");
 

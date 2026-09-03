@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 
 import { PageHeader } from "../components/site/PageHeader";
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../components/site/FormShell";
 import { CampaignWindowGate } from "@/components/site/CampaignWindowGate";
+import { zodErrors } from "@/lib/forms/validation";
 
 import {
   COUNTRIES,
@@ -78,6 +80,22 @@ export function ExposantsPage() {
   );
 }
 
+const exhibitorSchema = z.object({
+  denomination: z.string().trim().min(1, "Requis"),
+  secteur: z.string().min(1, "Requis"),
+  pays: z.string().min(1, "Requis"),
+  ville: z.string().trim().min(1, "Requis"),
+  contactNom: z.string().trim().min(1, "Requis"),
+  contactPoste: z.string().trim().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  phone: z.string().regex(/^\+?[0-9 -]{7,}$/, "Numéro invalide"),
+  standType: z.string().min(1, "Requis"),
+  repsCount: z.string().refine((v) => Number.isInteger(Number(v)) && Number(v) >= 1, "Nombre requis (≥ 1)"),
+  produits: z.string().trim().min(1, "Requis"),
+  reglement: z.boolean().refine((v) => v === true, "À accepter pour continuer"),
+  rgpd: z.boolean().refine((v) => v === true, "Consentement requis"),
+});
+
 function ExhibitorForm() {
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -95,34 +113,16 @@ function ExhibitorForm() {
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
 
-    const e: Record<string, string> = {};
-
-    if (!f.denomination.trim()) e.denomination = "Requis";
-    if (!f.secteur) e.secteur = "Requis";
-    if (!f.pays) e.pays = "Requis";
-    if (!f.ville.trim()) e.ville = "Requis";
-    if (!f.contactNom.trim()) e.contactNom = "Requis";
-    if (!f.contactPoste.trim()) e.contactPoste = "Requis";
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-    if (!/^\+?[0-9 -]{7,}$/.test(f.phone)) e.phone = "Numéro invalide";
-    if (!f.standType) e.standType = "Requis";
-
-    const reps = Number(f.repsCount);
-    if (!f.repsCount || !Number.isInteger(reps) || reps < 1) {
-      e.repsCount = "Nombre requis (≥ 1)";
-    }
-
-    if (!f.produits.trim()) e.produits = "Requis";
-    if (!f.reglement) e.reglement = "À accepter pour continuer";
-    if (!f.rgpd) e.rgpd = "Consentement requis";
-
+    const parsed = exhibitorSchema.safeParse(f);
+    const e = zodErrors(parsed);
     setErrors(e);
 
-    if (Object.keys(e).length) {
+    if (!parsed.success) {
       toast.error("Merci de corriger les champs.");
       return;
     }
 
+    const reps = Number(f.repsCount);
     const fd = new FormData();
     fd.set("organization_name", f.denomination.trim());
     fd.set("sector", f.secteur);

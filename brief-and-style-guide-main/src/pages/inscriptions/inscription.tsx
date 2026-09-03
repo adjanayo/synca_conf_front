@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
@@ -15,6 +16,26 @@ import {
 } from "../../components/site/FormShell";
 import { COUNTRIES, SECTEURS, NIVEAUX, PROFILS, GENRES, SOURCES } from "../../lib/forms/constants";
 import { ApiError } from "../../lib/api/client";
+import { zodErrors } from "../../lib/forms/validation";
+
+const waitlistSchema = z.object({
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+});
+
+const inscriptionSchema = z.object({
+  nom: z.string().trim().min(1, "Requis"),
+  prenom: z.string().trim().min(1, "Requis"),
+  genre: z.string().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  phone: z.string().regex(/^\+?[0-9 -]{7,}$/, "Numéro avec indicatif (ex : +221 77 000 00 00)"),
+  pays: z.string().min(1, "Requis"),
+  ville: z.string().trim().min(1, "Requis"),
+  profils: z.array(z.string()).min(1, "Choisis au moins un profil"),
+  secteur: z.string().min(1, "Requis"),
+  niveau: z.string().min(1, "Requis"),
+  passTypeId: z.number().nullable().refine((v) => v !== null, "Requis"),
+  rgpd: z.boolean().refine((v) => v === true, "Tu dois accepter la politique RGPD"),
+});
 import {
   getCampaignWindows,
   getPassTypes,
@@ -50,11 +71,17 @@ function StatusBanner({ title, description }: { title: string; description: stri
 
 function WaitlistSignup() {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | undefined>();
   const [pending, setPending] = useState(false);
   const [done, setDone] = useState(false);
 
   const onSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
+    const parsed = waitlistSchema.safeParse({ email });
+    const e = zodErrors(parsed);
+    setError(e.email);
+    if (!parsed.success) return;
+
     setPending(true);
     try {
       await joinWaitlist(email.trim());
@@ -82,22 +109,24 @@ function WaitlistSignup() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-      <input
-        type="email"
-        required
-        placeholder="ton@email.com"
-        className="rounded-full border border-border px-4 py-2.5 text-sm w-full sm:w-72"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex items-center justify-center rounded-full bg-primary text-ink font-semibold px-6 py-2.5 hover:brightness-110 transition disabled:opacity-60"
-      >
-        {pending ? "Envoi…" : "Rejoindre la liste d'attente"}
-      </button>
+    <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col items-center gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 justify-center w-full sm:w-auto">
+        <input
+          type="email"
+          placeholder="ton@email.com"
+          className="rounded-full border border-border px-4 py-2.5 text-sm w-full sm:w-72"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex items-center justify-center rounded-full bg-primary text-ink font-semibold px-6 py-2.5 hover:brightness-110 transition disabled:opacity-60"
+        >
+          {pending ? "Envoi…" : "Rejoindre la liste d'attente"}
+        </button>
+      </div>
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </form>
   );
 }
@@ -241,22 +270,9 @@ function InscriptionForm() {
   const passTypesQuery = useQuery({ queryKey: ["public", "pass-types"], queryFn: getPassTypes });
 
   const validate = () => {
-    const e: Record<string, string> = {};
-    if (!f.nom.trim()) e.nom = "Requis";
-    if (!f.prenom.trim()) e.prenom = "Requis";
-    if (!f.genre) e.genre = "Requis";
-    if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-    if (!/^\+?[0-9 -]{7,}$/.test(f.phone))
-      e.phone = "Numéro avec indicatif (ex : +221 77 000 00 00)";
-    if (!f.pays) e.pays = "Requis";
-    if (!f.ville.trim()) e.ville = "Requis";
-    if (f.profils.length === 0) e.profils = "Choisis au moins un profil";
-    if (!f.secteur) e.secteur = "Requis";
-    if (!f.niveau) e.niveau = "Requis";
-    if (!f.passTypeId) e.passTypeId = "Requis";
-    if (!f.rgpd) e.rgpd = "Tu dois accepter la politique RGPD";
-    setErrors(e);
-    return Object.keys(e).length === 0;
+    const parsed = inscriptionSchema.safeParse(f);
+    setErrors(zodErrors(parsed));
+    return parsed.success;
   };
 
   const onSubmit = async (ev: React.FormEvent) => {

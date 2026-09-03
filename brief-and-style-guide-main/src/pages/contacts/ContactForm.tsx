@@ -1,11 +1,19 @@
 import { FormShell, FormSection, Field, inputCls, textareaCls } from "../../components/site/FormShell";
 import { CONTACT_SUBJECTS } from "../../lib/forms/constants";
 import { useState } from "react";
+import { z } from "zod";
 import { toast } from "sonner";
 import { sendContactMessage } from "../../lib/api/contact";
 import { ApiError } from "../../lib/api/client";
+import { zodErrors } from "../../lib/forms/validation";
 
-
+const schema = z.object({
+  nom: z.string().trim().min(1, "Requis"),
+  email: z.string().trim().regex(/^\S+@\S+\.\S+$/, "Email invalide"),
+  sujet: z.string().min(1, "Requis"),
+  message: z.string().trim().min(1, "Requis"),
+  rgpd: z.boolean().refine((v) => v === true, { message: "Consentement requis" }),
+});
 
 type Form = { nom: string; email: string; sujet: string; message: string; rgpd: boolean };
 const empty: Form = { nom: "", email: "", sujet: "", message: "", rgpd: false };
@@ -19,14 +27,10 @@ export function ContactForm() {
 
       const submit = async (ev: React.FormEvent) => {
         ev.preventDefault();
-        const e: Record<string, string> = {};
-        if (!f.nom.trim()) e.nom = "Requis";
-        if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Email invalide";
-        if (!f.sujet) e.sujet = "Requis";
-        if (!f.message.trim()) e.message = "Requis";
-        if (!f.rgpd) e.rgpd = "Consentement requis";
+        const parsed = schema.safeParse(f);
+        const e = zodErrors(parsed);
         setErrors(e);
-        if (Object.keys(e).length) return toast.error("Merci de corriger les champs.");
+        if (!parsed.success) return toast.error("Merci de corriger les champs.");
 
         setSubmitting(true);
         try {
