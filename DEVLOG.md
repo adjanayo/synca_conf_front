@@ -90,6 +90,21 @@
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau
 - [ ] Gestion du refresh token quand le backend l'exposera
 
+### Partie 7 — Hackathon universitaire + Synca Community Certified
+Demande utilisateur — nouveau chantier prévu **après** les parties 1 à 6 (pas encore implémenté, planifié comme référence). Deux volets liés :
+
+#### Hackathon universitaire
+- S'appuie sur le modèle "Synca Community Certified" + un hackathon étudiant.
+- **Formation des équipes** : chaque université propose 1 à 2 équipes, choisies parmi 3 à 4 personnes max par équipe.
+- **Finale** : se joue entre 10 et 15 équipes, selon le nombre d'universités participantes.
+- **Contenu géré par les administrateurs** : ils mettent en ligne la liste des équipes par université, ainsi que les informations de dates du hackathon.
+- **Membre d'équipe** (par personne) : photo, nom complet, niveau d'étude, spécialité.
+- **Équipe** : un nom, un nom de projet, une description du projet.
+- Tout configurable au dashboard admin et affichable sur le site public.
+
+#### Synca Community Certified (rappel du gap déjà signalé)
+- La deadline de candidature (31 décembre 2026 / mi-janvier 2027) et le programme lui-même restent **en dur dans la FAQ** (`data/faq.ts`) — **aucun champ DB correspondant** (gap déjà signalé en suite 9). Ce chantier devra soit ajouter une clé `CampaignWindow` dédiée (ex. `call_for_community_certified`, comme les autres fenêtres), soit créer un modèle dédié pour piloter deadline/annonce au dashboard.
+
 ## Journal
 
 ### 2026-09-02
@@ -193,3 +208,4 @@
 - Fait : `candidature-speaker.tsx` (description + libellé "Disponibilité") et `SpeakersView.tsx` (description) — branchés sur `useCampaignWindow("call_for_speaker")` (nouveau helper générique dans `useEventWindow.ts`, réutilise le même cache que `useEventWindow`) pour la date d'ouverture des candidatures, et sur `dateLabel`/`useEventWindow` pour les dates de l'événement. La phrase "profils dévoilés à partir d'avril 2027" n'avait aucune source DB correspondante (aucune fenêtre ne couvre cette annonce) — reformulée sans date plutôt que de garder une valeur non vérifiable.
 - Fait : nettoyage des reliquats de fallback incohérents avec la vraie date désormais confirmée — `data/parameter.ts::PARAMETER.date` ("16–18 Mars 2027" → "18–20 Août 2027") et `Hero.tsx::FALLBACK_TARGET` (countdown, même correction) : ce sont les valeurs utilisées brièvement avant que l'API réponde, elles ne doivent plus contredire la vraie date.
 - Vérification : `rtk tsc --noEmit` et `rtk lint` clean (0 erreur, 1 warning pré-existant hors scope).
+
