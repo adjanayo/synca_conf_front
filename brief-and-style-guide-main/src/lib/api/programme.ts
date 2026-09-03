@@ -1,27 +1,16 @@
+import { z } from "zod";
 import { apiFetch } from "./client";
+import { publicDaySchema, publicSessionSchema } from "../schemas/public";
 
-export type PublicDay = {
-  id: number;
-  date: string;
-  label: string;
-};
+export type PublicDay = z.infer<typeof publicDaySchema>;
+export type PublicSession = z.infer<typeof publicSessionSchema>;
 
-export type PublicSession = {
-  id: number;
-  day_id: number;
-  title: string;
-  description: string | null;
-  category: string;
-  start_time: string;
-  end_time: string;
-  room: string | null;
-  speaker_id: number | null;
-};
-
-export function getDays() {
-  return apiFetch<PublicDay[]>("/api/days");
+export async function getDays() {
+  const data = await apiFetch<unknown>("/api/days");
+  return z.array(publicDaySchema).parse(data);
 }
 
-export function getSessions() {
-  return apiFetch<PublicSession[]>("/api/sessions?limit=200");
+export async function getSessions() {
+  const data = await apiFetch<unknown>("/api/sessions?limit=200");
+  return z.array(publicSessionSchema).parse(data);
 }

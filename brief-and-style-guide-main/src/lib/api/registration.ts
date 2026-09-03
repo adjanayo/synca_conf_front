@@ -1,26 +1,11 @@
+import { z } from "zod";
 import { apiFetch } from "./client";
 import type { ParticipantProfile } from "./participant";
+import { passTypeSchema, campaignWindowSchema } from "../schemas/public";
 
-export type PassType = {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  inclusions: string;
-  max_days: number;
-  is_active: boolean;
-  created_at: string;
-};
+export type PassType = z.infer<typeof passTypeSchema>;
 
-export type CampaignWindow = {
-  id: number;
-  key: string;
-  start_at: string;
-  end_at: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-};
+export type CampaignWindow = z.infer<typeof campaignWindowSchema>;
 
 export type RegisterPayload = {
   first_name: string;
@@ -45,12 +30,14 @@ export type RegisterPayload = {
 
 export type RegisterResponse = ParticipantProfile & { access_token: string };
 
-export function getPassTypes() {
-  return apiFetch<PassType[]>("/api/pass-types");
+export async function getPassTypes() {
+  const data = await apiFetch<unknown>("/api/pass-types");
+  return z.array(passTypeSchema).parse(data);
 }
 
-export function getCampaignWindows() {
-  return apiFetch<CampaignWindow[]>("/api/campaign-windows");
+export async function getCampaignWindows() {
+  const data = await apiFetch<unknown>("/api/campaign-windows");
+  return z.array(campaignWindowSchema).parse(data);
 }
 
 export type EventSettings = {

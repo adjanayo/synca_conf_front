@@ -1,22 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Mic } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
-import { SPEAKERS } from "../../data/speaker";
-import { getSpeakers, type SpeakerPublic } from "../../lib/api/applications";
+import { getSpeakers } from "../../lib/api/applications";
 import { useCampaignWindow, formatMonthYear } from "../../hooks/useEventWindow";
 
 export function SpeakersView() {
-  const [speakers, setSpeakers] = useState<SpeakerPublic[] | null>(null);
   const { startAt: speakersOpenAt } = useCampaignWindow("call_for_speaker");
+  const speakers = useQuery({ queryKey: ["public", "speakers"], queryFn: getSpeakers });
 
-  useEffect(() => {
-    getSpeakers()
-      .then(setSpeakers)
-      .catch(() => setSpeakers([]));
-  }, []);
-
-  const confirmed = speakers ?? [];
+  const confirmed = speakers.data ?? [];
 
   return (
     <>
@@ -34,44 +27,41 @@ export function SpeakersView() {
 
       <section className="py-20 bg-background">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
-            {confirmed.length > 0
-              ? confirmed.map((s) => (
-                  <Link key={s.id} to={`/speakers/${s.id}`} className="group">
-                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-ink/20">
-                      {s.photo_url ? (
-                        <img
-                          src={s.photo_url}
-                          alt={`${s.first_name} ${s.last_name}`}
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      ) : null}
-                      <div className="absolute inset-0 bg-ink/10 group-hover:bg-ink/0 transition-colors" />
-                      <div className="absolute bottom-0 inset-x-0 p-4 text-white">
-                        <div className="text-[10px] uppercase tracking-widest font-bold">
-                          {s.theme}
-                        </div>
+          {speakers.isLoading && (
+            <p className="text-center text-muted-foreground py-10">Chargement des speakers…</p>
+          )}
+          {(speakers.isError || (speakers.isSuccess && confirmed.length === 0)) && (
+            <p className="text-center text-muted-foreground py-10">
+              Les speakers seront annoncés prochainement. Reviens bientôt pour découvrir les profils confirmés.
+            </p>
+          )}
+          {speakers.isSuccess && confirmed.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
+              {confirmed.map((s) => (
+                <Link key={s.id} to={`/speakers/${s.id}`} className="group">
+                  <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-ink/20">
+                    {s.photo_url ? (
+                      <img
+                        src={s.photo_url}
+                        alt={`${s.first_name} ${s.last_name}`}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ) : null}
+                    <div className="absolute inset-0 bg-ink/10 group-hover:bg-ink/0 transition-colors" />
+                    <div className="absolute bottom-0 inset-x-0 p-4 text-white">
+                      <div className="text-[10px] uppercase tracking-widest font-bold">
+                        {s.theme}
                       </div>
                     </div>
-                    <div className="mt-3 font-display font-semibold text-lg">
-                      {s.first_name} {s.last_name}
-                    </div>
-                    <div className="text-sm text-muted-foreground">{s.title_role}</div>
-                  </Link>
-                ))
-              : SPEAKERS.map((s, i) => (
-                  <div key={i} className="group">
-                    <div className={`relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br ${s.c}`}>
-                      <div className="absolute inset-0 bg-ink/10 group-hover:bg-ink/0 transition-colors" />
-                      <div className="absolute bottom-0 inset-x-0 p-4 text-ink">
-                        <div className="text-[10px] uppercase tracking-widest font-bold">{s.r}</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 font-display font-semibold text-lg">{s.n}</div>
-                    <div className="text-sm text-muted-foreground">Profil dévoilé bientôt</div>
                   </div>
-                ))}
-          </div>
+                  <div className="mt-3 font-display font-semibold text-lg">
+                    {s.first_name} {s.last_name}
+                  </div>
+                  <div className="text-sm text-muted-foreground">{s.title_role}</div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>

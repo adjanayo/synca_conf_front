@@ -1,25 +1,12 @@
+import { z } from "zod";
 import { apiFetch, apiFetchForm } from "./client";
+import { speakerPublicSchema, partnerPublicSchema, exhibitorPublicSchema } from "../schemas/public";
 
-export type SpeakerPublic = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  title_role: string;
-  company: string | null;
-  country: string;
-  linkedin_url: string | null;
-  website_url: string | null;
-  photo_url: string | null;
-  intervention_format: string;
-  intervention_title: string;
-  theme: string;
-  summary: string;
-  audience_level: string | null;
-  language: string | null;
-};
+export type SpeakerPublic = z.infer<typeof speakerPublicSchema>;
 
-export function getSpeakers() {
-  return apiFetch<SpeakerPublic[]>("/api/speakers?limit=200");
+export async function getSpeakers() {
+  const data = await apiFetch<unknown>("/api/speakers?limit=200");
+  return z.array(speakerPublicSchema).parse(data);
 }
 
 export function getSpeaker(id: number) {
@@ -60,27 +47,18 @@ export function getPartnerLevels() {
   return apiFetch<PartnerLevel[]>("/api/partner-levels");
 }
 
-export type PartnerPublic = {
-  id: number;
-  organization_name: string;
-  website_url: string | null;
-  logo_url: string | null;
-  level_id: number;
-};
+export type PartnerPublic = z.infer<typeof partnerPublicSchema>;
 
-export function getPartners() {
-  return apiFetch<PartnerPublic[]>("/api/partners?limit=200");
+export async function getPartners() {
+  const data = await apiFetch<unknown>("/api/partners?limit=200");
+  return z.array(partnerPublicSchema).parse(data);
 }
 
-export type ExhibitorPublic = {
-  id: number;
-  organization_name: string;
-  website_url: string | null;
-  stand_type: string;
-};
+export type ExhibitorPublic = z.infer<typeof exhibitorPublicSchema>;
 
-export function getExhibitors() {
-  return apiFetch<ExhibitorPublic[]>("/api/exhibitors?limit=200");
+export async function getExhibitors() {
+  const data = await apiFetch<unknown>("/api/exhibitors?limit=200");
+  return z.array(exhibitorPublicSchema).parse(data);
 }
 
 export type SpeakerApplyResponse = { id: number };

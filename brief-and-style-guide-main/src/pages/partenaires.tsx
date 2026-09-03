@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PageHeader } from "../components/site/PageHeader";
@@ -18,8 +19,6 @@ import {
   getPartners,
   getExhibitors,
   type PartnerLevel,
-  type PartnerPublic,
-  type ExhibitorPublic,
 } from "../lib/api/applications";
 import { ApiError } from "../lib/api/client";
 import { useEventWindow } from "@/hooks/useEventWindow";
@@ -228,19 +227,13 @@ export function PartenairesPage() {
 }
 
 function PartnersShowcase() {
-  const [partners, setPartners] = useState<PartnerPublic[] | null>(null);
-  const [exhibitors, setExhibitors] = useState<ExhibitorPublic[] | null>(null);
+  const partnersQuery = useQuery({ queryKey: ["public", "partners"], queryFn: getPartners });
+  const exhibitorsQuery = useQuery({ queryKey: ["public", "exhibitors"], queryFn: getExhibitors });
 
-  useEffect(() => {
-    getPartners()
-      .then(setPartners)
-      .catch(() => setPartners([]));
-    getExhibitors()
-      .then(setExhibitors)
-      .catch(() => setExhibitors([]));
-  }, []);
+  if (partnersQuery.isLoading || exhibitorsQuery.isLoading) return null;
 
-  if (partners === null || exhibitors === null) return null;
+  const partners = partnersQuery.data ?? [];
+  const exhibitors = exhibitorsQuery.data ?? [];
 
   return (
     <section className="py-16 bg-cream">
@@ -251,7 +244,7 @@ function PartnersShowcase() {
           </div>
           <h2 className="mt-3 font-display font-bold text-3xl text-center">Nos partenaires</h2>
 
-          {partners.length === 0 ? (
+          {partnersQuery.isError || partners.length === 0 ? (
             <p className="mt-6 mx-auto max-w-xl text-center text-muted-foreground">
               Nos partenaires seront annoncés prochainement. Suis nos pages Synca Conf pour ne rien
               manquer de l'annonce.
@@ -288,7 +281,7 @@ function PartnersShowcase() {
             </Link>
           </div>
 
-          {exhibitors.length === 0 ? (
+          {exhibitorsQuery.isError || exhibitors.length === 0 ? (
             <p className="mt-6 mx-auto max-w-xl text-center text-muted-foreground">
               Nos exposants seront annoncés prochainement. Suis nos pages Synca Conf pour ne rien
               manquer de l'annonce.

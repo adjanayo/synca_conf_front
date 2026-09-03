@@ -1,19 +1,16 @@
+import { z } from "zod";
 import { apiFetch } from "./client";
+import { faqCategoryPublicSchema, faqPublicSchema } from "../schemas/public";
 
-export type FaqCategoryPublic = { id: number; name: string };
+export type FaqCategoryPublic = z.infer<typeof faqCategoryPublicSchema>;
+export type FaqPublic = z.infer<typeof faqPublicSchema>;
 
-export type FaqPublic = {
-  id: number;
-  category_id: number;
-  question: string;
-  answer: string;
-  sort_order: number;
-};
-
-export function getFaqCategories() {
-  return apiFetch<FaqCategoryPublic[]>("/api/faq-categories");
+export async function getFaqCategories() {
+  const data = await apiFetch<unknown>("/api/faq-categories");
+  return z.array(faqCategoryPublicSchema).parse(data);
 }
 
-export function getFaqs() {
-  return apiFetch<FaqPublic[]>("/api/faqs?limit=200");
+export async function getFaqs() {
+  const data = await apiFetch<unknown>("/api/faqs?limit=200");
+  return z.array(faqPublicSchema).parse(data);
 }
