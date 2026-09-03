@@ -15,10 +15,6 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
 - [ ] Gestion du refresh token quand le backend l'exposera — bloqué, `POST /api/admin/login` émet déjà `refresh_token` mais aucun endpoint `/refresh` n'existe côté back pour le consommer
 
-## Partie 7 — Hackathon universitaire + Synca Community Certified
-- [ ] Lien vers `/hackathon-universitaire` dans le `Nav.tsx` principal (pas fait — cohérent avec exposants/candidature-speaker, pages déjà atteignables sans être dans le menu top ; à ajouter si l'utilisateur veut plus de visibilité)
-- [ ] La FAQ (`answer` en base, table `faqs`) garde le texte de deadline Synca Community Certified en dur — rien ne consomme encore la fenêtre `call_for_community_certified` pour l'afficher dynamiquement. Éditable manuellement au dashboard FAQ existant en attendant.
-
 ## Partie 8 — Contenu des pass pilotable + offres partenaires au dashboard
 Demande utilisateur — planifié, **pas de code pour le moment** :
 

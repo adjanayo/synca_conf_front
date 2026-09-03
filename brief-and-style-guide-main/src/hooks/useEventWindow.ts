@@ -18,6 +18,13 @@ export function formatDayLabel(date: Date): string {
   return `${WEEKDAYS_FR[date.getDay()]} ${date.getDate()} ${MONTHS_FR[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+// Même chose sans le jour de la semaine, mois en minuscule ("31 décembre
+// 2026", convention française) -- pour une deadline plutôt qu'une date
+// d'événement (FAQView, tokens {{end_at:...}}).
+export function formatDateFr(date: Date): string {
+  return `${date.getDate()} ${MONTHS_FR[date.getMonth()].toLowerCase()} ${date.getFullYear()}`;
+}
+
 function formatRange(startAt: string, endAt: string): string {
   const start = new Date(startAt);
   const end = new Date(endAt);
