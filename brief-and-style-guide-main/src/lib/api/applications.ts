@@ -34,13 +34,19 @@ export function getAmbassador(id: number) {
   return apiFetch<AmbassadorPublic>(`/api/ambassadors/${id}`);
 }
 
+export type PartnerBenefit = {
+  id: number;
+  label: string;
+  created_at: string;
+};
+
 export type PartnerLevel = {
   id: number;
   name: string;
   price: number;
-  benefits: string | null;
   sort_order: number;
   created_at: string;
+  benefits: PartnerBenefit[];
 };
 
 export function getPartnerLevels() {

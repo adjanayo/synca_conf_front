@@ -600,27 +600,33 @@ export function deletePassContent(id: number) {
   });
 }
 
+export type PartnerBenefit = {
+  id: number;
+  label: string;
+  created_at: string;
+};
+
 export type PartnerLevel = {
   id: number;
   name: string;
   price: number;
-  benefits: string | null;
   sort_order: number;
   created_at: string;
+  benefits: PartnerBenefit[];
 };
 
 export type PartnerLevelCreate = {
   name: string;
   price: number;
-  benefits?: string;
   sort_order?: number;
+  benefit_ids?: number[];
 };
 
 export type PartnerLevelUpdate = {
   name?: string;
   price?: number;
-  benefits?: string;
   sort_order?: number;
+  benefit_ids?: number[];
 };
 
 export function listPartnerLevelsAdmin() {
@@ -645,6 +651,25 @@ export function updatePartnerLevel(id: number, body: PartnerLevelUpdate) {
 
 export function deletePartnerLevel(id: number) {
   return apiFetch<void>(`/api/admin/partner-levels/${id}`, {
+    method: "DELETE",
+    auth: "admin",
+  });
+}
+
+export function listPartnerBenefits() {
+  return apiFetch<PartnerBenefit[]>("/api/admin/partner-benefits", { auth: "admin" });
+}
+
+export function createPartnerBenefit(label: string) {
+  return apiFetch<PartnerBenefit>("/api/admin/partner-benefits", {
+    method: "POST",
+    auth: "admin",
+    body: { label },
+  });
+}
+
+export function deletePartnerBenefit(id: number) {
+  return apiFetch<void>(`/api/admin/partner-benefits/${id}`, {
     method: "DELETE",
     auth: "admin",
   });

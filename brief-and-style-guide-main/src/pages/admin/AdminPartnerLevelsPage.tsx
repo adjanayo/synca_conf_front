@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  createPartnerBenefit,
   createPartnerLevel,
+  deletePartnerBenefit,
   deletePartnerLevel,
+  listPartnerBenefits,
   listPartnerLevelsAdmin,
   updatePartnerLevel,
+  type PartnerBenefit,
   type PartnerLevel,
 } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
@@ -14,20 +18,131 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
-import { Textarea } from "../../components/ui/textarea";
+import { Checkbox } from "../../components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 
-function PartnerLevelCard({ level: l }: { level: PartnerLevel }) {
+function toggleId(ids: number[], id: number, checked: boolean): number[] {
+  return checked ? [...ids, id] : ids.filter((x) => x !== id);
+}
+
+function BenefitCheckboxList({
+  benefits,
+  selectedIds,
+  onToggle,
+  idPrefix,
+}: {
+  benefits: PartnerBenefit[];
+  selectedIds: number[];
+  onToggle: (id: number, checked: boolean) => void;
+  idPrefix: string;
+}) {
+  if (benefits.length === 0) {
+    return <p className="text-sm text-muted-foreground">Aucun avantage dans le catalogue pour l'instant.</p>;
+  }
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {benefits.map((b) => (
+        <label key={b.id} htmlFor={`${idPrefix}-benefit-${b.id}`} className="flex items-center gap-2 text-sm">
+          <Checkbox
+            id={`${idPrefix}-benefit-${b.id}`}
+            checked={selectedIds.includes(b.id)}
+            onCheckedChange={(checked) => onToggle(b.id, checked === true)}
+          />
+          {b.label}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function PartnerBenefitCatalog({ benefits }: { benefits: PartnerBenefit[] }) {
+  const queryClient = useQueryClient();
+  const [label, setLabel] = useState("");
+
+  const createMutation = useMutation({
+    mutationFn: () => createPartnerBenefit(label),
+    onSuccess: () => {
+      toast.success("Avantage ajouté au catalogue.");
+      setLabel("");
+      queryClient.invalidateQueries({ queryKey: ["admin", "partner-benefits"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deletePartnerBenefit(id),
+    onSuccess: () => {
+      toast.success("Avantage supprimé du catalogue.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "partner-benefits"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "partner-levels"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  return (
+    <Card className="mb-8">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-medium text-ink">Catalogue des avantages</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Avantages réutilisables — coche ceux qui s'appliquent à chaque palier ci-dessous.
+        </p>
+        {benefits.length > 0 && (
+          <ul className="space-y-1.5">
+            {benefits.map((b) => (
+              <li key={b.id} className="flex items-center justify-between gap-2 text-sm">
+                <span>{b.label}</span>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={deleteMutation.isPending}
+                  onClick={() => {
+                    if (window.confirm(`Supprimer "${b.label}" du catalogue ?`)) {
+                      deleteMutation.mutate(b.id);
+                    }
+                  }}
+                >
+                  Supprimer
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="flex gap-2">
+          <Input
+            placeholder="Nouvel avantage (ex : Logo sur le site)"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+          />
+          <Button
+            size="sm"
+            disabled={label.trim() === "" || createMutation.isPending}
+            onClick={() => createMutation.mutate()}
+          >
+            Ajouter
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PartnerLevelCard({ level: l, benefits }: { level: PartnerLevel; benefits: PartnerBenefit[] }) {
   const queryClient = useQueryClient();
   const [name, setName] = useState(l.name);
   const [price, setPrice] = useState(String(l.price));
-  const [benefits, setBenefits] = useState(l.benefits ?? "");
+  const [benefitIds, setBenefitIds] = useState(l.benefits.map((b) => b.id));
   const [sortOrder, setSortOrder] = useState(String(l.sort_order));
 
   useEffect(() => {
     setName(l.name);
     setPrice(String(l.price));
-    setBenefits(l.benefits ?? "");
+    setBenefitIds(l.benefits.map((b) => b.id));
     setSortOrder(String(l.sort_order));
   }, [l.name, l.price, l.benefits, l.sort_order]);
 
@@ -36,7 +151,7 @@ function PartnerLevelCard({ level: l }: { level: PartnerLevel }) {
       updatePartnerLevel(l.id, {
         name,
         price: Number(price),
-        benefits: benefits || undefined,
+        benefit_ids: benefitIds,
         sort_order: Number(sortOrder),
       }),
     onSuccess: () => {
@@ -59,11 +174,11 @@ function PartnerLevelCard({ level: l }: { level: PartnerLevel }) {
     },
   });
 
+  const sameBenefitIds =
+    benefitIds.length === l.benefits.length &&
+    benefitIds.every((id) => l.benefits.some((b) => b.id === id));
   const dirty =
-    name !== l.name ||
-    price !== String(l.price) ||
-    benefits !== (l.benefits ?? "") ||
-    sortOrder !== String(l.sort_order);
+    name !== l.name || price !== String(l.price) || !sameBenefitIds || sortOrder !== String(l.sort_order);
 
   return (
     <Card>
@@ -87,11 +202,12 @@ function PartnerLevelCard({ level: l }: { level: PartnerLevel }) {
           </div>
         </div>
         <div className="space-y-1">
-          <Label htmlFor={`benefits-${l.id}`}>Avantages</Label>
-          <Textarea
-            id={`benefits-${l.id}`}
-            value={benefits}
-            onChange={(e) => setBenefits(e.target.value)}
+          <Label>Avantages inclus</Label>
+          <BenefitCheckboxList
+            benefits={benefits}
+            selectedIds={benefitIds}
+            onToggle={(id, checked) => setBenefitIds((ids) => toggleId(ids, id, checked))}
+            idPrefix={`level-${l.id}`}
           />
         </div>
         <div className="space-y-1 w-40">
@@ -127,11 +243,11 @@ function PartnerLevelCard({ level: l }: { level: PartnerLevel }) {
   );
 }
 
-function NewPartnerLevelForm() {
+function NewPartnerLevelForm({ benefits }: { benefits: PartnerBenefit[] }) {
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [benefits, setBenefits] = useState("");
+  const [benefitIds, setBenefitIds] = useState<number[]>([]);
   const [sortOrder, setSortOrder] = useState("0");
 
   const mutation = useMutation({
@@ -139,14 +255,14 @@ function NewPartnerLevelForm() {
       createPartnerLevel({
         name,
         price: Number(price),
-        benefits: benefits || undefined,
+        benefit_ids: benefitIds,
         sort_order: Number(sortOrder),
       }),
     onSuccess: () => {
       toast.success("Palier de partenariat créé.");
       setName("");
       setPrice("");
-      setBenefits("");
+      setBenefitIds([]);
       setSortOrder("0");
       queryClient.invalidateQueries({ queryKey: ["admin", "partner-levels"] });
     },
@@ -179,11 +295,12 @@ function NewPartnerLevelForm() {
           </div>
         </div>
         <div className="space-y-1">
-          <Label htmlFor="new-benefits">Avantages</Label>
-          <Textarea
-            id="new-benefits"
-            value={benefits}
-            onChange={(e) => setBenefits(e.target.value)}
+          <Label>Avantages inclus</Label>
+          <BenefitCheckboxList
+            benefits={benefits}
+            selectedIds={benefitIds}
+            onToggle={(id, checked) => setBenefitIds((ids) => toggleId(ids, id, checked))}
+            idPrefix="new-level"
           />
         </div>
         <div className="space-y-1 w-40">
@@ -216,6 +333,13 @@ export function AdminPartnerLevelsPage() {
     retry: (failureCount, error) =>
       error instanceof ApiError && error.status !== 401 && failureCount < 2,
   });
+  const benefitsQuery = useQuery({
+    queryKey: ["admin", "partner-benefits"],
+    queryFn: listPartnerBenefits,
+    retry: (failureCount, error) =>
+      error instanceof ApiError && error.status !== 401 && failureCount < 2,
+  });
+  const benefits = benefitsQuery.data ?? [];
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
@@ -228,7 +352,9 @@ export function AdminPartnerLevelsPage() {
         </div>
       </div>
 
-      <NewPartnerLevelForm />
+      <PartnerBenefitCatalog benefits={benefits} />
+
+      <NewPartnerLevelForm benefits={benefits} />
 
       {levelsQuery.isPending && (
         <div className="grid gap-4">
@@ -250,7 +376,7 @@ export function AdminPartnerLevelsPage() {
       {levelsQuery.data && (
         <div className="grid gap-4">
           {levelsQuery.data.map((l) => (
-            <PartnerLevelCard key={l.id} level={l} />
+            <PartnerLevelCard key={l.id} level={l} benefits={benefits} />
           ))}
         </div>
       )}
