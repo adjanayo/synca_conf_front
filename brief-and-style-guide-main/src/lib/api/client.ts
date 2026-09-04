@@ -16,6 +16,7 @@ export class ApiError extends Error {
 type AuthScope = "participant" | "admin";
 
 const ADMIN_TOKEN_KEY = "admin_token";
+const ADMIN_REFRESH_TOKEN_KEY = "admin_refresh_token";
 
 /**
  * Central place each JWT lives in memory — never localStorage (XSS risk,
@@ -29,6 +30,15 @@ const tokens: Record<AuthScope, string | null> = {
   admin: typeof sessionStorage !== "undefined" ? sessionStorage.getItem(ADMIN_TOKEN_KEY) : null,
 };
 
+// Seul le scope admin a un refresh_token (POST /api/admin/login en émet un,
+// les participants n'en ont pas -- pas de refresh côté participant_auth.py).
+const refreshTokens: { admin: string | null } = {
+  admin:
+    typeof sessionStorage !== "undefined"
+      ? sessionStorage.getItem(ADMIN_REFRESH_TOKEN_KEY)
+      : null,
+};
+
 export function getAuthToken(scope: AuthScope) {
   return tokens[scope];
 }
@@ -39,6 +49,12 @@ export function setAuthToken(scope: AuthScope, token: string | null) {
     if (token) sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
     else sessionStorage.removeItem(ADMIN_TOKEN_KEY);
   }
+}
+
+export function setAdminRefreshToken(token: string | null) {
+  refreshTokens.admin = token;
+  if (token) sessionStorage.setItem(ADMIN_REFRESH_TOKEN_KEY, token);
+  else sessionStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
 }
 
 const unauthorizedHandlers: Record<AuthScope, (() => void) | null> = {
@@ -55,10 +71,49 @@ export function setUnauthorizedHandler(scope: AuthScope, handler: (() => void) |
   unauthorizedHandlers[scope] = handler;
 }
 
+// Un seul appel /api/admin/refresh en vol à la fois -- si plusieurs requêtes
+// admin échouent en 401 en même temps (onglets/appels concurrents), elles
+// partagent le même refresh au lieu d'en déclencher un chacune (le back
+// fait tourner le refresh_token à chaque appel, un second appel concurrent
+// avec l'ancien jeton échouerait).
+let adminRefreshInFlight: Promise<string | null> | null = null;
+
+async function refreshAdminAccessToken(): Promise<string | null> {
+  const refreshToken = refreshTokens.admin;
+  if (!refreshToken || !API_BASE_URL) return null;
+
+  if (!adminRefreshInFlight) {
+    adminRefreshInFlight = (async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+        if (!response.ok) {
+          setAdminRefreshToken(null);
+          return null;
+        }
+        const data = (await response.json()) as { access_token: string; refresh_token: string };
+        setAuthToken("admin", data.access_token);
+        setAdminRefreshToken(data.refresh_token);
+        return data.access_token;
+      } catch {
+        return null;
+      } finally {
+        adminRefreshInFlight = null;
+      }
+    })();
+  }
+  return adminRefreshInFlight;
+}
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   auth?: AuthScope;
+  /** Usage interne : marque une requête déjà rejouée après un refresh, pour ne jamais boucler. */
+  _isRetry?: boolean;
 };
 
 /**
@@ -96,6 +151,10 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
       // response wasn't JSON -- keep the generic message
     }
     if (response.status === 401 && options.auth) {
+      if (options.auth === "admin" && !options._isRetry) {
+        const newToken = await refreshAdminAccessToken();
+        if (newToken) return apiFetch<T>(path, { ...options, _isRetry: true });
+      }
       unauthorizedHandlers[options.auth]?.();
     }
     throw new ApiError(response.status, detail);
@@ -133,7 +192,7 @@ export async function apiFetchAll<T>(path: string, limit = 200): Promise<T[]> {
 export async function apiFetchForm<T>(
   path: string,
   formData: FormData,
-  options: { method?: "POST" | "PATCH"; auth?: AuthScope } = {},
+  options: { method?: "POST" | "PATCH"; auth?: AuthScope; _isRetry?: boolean } = {},
 ): Promise<T> {
   if (!API_BASE_URL) {
     throw new Error("VITE_API_URL n'est pas configuré (voir .env.example).");
@@ -161,6 +220,10 @@ export async function apiFetchForm<T>(
       // response wasn't JSON -- keep the generic message
     }
     if (response.status === 401 && options.auth) {
+      if (options.auth === "admin" && !options._isRetry) {
+        const newToken = await refreshAdminAccessToken();
+        if (newToken) return apiFetchForm<T>(path, formData, { ...options, _isRetry: true });
+      }
       unauthorizedHandlers[options.auth]?.();
     }
     throw new ApiError(response.status, detail);
@@ -173,7 +236,12 @@ export async function apiFetchForm<T>(
  * CSV exports need the Authorization header (can't be a plain <a href> link),
  * so fetch as blob then trigger a save via a throwaway object URL.
  */
-export async function apiDownload(path: string, auth: AuthScope, filename: string): Promise<void> {
+export async function apiDownload(
+  path: string,
+  auth: AuthScope,
+  filename: string,
+  _isRetry = false,
+): Promise<void> {
   if (!API_BASE_URL) {
     throw new Error("VITE_API_URL n'est pas configuré (voir .env.example).");
   }
@@ -193,7 +261,13 @@ export async function apiDownload(path: string, auth: AuthScope, filename: strin
     } catch {
       // response wasn't JSON -- keep the generic message
     }
-    if (response.status === 401) unauthorizedHandlers[auth]?.();
+    if (response.status === 401) {
+      if (auth === "admin" && !_isRetry) {
+        const newToken = await refreshAdminAccessToken();
+        if (newToken) return apiDownload(path, auth, filename, true);
+      }
+      unauthorizedHandlers[auth]?.();
+    }
     throw new ApiError(response.status, detail);
   }
 

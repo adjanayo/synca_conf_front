@@ -12,5 +12,4 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 
 ## Partie 6 — Divers
 - [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
-- [ ] Gestion du refresh token quand le backend l'exposera — bloqué, `POST /api/admin/login` émet déjà `refresh_token` mais aucun endpoint `/refresh` n'existe côté back pour le consommer
 

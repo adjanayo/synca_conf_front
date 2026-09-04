@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { getAuthToken, setAuthToken, setUnauthorizedHandler } from "../api/client";
+import { getAuthToken, setAdminRefreshToken, setAuthToken, setUnauthorizedHandler } from "../api/client";
 import { getAdminMe } from "../api/admin";
 import { AdminAuthContext } from "./adminContext";
 
@@ -17,13 +17,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setAuthToken("admin", null);
+    setAdminRefreshToken(null);
     setIsAuthenticated(false);
     setRole(null);
     setPermissions([]);
   }, []);
 
-  const login = useCallback(async (token: string) => {
+  const login = useCallback(async (token: string, refreshToken: string) => {
     setAuthToken("admin", token);
+    setAdminRefreshToken(refreshToken);
     // ROADMAP_ADMIN.md A4 -- rôle + permissions viennent de GET /api/admin/me,
     // pas du login lui-même (le login ne renvoie qu'une paire de tokens).
     try {
@@ -33,6 +35,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(true);
     } catch (err) {
       setAuthToken("admin", null);
+      setAdminRefreshToken(null);
       throw err;
     }
   }, []);
@@ -58,6 +61,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         setAuthToken("admin", null);
+        setAdminRefreshToken(null);
       })
       .finally(() => setIsLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1067,7 +1067,6 @@ export function exportPaymentsCsv() {
 export type HackathonTeamMember = {
   id: number;
   team_id: number;
-  user_id: number | null;
   full_name: string;
   study_level: string;
   specialty: string;
@@ -1125,7 +1124,6 @@ export type HackathonTeamMemberFields = {
   full_name: string;
   study_level: string;
   specialty: string;
-  user_id?: number | null;
 };
 
 export function createHackathonTeamMember(
@@ -1137,7 +1135,6 @@ export function createHackathonTeamMember(
   formData.set("full_name", fields.full_name);
   formData.set("study_level", fields.study_level);
   formData.set("specialty", fields.specialty);
-  if (fields.user_id != null) formData.set("user_id", String(fields.user_id));
   if (photo) formData.set("photo", photo);
   return apiFetchForm<HackathonTeamMember>(
     `/api/admin/hackathon/teams/${teamId}/members`,
@@ -1156,7 +1153,6 @@ export function updateHackathonTeamMember(
   if (fields.full_name !== undefined) formData.set("full_name", fields.full_name);
   if (fields.study_level !== undefined) formData.set("study_level", fields.study_level);
   if (fields.specialty !== undefined) formData.set("specialty", fields.specialty);
-  if (fields.user_id != null) formData.set("user_id", String(fields.user_id));
   if (photo) formData.set("photo", photo);
   return apiFetchForm<HackathonTeamMember>(
     `/api/admin/hackathon/teams/${teamId}/members/${memberId}`,
@@ -1169,34 +1165,5 @@ export function deleteHackathonTeamMember(teamId: number, memberId: number) {
   return apiFetch<void>(`/api/admin/hackathon/teams/${teamId}/members/${memberId}`, {
     method: "DELETE",
     auth: "admin",
-  });
-}
-
-export type Participant = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-};
-
-export type ParticipantCreate = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_whatsapp: string;
-  country: string;
-  city: string;
-};
-
-export function searchParticipants(q: string) {
-  const query = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
-  return apiFetch<Participant[]>(`/api/admin/participants${query}`, { auth: "admin" });
-}
-
-export function createParticipant(body: ParticipantCreate) {
-  return apiFetch<Participant>("/api/admin/participants", {
-    method: "POST",
-    auth: "admin",
-    body,
   });
 }

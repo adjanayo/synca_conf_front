@@ -6,7 +6,7 @@ export type AdminAuthContextValue = {
   role: string | null;
   permissions: string[];
   hasPermission: (code: string) => boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string, refreshToken: string) => Promise<void>;
   logout: () => void;
 };
 

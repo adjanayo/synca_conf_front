@@ -26,8 +26,8 @@ export function AdminLoginPage({ dashboardPath }: { dashboardPath: string }) {
     }
     setPending(true);
     try {
-      const { access_token } = await adminLogin(email, password);
-      await login(access_token);
+      const { access_token, refresh_token } = await adminLogin(email, password);
+      await login(access_token, refresh_token);
       toast.success("Connexion réussie");
       navigate(dashboardPath, { replace: true });
     } catch (err) {
