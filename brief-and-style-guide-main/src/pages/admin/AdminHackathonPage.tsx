@@ -5,13 +5,16 @@ import { toast } from "sonner";
 import {
   createHackathonTeam,
   createHackathonTeamMember,
+  createParticipant,
   deleteHackathonTeam,
   deleteHackathonTeamMember,
   listHackathonTeams,
+  searchParticipants,
   updateHackathonTeam,
   updateHackathonTeamMember,
   type HackathonTeam,
   type HackathonTeamMember,
+  type Participant,
 } from "../../lib/api/admin";
 import { ApiError } from "../../lib/api/client";
 import { Skeleton } from "../../components/ui/skeleton";
@@ -135,26 +138,181 @@ function TeamFormDialog({
 
 // ---------- Members ----------
 
+// Lie un membre d'équipe à un compte participant réel (table `users`) --
+// soit en cherchant un compte déjà inscrit, soit en en créant un
+// directement depuis le dashboard (les étudiants du hackathon ne passent
+// pas forcément par la billetterie publique). Demande explicite utilisateur.
+function ParticipantPicker({
+  currentUserId,
+  onLink,
+}: {
+  currentUserId: number | null | undefined;
+  onLink: (participant: Participant) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"search" | "create">("search");
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Participant[]>([]);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+
+  const searchMutation = useMutation({
+    mutationFn: () => searchParticipants(query),
+    onSuccess: (data) => setResults(data),
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: () =>
+      createParticipant({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_whatsapp: phone,
+        country,
+        city,
+      }),
+    onSuccess: (participant) => {
+      toast.success("Compte participant créé.");
+      onLink(participant);
+      setOpen(false);
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
+  if (!open) {
+    return (
+      <div className="flex items-center gap-2 text-xs">
+        <span className="text-muted-foreground">
+          {currentUserId ? `Compte participant lié (#${currentUserId})` : "Aucun compte lié"}
+        </span>
+        <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
+          {currentUserId ? "Changer" : "Lier un participant"}
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full rounded-lg border border-border p-3 space-y-2 bg-muted/30">
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant={mode === "search" ? "default" : "secondary"}
+          onClick={() => setMode("search")}
+        >
+          Rechercher
+        </Button>
+        <Button
+          size="sm"
+          variant={mode === "create" ? "default" : "secondary"}
+          onClick={() => setMode("create")}
+        >
+          Créer un compte
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+          Annuler
+        </Button>
+      </div>
+      {mode === "search" ? (
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Nom ou email"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <Button
+              size="sm"
+              disabled={query.trim() === "" || searchMutation.isPending}
+              onClick={() => searchMutation.mutate()}
+            >
+              Chercher
+            </Button>
+          </div>
+          {results.length > 0 && (
+            <ul className="space-y-1">
+              {results.map((p) => (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    className="text-sm text-primary hover:underline"
+                    onClick={() => {
+                      onLink(p);
+                      setOpen(false);
+                    }}
+                  >
+                    {p.first_name} {p.last_name} — {p.email}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <Input placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <Input placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input
+            placeholder="Téléphone WhatsApp"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <Input placeholder="Pays" value={country} onChange={(e) => setCountry(e.target.value)} />
+          <Input placeholder="Ville" value={city} onChange={(e) => setCity(e.target.value)} />
+          <Button
+            size="sm"
+            className="col-span-2"
+            disabled={
+              !firstName.trim() ||
+              !lastName.trim() ||
+              !email.trim() ||
+              !phone.trim() ||
+              !country.trim() ||
+              !city.trim() ||
+              createMutation.isPending
+            }
+            onClick={() => createMutation.mutate()}
+          >
+            Créer et lier
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MemberRow({ teamId, member: m }: { teamId: number; member: HackathonTeamMember }) {
   const queryClient = useQueryClient();
   const [fullName, setFullName] = useState(m.full_name);
   const [studyLevel, setStudyLevel] = useState(m.study_level);
   const [specialty, setSpecialty] = useState(m.specialty);
   const [photo, setPhoto] = useState<File | null>(null);
+  const [userId, setUserId] = useState(m.user_id);
 
   useEffect(() => {
     setFullName(m.full_name);
     setStudyLevel(m.study_level);
     setSpecialty(m.specialty);
     setPhoto(null);
-  }, [m.full_name, m.study_level, m.specialty]);
+    setUserId(m.user_id);
+  }, [m.full_name, m.study_level, m.specialty, m.user_id]);
 
   const updateMutation = useMutation({
     mutationFn: () =>
       updateHackathonTeamMember(
         teamId,
         m.id,
-        { full_name: fullName, study_level: studyLevel, specialty: specialty },
+        { full_name: fullName, study_level: studyLevel, specialty: specialty, user_id: userId },
         photo,
       ),
     onSuccess: () => {
@@ -179,7 +337,11 @@ function MemberRow({ teamId, member: m }: { teamId: number; member: HackathonTea
   });
 
   const dirty =
-    fullName !== m.full_name || studyLevel !== m.study_level || specialty !== m.specialty || photo !== null;
+    fullName !== m.full_name ||
+    studyLevel !== m.study_level ||
+    specialty !== m.specialty ||
+    photo !== null ||
+    userId !== m.user_id;
 
   return (
     <div className="flex flex-wrap items-center gap-2 py-2 border-b last:border-b-0">
@@ -215,6 +377,15 @@ function MemberRow({ teamId, member: m }: { teamId: number; member: HackathonTea
       >
         Supprimer
       </Button>
+      <div className="w-full">
+        <ParticipantPicker
+          currentUserId={userId}
+          onLink={(p) => {
+            setUserId(p.id);
+            if (!fullName.trim()) setFullName(`${p.first_name} ${p.last_name}`);
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -225,12 +396,13 @@ function NewMemberForm({ teamId }: { teamId: number }) {
   const [studyLevel, setStudyLevel] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
 
   const mutation = useMutation({
     mutationFn: () =>
       createHackathonTeamMember(
         teamId,
-        { full_name: fullName, study_level: studyLevel, specialty },
+        { full_name: fullName, study_level: studyLevel, specialty, user_id: userId },
         photo,
       ),
     onSuccess: () => {
@@ -239,6 +411,7 @@ function NewMemberForm({ teamId }: { teamId: number }) {
       setStudyLevel("");
       setSpecialty("");
       setPhoto(null);
+      setUserId(null);
       queryClient.invalidateQueries({ queryKey: ["admin", "hackathon-teams"] });
     },
     onError: (error) => {
@@ -277,6 +450,15 @@ function NewMemberForm({ teamId }: { teamId: number }) {
       <Button size="sm" disabled={!canSubmit || mutation.isPending} onClick={() => mutation.mutate()}>
         Ajouter
       </Button>
+      <div className="w-full">
+        <ParticipantPicker
+          currentUserId={userId}
+          onLink={(p) => {
+            setUserId(p.id);
+            if (!fullName.trim()) setFullName(`${p.first_name} ${p.last_name}`);
+          }}
+        />
+      </div>
     </div>
   );
 }
