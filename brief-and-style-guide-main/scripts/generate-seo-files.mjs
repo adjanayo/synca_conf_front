@@ -6,6 +6,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { PUBLIC_ROUTES as ROUTES } from "./public-routes.mjs";
 
 const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -15,25 +16,6 @@ function readSiteUrl() {
   const match = readFileSync(envPath, "utf-8").match(/^VITE_SITE_URL=(.+)$/m);
   return match ? match[1].trim().replace(/\/$/, "") : null;
 }
-
-// Routes publiques statiques uniquement -- pas les pages détail à id
-// dynamique (/speakers/:id, /ambassadeurs/:id, non énumérables sans appeler
-// l'API ici) ni les routes participant (/connexion, /espace, comptes
-// personnels, aucune valeur SEO).
-const ROUTES = [
-  "/",
-  "/programme",
-  "/speakers",
-  "/partenaires",
-  "/exposants",
-  "/ambassadeur",
-  "/ambassadeurs",
-  "/hackathon-universitaire",
-  "/faq",
-  "/contact",
-  "/inscription",
-  "/candidature-speaker",
-];
 
 const siteUrl = readSiteUrl();
 
