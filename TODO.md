@@ -10,6 +10,3 @@ Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé —
 - [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
 - [ ] Workflow inscription → paiement → webhook → ticket PDF+QR
 
-## Partie 6 — Divers
-- [ ] Faire remonter les shapes manquants/statuts inattendus au backend au fil de l'eau — continu, 1er passage fait (`DEVLOG.md` suite 14)
-

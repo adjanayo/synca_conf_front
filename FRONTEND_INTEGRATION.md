@@ -96,6 +96,16 @@ Utiliser `access_token` en header `Authorization: Bearer <token>` sur les routes
 
 5 échecs de connexion consécutifs verrouillent le compte 15 min (doublement à chaque échec suivant, plafonné à 4h).
 
+#### `POST /api/admin/refresh`
+
+Échange le `refresh_token` (longue durée, `REFRESH_TOKEN_EXPIRE_DAYS` dans `.env`) contre une nouvelle paire — évite de renvoyer l'admin au login à chaque expiration de l'`access_token`.
+
+```json
+{ "refresh_token": "..." }
+```
+
+**Réponse `200`** : même forme que le login (`access_token`/`refresh_token`/`token_type`). **Rotation à chaque appel** — l'ancien `refresh_token` n'est plus valide une fois échangé, toujours stocker la nouvelle paire renvoyée. **`401`** si le jeton est invalide, expiré, du mauvais type (ex. un `access_token` envoyé par erreur), ou si le compte n'est plus actif.
+
 ---
 
 ## 4. Endpoints publics — lecture (GET, pas d'auth)
@@ -174,15 +184,18 @@ Types de billets actifs uniquement.
     "name": "Pass 1 jour",
     "price": 15000,
     "description": "Accès à une journée au choix",
-    "inclusions": "Badge, café pause, déjeuner",
     "max_days": 1,
     "is_active": true,
-    "created_at": "2026-08-01T10:00:00"
+    "created_at": "2026-08-01T10:00:00",
+    "contents": [
+      { "id": 1, "label": "Badge nominatif", "created_at": "2026-08-01T10:00:00" },
+      { "id": 2, "label": "Déjeuner inclus", "created_at": "2026-08-01T10:00:00" }
+    ]
   }
 ]
 ```
 
-> `price` est un `int` en **francs CFA (FCFA)**, sans décimales.
+> `price` est un `int` en **francs CFA (FCFA)**, sans décimales. Les inclusions (`contents`) sont un catalogue coché au dashboard (`PassContent`), pas du texte libre — un pass sans contenu coché renvoie `contents: []`.
 
 ### 4.5 `GET /api/speakers`
 
@@ -249,7 +262,47 @@ Partenaires confirmés et publiés uniquement (`is_public=true` filtré côté s
 
 > Sous-ensemble sans PII (`PartnerPublicRead` côté back) : ni `sector`/`country`/`city`, ni les champs de contact (`contact_name`/`contact_email`/`contact_phone`/...), ni `status`/`gdpr_consent` — uniquement ce qui précède.
 
-### 4.7 `GET /api/exhibitors`
+### 4.7 `GET /api/partner-levels`
+
+Paliers de partenariat (les `level_id` référencés par `/api/partners` et le formulaire de candidature).
+
+**Paramètres** : aucun.
+
+**Réponse** `200` — tableau :
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Gold",
+    "price": 500000,
+    "sort_order": 1,
+    "created_at": "2026-08-01T10:00:00",
+    "benefits": [
+      { "id": 1, "label": "Logo sur le site", "created_at": "2026-08-01T10:00:00" },
+      { "id": 2, "label": "Stand exposition", "created_at": "2026-08-01T10:00:00" }
+    ]
+  }
+]
+```
+
+> Les avantages (`benefits`) sont un catalogue coché au dashboard (`PartnerBenefit`), pas du texte libre.
+
+### 4.8 `GET /api/faq-categories`
+
+Catégories de FAQ, triées par `id`.
+
+**Paramètres** : aucun.
+
+**Réponse** `200` — tableau :
+
+```json
+[
+  { "id": 1, "name": "Billetterie" }
+]
+```
+
+### 4.9 `GET /api/exhibitors`
 
 Exposants confirmés et publiés uniquement (`is_public=true` filtré côté serveur).
 
@@ -274,7 +327,7 @@ Exposants confirmés et publiés uniquement (`is_public=true` filtré côté ser
 
 > Sous-ensemble sans PII (`ExhibitorPublicRead` côté back) : ni `sector`/`country`/`city`, ni les champs de contact, ni `reps_count`/`status`/`gdpr_consent`/... — uniquement ce qui précède.
 
-### 4.8 `GET /api/faqs`
+### 4.10 `GET /api/faqs`
 
 FAQ, triée par `sort_order`.
 
@@ -300,7 +353,7 @@ FAQ, triée par `sort_order`.
 ]
 ```
 
-### 4.9 `GET /api/campaign-windows`
+### 4.11 `GET /api/campaign-windows`
 
 Dates d'ouverture/fermeture de chaque étape (billetterie, call for speaker, etc.). Utile pour un **compte à rebours** frontend ou pour activer/désactiver des formulaires côté client.
 
@@ -331,7 +384,45 @@ Dates d'ouverture/fermeture de chaque étape (billetterie, call for speaker, etc
 ]
 ```
 
-> Les `key` possibles : `ticketing`, `call_for_speaker`, `call_for_partner`, `call_for_ambassador`, `call_for_exhibitor`.
+> Les `key` possibles : `call_for_speaker`, `ticketing`, `call_for_partner`, `call_for_ambassador`, `call_for_exhibitor`, `event`, `hackathon_universitaire`, `call_for_community_certified`.
+
+### 4.12 `GET /api/hackathon-teams`
+
+Équipes du hackathon universitaire, avec leurs membres imbriqués. Ne renvoie que les équipes visibles publiquement (`is_public=true` filtré côté serveur — l'admin peut masquer une équipe sans la supprimer).
+
+**Paramètres query** (optionnels) :
+| Param | Type | Description |
+|---|---|---|
+| `limit` | `int` | Défaut `50`, max `200` |
+| `offset` | `int` | Défaut `0` |
+
+**Réponse** `200` — tableau :
+
+```json
+[
+  {
+    "id": 1,
+    "university_name": "UCAD",
+    "name": "Team Alpha",
+    "project_name": "AgriSense",
+    "project_description": "Capteurs IoT pour agriculture de précision.",
+    "created_at": "2026-08-01T10:00:00",
+    "members": [
+      {
+        "id": 1,
+        "team_id": 1,
+        "full_name": "Awa Diop",
+        "study_level": "Licence 3",
+        "specialty": "Informatique",
+        "photo_url": "https://b2-cdn.example.com/hackathon/abc123.jpg",
+        "created_at": "2026-08-01T10:00:00"
+      }
+    ]
+  }
+]
+```
+
+> Les membres sont saisis directement au dashboard admin (pas liés aux inscrits/billetterie — deux populations volontairement distinctes).
 
 ---
 
@@ -922,7 +1013,7 @@ Quand la limite est dépassée, la réponse est :
 
 ## 9. Pagination
 
-Les endpoints de liste (`sessions`, `speakers`, `partners`, `exhibitors`, `faqs`) supportent la pagination. La réponse est un **tableau brut** (pas un objet wrapper) :
+Les endpoints de liste (`sessions`, `speakers`, `partners`, `exhibitors`, `faqs`, `hackathon-teams`) supportent la pagination. La réponse est un **tableau brut** (pas un objet wrapper) :
 
 ```
 GET /api/speakers?limit=10&offset=0   → 10 premiers speakers
@@ -941,8 +1032,6 @@ GET /api/speakers?limit=10&offset=10  → 10 suivants
 ## 10. Ce qui n'est pas encore disponible
 
 - **Paiement/billetterie** — Phase 5 terminée côté backend (webhooks Stripe/Wave/Orange Money, génération billet PDF + QR code) mais pas encore testée en conditions réelles. Les endpoints `POST /api/payments` et `POST /api/promo/validate` existent mais ne doivent pas encore être consommés par le frontend en production.
-- **Refresh token endpoint** — pas encore exposé, seul le login émet une paire access+refresh.
-
 Le suivi d'avancement précis est dans `ROADMAP.md` à la racine du repo.
 
 ---

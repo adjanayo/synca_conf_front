@@ -17,7 +17,9 @@ import { ApiError } from "../../lib/api/client";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import { Switch } from "../../components/ui/switch";
 import { Textarea } from "../../components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog";
@@ -29,6 +31,7 @@ type TeamFormState = {
   name: string;
   project_name: string;
   project_description: string;
+  is_public: boolean;
 };
 
 const EMPTY_TEAM_FORM: TeamFormState = {
@@ -36,6 +39,7 @@ const EMPTY_TEAM_FORM: TeamFormState = {
   name: "",
   project_name: "",
   project_description: "",
+  is_public: true,
 };
 
 function teamToForm(t: HackathonTeam): TeamFormState {
@@ -44,6 +48,7 @@ function teamToForm(t: HackathonTeam): TeamFormState {
     name: t.name,
     project_name: t.project_name,
     project_description: t.project_description,
+    is_public: t.is_public,
   };
 }
 
@@ -120,6 +125,14 @@ function TeamFormDialog({
               value={form.project_description}
               onChange={(e) => setForm((f) => ({ ...f, project_description: e.target.value }))}
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              id="team-is-public"
+              checked={form.is_public}
+              onCheckedChange={(v) => setForm((f) => ({ ...f, is_public: v }))}
+            />
+            <Label htmlFor="team-is-public">Équipe visible publiquement</Label>
           </div>
         </div>
 
@@ -300,12 +313,28 @@ function TeamCard({ team: t, onEdit }: { team: HackathonTeam; onEdit: () => void
     },
   });
 
+  const toggleVisibilityMutation = useMutation({
+    mutationFn: () => updateHackathonTeam(t.id, { is_public: !t.is_public }),
+    onSuccess: () => {
+      toast.success(t.is_public ? "Équipe masquée." : "Équipe rendue visible.");
+      queryClient.invalidateQueries({ queryKey: ["admin", "hackathon-teams"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
   return (
     <Card className="mb-6">
       <CardHeader className="flex flex-row items-start justify-between pb-2">
         <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">
-            {t.university_name}
+          <div className="flex items-center gap-2">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">
+              {t.university_name}
+            </div>
+            <Badge variant={t.is_public ? "default" : "secondary"}>
+              {t.is_public ? "Visible" : "Masquée"}
+            </Badge>
           </div>
           <CardTitle className="text-base font-medium text-ink">
             {t.name} — {t.project_name}
@@ -313,6 +342,14 @@ function TeamCard({ team: t, onEdit }: { team: HackathonTeam; onEdit: () => void
           <p className="text-sm text-muted-foreground mt-1">{t.project_description}</p>
         </div>
         <div className="flex gap-2 shrink-0">
+          <Button
+            size="sm"
+            variant="secondary"
+            disabled={toggleVisibilityMutation.isPending}
+            onClick={() => toggleVisibilityMutation.mutate()}
+          >
+            {t.is_public ? "Masquer" : "Afficher"}
+          </Button>
           <Button size="sm" variant="secondary" onClick={onEdit}>
             Modifier
           </Button>

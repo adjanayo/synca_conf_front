@@ -1080,6 +1080,7 @@ export type HackathonTeam = {
   name: string;
   project_name: string;
   project_description: string;
+  is_public: boolean;
   created_at: string;
   members: HackathonTeamMember[];
 };
@@ -1089,6 +1090,7 @@ export type HackathonTeamCreate = {
   name: string;
   project_name: string;
   project_description: string;
+  is_public?: boolean;
 };
 
 export type HackathonTeamUpdate = Partial<HackathonTeamCreate>;
