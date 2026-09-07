@@ -1,0 +1,16 @@
+name: synca-conf
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: dev-synca-front
+    container_name: dev-synca-front
+    env_file:
+      - .env
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
