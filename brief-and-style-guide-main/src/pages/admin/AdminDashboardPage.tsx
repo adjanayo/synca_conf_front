@@ -58,6 +58,14 @@ function statusVariant(status: string): "default" | "secondary" | "destructive" 
   return "secondary";
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  completed: "Payé",
+  pending: "En attente",
+  failed: "Échoué",
+  refunded: "Remboursé",
+  registered: "Inscrit (non payé)",
+};
+
 export function AdminDashboardPage() {
   const { logout } = useAdminAuth();
 
@@ -189,7 +197,7 @@ export function AdminDashboardPage() {
 
       {statsQuery.data && (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <KpiCard label="Inscriptions" value={statsQuery.data.total_registrations.toString()} />
             <KpiCard label="Revenu total" value={currency.format(statsQuery.data.total_revenue)} />
             <KpiCard
@@ -200,6 +208,11 @@ export function AdminDashboardPage() {
               label="Conversion code promo"
               value={`${Math.round(statsQuery.data.promo_conversion_rate * 100)}%`}
             />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <KpiCard label="Payés" value={statsQuery.data.completed_payments.toString()} />
+            <KpiCard label="En attente de paiement" value={statsQuery.data.pending_payments.toString()} />
+            <KpiCard label="Liste d'attente" value={statsQuery.data.waitlist_count.toString()} />
           </div>
 
           <h2 className="font-display font-semibold text-lg text-ink mb-4">
@@ -249,23 +262,23 @@ export function AdminDashboardPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {registrationsQuery.data.length === 0 && (
+            {registrationsQuery.data.items.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
                   Aucune inscription pour l'instant.
                 </TableCell>
               </TableRow>
             )}
-            {registrationsQuery.data.map((r) => (
-              <TableRow key={r.payment_id}>
+            {registrationsQuery.data.items.map((r) => (
+              <TableRow key={`${r.user_id}-${r.payment_id ?? "none"}`}>
                 <TableCell>
                   <div className="font-medium">{r.user_name}</div>
                   <div className="text-xs text-muted-foreground">{r.user_email}</div>
                 </TableCell>
-                <TableCell>{r.pass_type_name}</TableCell>
-                <TableCell>{currency.format(r.amount_paid)}</TableCell>
+                <TableCell>{r.pass_type_name ?? "—"}</TableCell>
+                <TableCell>{r.amount_paid !== null ? currency.format(r.amount_paid) : "—"}</TableCell>
                 <TableCell>
-                  <Badge variant={statusVariant(r.status)}>{r.status}</Badge>
+                  <Badge variant={statusVariant(r.status)}>{STATUS_LABELS[r.status] ?? r.status}</Badge>
                 </TableCell>
                 <TableCell>{dateTime.format(new Date(r.created_at))}</TableCell>
               </TableRow>

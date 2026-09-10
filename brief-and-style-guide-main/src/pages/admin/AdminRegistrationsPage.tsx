@@ -32,6 +32,14 @@ function statusVariant(status: string): "default" | "secondary" | "destructive" 
   return "secondary";
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  completed: "Payé",
+  pending: "En attente",
+  failed: "Échoué",
+  refunded: "Remboursé",
+  registered: "Inscrit (non payé)",
+};
+
 export function AdminRegistrationsPage() {
   const [offset, setOffset] = useState(0);
 
@@ -42,10 +50,11 @@ export function AdminRegistrationsPage() {
       error instanceof ApiError && error.status !== 401 && failureCount < 2,
   });
 
-  const hasMore = (registrationsQuery.data?.length ?? 0) === LIMIT;
+  const total = registrationsQuery.data?.total ?? 0;
+  const hasMore = offset + LIMIT < total;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
+    <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display font-bold text-2xl text-ink">Inscriptions</h1>
@@ -53,6 +62,9 @@ export function AdminRegistrationsPage() {
             ← Tableau de bord
           </Link>
         </div>
+        {registrationsQuery.data && (
+          <span className="text-sm text-muted-foreground">{total} inscription{total > 1 ? "s" : ""} au total</span>
+        )}
       </div>
 
       {registrationsQuery.isPending && <Skeleton className="h-64" />}
@@ -79,23 +91,23 @@ export function AdminRegistrationsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {registrationsQuery.data.length === 0 && (
+              {registrationsQuery.data.items.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-muted-foreground">
                     Aucune inscription pour ces filtres.
                   </TableCell>
                 </TableRow>
               )}
-              {registrationsQuery.data.map((r) => (
-                <TableRow key={r.payment_id}>
+              {registrationsQuery.data.items.map((r) => (
+                <TableRow key={`${r.user_id}-${r.payment_id ?? "none"}`}>
                   <TableCell>
                     <div className="font-medium">{r.user_name}</div>
                     <div className="text-xs text-muted-foreground">{r.user_email}</div>
                   </TableCell>
-                  <TableCell>{r.pass_type_name}</TableCell>
-                  <TableCell>{currency.format(r.amount_paid)}</TableCell>
+                  <TableCell>{r.pass_type_name ?? "—"}</TableCell>
+                  <TableCell>{r.amount_paid !== null ? currency.format(r.amount_paid) : "—"}</TableCell>
                   <TableCell>
-                    <Badge variant={statusVariant(r.status)}>{r.status}</Badge>
+                    <Badge variant={statusVariant(r.status)}>{STATUS_LABELS[r.status] ?? r.status}</Badge>
                   </TableCell>
                   <TableCell>{dateTime.format(new Date(r.created_at))}</TableCell>
                 </TableRow>
@@ -113,7 +125,7 @@ export function AdminRegistrationsPage() {
               Précédent
             </Button>
             <span className="text-sm text-muted-foreground">
-              {offset + 1}–{offset + registrationsQuery.data.length}
+              {total === 0 ? 0 : offset + 1}–{offset + registrationsQuery.data.items.length} sur {total}
             </span>
             <Button
               variant="outline"

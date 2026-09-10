@@ -53,7 +53,8 @@ export const SOURCES = [
 ] as const;
 
 export const SPEAKER_FORMATS = ["Keynote", "Panel", "Workshop", "Lightning Talk", "Fireside Chat"] as const;
-export const SPEAKER_THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cyber Sécurité"] as const;
+// Valeurs alignées à l'identique sur THEME_VALUES backend (app/models/applications.py).
+export const SPEAKER_THEMES = ["IA", "EdTech", "Entrepreneuriat", "Carrières", "Impact", "Cybersec"] as const;
 export const SPEAKER_AUDIENCE = ["Débutant", "Intermédiaire", "Avancé", "Tous"] as const;
 export const SPEAKER_LANGUES = ["Français", "Anglais", "Bilingue", "Autre"] as const;
 export const SPEAKER_DISPO = ["Oui confirmé", "Sous réserve", "Besoin aide déplacement"] as const;

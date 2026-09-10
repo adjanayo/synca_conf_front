@@ -208,7 +208,7 @@ export function AdminUsersPage() {
   const hasMore = (usersQuery.data?.length ?? 0) === LIMIT;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
+    <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display font-bold text-2xl text-ink">Comptes admin</h1>

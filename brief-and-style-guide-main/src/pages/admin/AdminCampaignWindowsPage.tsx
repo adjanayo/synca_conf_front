@@ -24,6 +24,8 @@ const KEY_LABELS: Record<CampaignWindowKey, string> = {
   call_for_ambassador: "Appel à ambassadeurs",
   call_for_exhibitor: "Appel à exposants",
   event: "Dates de l'événement",
+  hackathon_universitaire: "Hackathon universitaire",
+  call_for_community_certified: "Synca Community Certified",
 };
 
 // "Dates de l'événement" vit dans Réglages événement (AdminEventSettingsPage),
@@ -70,12 +72,26 @@ function WindowCard({ window: w }: { window: CampaignWindow }) {
     endAt !== toLocalInputValue(w.end_at) ||
     isActive !== w.is_active;
 
+  // Une fenêtre ne peut être activée/désactivée manuellement que pendant sa
+  // période ; hors période (passée ou future) elle est désactivée par
+  // défaut côté backend, quelle que soit la valeur enregistrée ici.
+  const inPeriod = (() => {
+    const start = new Date(startAt).getTime();
+    const end = new Date(endAt).getTime();
+    const now = Date.now();
+    return Number.isFinite(start) && Number.isFinite(end) && now >= start && now <= end;
+  })();
+  const effectiveActive = w.is_active && (() => {
+    const now = Date.now();
+    return now >= new Date(w.start_at).getTime() && now <= new Date(w.end_at).getTime();
+  })();
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-base font-medium text-ink">{KEY_LABELS[w.key]}</CardTitle>
-        <Badge variant={w.is_active ? "default" : "secondary"}>
-          {w.is_active ? "Active" : "Inactive"}
+        <Badge variant={effectiveActive ? "default" : "secondary"}>
+          {effectiveActive ? "Active" : "Inactive"}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -100,9 +116,21 @@ function WindowCard({ window: w }: { window: CampaignWindow }) {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Switch id={`active-${w.key}`} checked={isActive} onCheckedChange={setIsActive} />
-            <Label htmlFor={`active-${w.key}`}>Fenêtre active</Label>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <Switch
+                id={`active-${w.key}`}
+                checked={inPeriod && isActive}
+                disabled={!inPeriod}
+                onCheckedChange={setIsActive}
+              />
+              <Label htmlFor={`active-${w.key}`}>Fenêtre active</Label>
+            </div>
+            {!inPeriod && (
+              <p className="text-xs text-muted-foreground">
+                Désactivée par défaut hors période. Activable manuellement pendant la période définie.
+              </p>
+            )}
           </div>
           <Button
             size="sm"

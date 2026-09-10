@@ -30,6 +30,8 @@ export type AdminStats = {
   completed_payments: number;
   payments_with_promo: number;
   promo_conversion_rate: number;
+  pending_payments: number;
+  waitlist_count: number;
   applications_by_status: Record<string, Record<string, number>>;
 };
 
@@ -38,12 +40,12 @@ export function getAdminStats() {
 }
 
 export type AdminRegistration = {
-  payment_id: number;
+  payment_id: number | null;
   user_id: number;
   user_name: string;
   user_email: string;
-  pass_type_name: string;
-  amount_paid: number;
+  pass_type_name: string | null;
+  amount_paid: number | null;
   status: string;
   ticket_number: string | null;
   created_at: string;
@@ -54,11 +56,16 @@ export type RegistrationFilters = {
   offset?: number;
 };
 
+export type RegistrationList = {
+  items: AdminRegistration[];
+  total: number;
+};
+
 export function listRegistrations({ limit = 5, offset = 0 }: RegistrationFilters = {}) {
   const params = new URLSearchParams();
   params.set("limit", String(limit));
   params.set("offset", String(offset));
-  return apiFetch<AdminRegistration[]>(`/api/admin/registrations?${params.toString()}`, {
+  return apiFetch<RegistrationList>(`/api/admin/registrations?${params.toString()}`, {
     auth: "admin",
   });
 }
@@ -405,7 +412,9 @@ export type CampaignWindowKey =
   | "call_for_partner"
   | "call_for_ambassador"
   | "call_for_exhibitor"
-  | "event";
+  | "event"
+  | "hackathon_universitaire"
+  | "call_for_community_certified";
 
 export type CampaignWindow = {
   id: number;
