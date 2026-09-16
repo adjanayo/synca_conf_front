@@ -6,6 +6,7 @@ import {
   createSpeaker,
   listSpeakers,
   updateSpeakerStatus,
+  updateSpeakerVisibility,
   type Speaker,
   type SpeakerApplicationStatus,
   type SpeakerCreate,
@@ -426,6 +427,19 @@ export function AdminSpeakersPage() {
     },
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: ({ id, is_public }: { id: number; is_public: boolean }) =>
+      updateSpeakerVisibility(id, "accepted", is_public),
+    onSuccess: (updated) => {
+      toast.success(updated.is_public ? "Speaker visible sur le site." : "Speaker masqué du site.");
+      setSelected(updated);
+      queryClient.invalidateQueries({ queryKey: ["admin", "speakers"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
   return (
     <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
@@ -504,13 +518,14 @@ export function AdminSpeakersPage() {
               <TableHead>Thème</TableHead>
               <TableHead>Format</TableHead>
               <TableHead>Statut</TableHead>
+              <TableHead>Visible sur le site</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {speakersQuery.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Aucune candidature pour ces filtres.
                 </TableCell>
               </TableRow>
@@ -540,6 +555,15 @@ export function AdminSpeakersPage() {
                 <TableCell>{s.intervention_format}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariant(s.status)}>{STATUS_LABELS[s.status]}</Badge>
+                </TableCell>
+                <TableCell>
+                  {s.status === "accepted" ? (
+                    <Badge variant={s.is_public ? "default" : "secondary"}>
+                      {s.is_public ? "Visible" : "Masqué"}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>{dateTime.format(new Date(s.created_at))}</TableCell>
               </TableRow>
@@ -614,6 +638,20 @@ export function AdminSpeakersPage() {
                   >
                     Accepter
                   </Button>
+                </div>
+              )}
+
+              {selected.status === "accepted" && (
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <Switch
+                    id="sp-is-public"
+                    checked={selected.is_public}
+                    disabled={visibilityMutation.isPending}
+                    onCheckedChange={(v) =>
+                      visibilityMutation.mutate({ id: selected.id, is_public: v })
+                    }
+                  />
+                  <Label htmlFor="sp-is-public">Visible publiquement sur le site</Label>
                 </div>
               )}
             </>

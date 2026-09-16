@@ -6,6 +6,7 @@ import {
   createPartner,
   listPartners,
   updatePartnerStatus,
+  updatePartnerVisibility,
   type ExhibitorStatus,
   type Partner,
   type PartnerCreate,
@@ -17,6 +18,7 @@ import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { Switch } from "../../components/ui/switch";
 import { Textarea } from "../../components/ui/textarea";
 import {
   Select,
@@ -365,6 +367,19 @@ export function AdminPartnersPage() {
     },
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: ({ id, is_public }: { id: number; is_public: boolean }) =>
+      updatePartnerVisibility(id, "confirmed", is_public),
+    onSuccess: (updated) => {
+      toast.success(updated.is_public ? "Partenaire visible sur le site." : "Partenaire masqué du site.");
+      setSelected(updated);
+      queryClient.invalidateQueries({ queryKey: ["admin", "partners"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
   return (
     <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
@@ -414,13 +429,14 @@ export function AdminPartnersPage() {
               <TableHead>Niveau</TableHead>
               <TableHead>Contact</TableHead>
               <TableHead>Statut</TableHead>
+              <TableHead>Visible sur le site</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {partnersQuery.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Aucune candidature pour ces filtres.
                 </TableCell>
               </TableRow>
@@ -437,6 +453,15 @@ export function AdminPartnersPage() {
                 <TableCell>{p.contact_name}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariant(p.status)}>{STATUS_LABELS[p.status]}</Badge>
+                </TableCell>
+                <TableCell>
+                  {p.status === "confirmed" ? (
+                    <Badge variant={p.is_public ? "default" : "secondary"}>
+                      {p.is_public ? "Visible" : "Masqué"}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>{dateTime.format(new Date(p.created_at))}</TableCell>
               </TableRow>
@@ -500,6 +525,20 @@ export function AdminPartnersPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {selected.status === "confirmed" && (
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <Switch
+                    id="pa-is-public"
+                    checked={selected.is_public}
+                    disabled={visibilityMutation.isPending}
+                    onCheckedChange={(v) =>
+                      visibilityMutation.mutate({ id: selected.id, is_public: v })
+                    }
+                  />
+                  <Label htmlFor="pa-is-public">Visible publiquement sur le site</Label>
+                </div>
+              )}
             </>
           )}
         </DialogContent>

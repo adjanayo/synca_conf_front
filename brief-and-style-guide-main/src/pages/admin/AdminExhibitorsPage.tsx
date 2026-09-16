@@ -6,6 +6,7 @@ import {
   createExhibitor,
   listExhibitors,
   updateExhibitorStatus,
+  updateExhibitorVisibility,
   type Exhibitor,
   type ExhibitorCreate,
   type ExhibitorStatus,
@@ -17,6 +18,7 @@ import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { Switch } from "../../components/ui/switch";
 import { Textarea } from "../../components/ui/textarea";
 import {
   Select,
@@ -360,6 +362,19 @@ export function AdminExhibitorsPage() {
     },
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: ({ id, is_public }: { id: number; is_public: boolean }) =>
+      updateExhibitorVisibility(id, "confirmed", is_public),
+    onSuccess: (updated) => {
+      toast.success(updated.is_public ? "Exposant visible sur le site." : "Exposant masqué du site.");
+      setSelected(updated);
+      queryClient.invalidateQueries({ queryKey: ["admin", "exhibitors"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
   return (
     <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
@@ -423,13 +438,14 @@ export function AdminExhibitorsPage() {
               <TableHead>Stand</TableHead>
               <TableHead>Contact</TableHead>
               <TableHead>Statut</TableHead>
+              <TableHead>Visible sur le site</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {exhibitorsQuery.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Aucune candidature pour ces filtres.
                 </TableCell>
               </TableRow>
@@ -446,6 +462,15 @@ export function AdminExhibitorsPage() {
                 <TableCell>{e.contact_name}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariant(e.status)}>{STATUS_LABELS[e.status]}</Badge>
+                </TableCell>
+                <TableCell>
+                  {e.status === "confirmed" ? (
+                    <Badge variant={e.is_public ? "default" : "secondary"}>
+                      {e.is_public ? "Visible" : "Masqué"}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>{dateTime.format(new Date(e.created_at))}</TableCell>
               </TableRow>
@@ -514,6 +539,20 @@ export function AdminExhibitorsPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {selected.status === "confirmed" && (
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <Switch
+                    id="ex-is-public"
+                    checked={selected.is_public}
+                    disabled={visibilityMutation.isPending}
+                    onCheckedChange={(v) =>
+                      visibilityMutation.mutate({ id: selected.id, is_public: v })
+                    }
+                  />
+                  <Label htmlFor="ex-is-public">Visible publiquement sur le site</Label>
+                </div>
+              )}
             </>
           )}
         </DialogContent>

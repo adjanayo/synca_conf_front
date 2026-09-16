@@ -128,6 +128,14 @@ export function updateSpeakerStatus(id: number, status: SpeakerApplicationStatus
   });
 }
 
+export function updateSpeakerVisibility(id: number, status: SpeakerApplicationStatus, is_public: boolean) {
+  return apiFetch<Speaker>(`/api/admin/speakers/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status, is_public },
+  });
+}
+
 export type SpeakerCreate = {
   first_name: string;
   last_name: string;
@@ -189,6 +197,7 @@ export type Ambassador = {
   gdpr_consent: boolean;
   promo_code_id: number | null;
   status: SpeakerApplicationStatus;
+  is_public: boolean;
   created_at: string;
 };
 
@@ -212,6 +221,14 @@ export function updateAmbassadorStatus(id: number, status: SpeakerApplicationSta
     method: "PATCH",
     auth: "admin",
     body: { status },
+  });
+}
+
+export function updateAmbassadorVisibility(id: number, status: SpeakerApplicationStatus, is_public: boolean) {
+  return apiFetch<Ambassador>(`/api/admin/ambassadors/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status, is_public },
   });
 }
 
@@ -297,6 +314,14 @@ export function updateExhibitorStatus(id: number, status: ExhibitorStatus) {
   });
 }
 
+export function updateExhibitorVisibility(id: number, status: ExhibitorStatus, is_public: boolean) {
+  return apiFetch<Exhibitor>(`/api/admin/exhibitors/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status, is_public },
+  });
+}
+
 export type ExhibitorCreate = {
   organization_name: string;
   sector: string;
@@ -373,6 +398,14 @@ export function updatePartnerStatus(id: number, status: ExhibitorStatus) {
     method: "PATCH",
     auth: "admin",
     body: { status },
+  });
+}
+
+export function updatePartnerVisibility(id: number, status: ExhibitorStatus, is_public: boolean) {
+  return apiFetch<Partner>(`/api/admin/partners/${id}`, {
+    method: "PATCH",
+    auth: "admin",
+    body: { status, is_public },
   });
 }
 

@@ -6,6 +6,7 @@ import {
   createAmbassador,
   listAmbassadors,
   updateAmbassadorStatus,
+  updateAmbassadorVisibility,
   type Ambassador,
   type AmbassadorCreate,
   type SpeakerApplicationStatus,
@@ -425,6 +426,21 @@ export function AdminAmbassadorsPage() {
     },
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: ({ id, is_public }: { id: number; is_public: boolean }) =>
+      updateAmbassadorVisibility(id, "accepted", is_public),
+    onSuccess: (updated) => {
+      toast.success(
+        updated.is_public ? "Ambassadeur visible sur le site." : "Ambassadeur masqué du site.",
+      );
+      setSelected(updated);
+      queryClient.invalidateQueries({ queryKey: ["admin", "ambassadors"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof ApiError ? error.detail : "Une erreur est survenue.");
+    },
+  });
+
   return (
     <div className="mx-auto max-w-[90rem] px-6 py-16">
       <div className="flex items-center justify-between mb-8">
@@ -489,13 +505,14 @@ export function AdminAmbassadorsPage() {
               <TableHead>Profil</TableHead>
               <TableHead>Portée estimée</TableHead>
               <TableHead>Statut</TableHead>
+              <TableHead>Visible sur le site</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {ambassadorsQuery.data.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   Aucune candidature pour ces filtres.
                 </TableCell>
               </TableRow>
@@ -514,6 +531,15 @@ export function AdminAmbassadorsPage() {
                 <TableCell>{a.estimated_reach ?? "—"}</TableCell>
                 <TableCell>
                   <Badge variant={statusVariant(a.status)}>{STATUS_LABELS[a.status]}</Badge>
+                </TableCell>
+                <TableCell>
+                  {a.status === "accepted" ? (
+                    <Badge variant={a.is_public ? "default" : "secondary"}>
+                      {a.is_public ? "Visible" : "Masqué"}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>{dateTime.format(new Date(a.created_at))}</TableCell>
               </TableRow>
@@ -578,6 +604,20 @@ export function AdminAmbassadorsPage() {
                   >
                     Accepter
                   </Button>
+                </div>
+              )}
+
+              {selected.status === "accepted" && (
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <Switch
+                    id="am-is-public"
+                    checked={selected.is_public}
+                    disabled={visibilityMutation.isPending}
+                    onCheckedChange={(v) =>
+                      visibilityMutation.mutate({ id: selected.id, is_public: v })
+                    }
+                  />
+                  <Label htmlFor="am-is-public">Visible publiquement sur le site</Label>
                 </div>
               )}
             </>
