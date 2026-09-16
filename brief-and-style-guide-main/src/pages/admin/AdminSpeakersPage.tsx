@@ -518,10 +518,23 @@ export function AdminSpeakersPage() {
             {speakersQuery.data.map((s) => (
               <TableRow key={s.id} className="cursor-pointer" onClick={() => setSelected(s)}>
                 <TableCell>
-                  <div className="font-medium">
-                    {s.first_name} {s.last_name}
+                  <div className="flex items-center gap-3">
+                    {s.photo_url ? (
+                      <img
+                        src={s.photo_url}
+                        alt={`${s.first_name} ${s.last_name}`}
+                        className="h-9 w-9 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-9 w-9 shrink-0 rounded-full bg-muted" />
+                    )}
+                    <div>
+                      <div className="font-medium">
+                        {s.first_name} {s.last_name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{s.title_role}</div>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">{s.title_role}</div>
                 </TableCell>
                 <TableCell>{s.theme}</TableCell>
                 <TableCell>{s.intervention_format}</TableCell>
@@ -544,6 +557,14 @@ export function AdminSpeakersPage() {
                   {selected.first_name} {selected.last_name}
                 </DialogTitle>
               </DialogHeader>
+
+              {selected.photo_url && (
+                <img
+                  src={selected.photo_url}
+                  alt={`${selected.first_name} ${selected.last_name}`}
+                  className="h-24 w-24 rounded-full object-cover"
+                />
+              )}
 
               <dl className="grid grid-cols-2 gap-4">
                 <DetailRow label="Rôle / titre" value={selected.title_role} />
