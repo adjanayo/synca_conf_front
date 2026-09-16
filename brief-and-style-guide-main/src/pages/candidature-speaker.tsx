@@ -142,7 +142,6 @@ function SpeakerForm() {
     const parsed = schema.safeParse(f);
     const e = zodErrors(parsed);
     if (!f.photo) e.photo = "Photo HD requise";
-    else if (f.photo.size < 1024 * 1024) e.photo = "Minimum 1 MB";
     setErrors(e);
     if (Object.keys(e).length) return toast.error("Merci de corriger les champs en erreur.");
 
