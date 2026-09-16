@@ -215,17 +215,30 @@ export function AdminDashboardPage() {
             <KpiCard label="Liste d'attente" value={statsQuery.data.waitlist_count.toString()} />
           </div>
 
-          <h2 className="font-display font-semibold text-lg text-ink mb-4">
-            Candidatures en attente de revue
-          </h2>
+          <h2 className="font-display font-semibold text-lg text-ink mb-4">Candidatures</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {Object.entries(statsQuery.data.applications_by_status).map(([entity, byStatus]) => (
-              <KpiCard
-                key={entity}
-                label={ENTITY_LABELS[entity] ?? entity}
-                value={(byStatus.pending ?? 0).toString()}
-              />
-            ))}
+            {Object.entries(statsQuery.data.applications_by_status).map(([entity, byStatus]) => {
+              const accepted = byStatus.accepted ?? 0;
+              const pending = byStatus.pending ?? 0;
+              const total = Object.values(byStatus).reduce((sum, n) => sum + n, 0);
+              return (
+                <Card key={entity}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                      {ENTITY_LABELS[entity] ?? entity}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold text-ink">
+                      {accepted} / {total}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {pending} en attente de revue
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </>
       )}
