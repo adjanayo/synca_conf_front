@@ -1,12 +1,13 @@
-name: synca-conf
+name: synca-dev
 
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: dev-synca-front
-    container_name: dev-synca-front
+    image: synca-dev-web
+    container_name: synca-dev-web
+    restart: unless-stopped
     env_file:
       - .env
     ports:
@@ -14,3 +15,8 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+
+# Naming rule for every Docker project: <project>-<env>-<what>.
+networks:
+  default:
+    name: synca-dev-network
