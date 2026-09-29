@@ -10,15 +10,17 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-.output
-.vinxi
-.tanstack/**
-.nitro
+/backups/
 *.local
 
-# Wrangler / Cloudflare
-.wrangler/
-.dev.vars
+# Env
+.env
+.env.local
+
+# Générés à chaque build par scripts/generate-seo-files.mjs (dépendent de
+# VITE_SITE_URL dans .env, jamais commité)
+public/robots.txt
+public/sitemap.xml
 
 # Editor directories and files
 .vscode/*

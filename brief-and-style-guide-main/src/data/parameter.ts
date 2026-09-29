@@ -1,5 +1,5 @@
 import { createElement, type SVGProps } from "react";
-import { Briefcase, Code2, Facebook, Instagram, Linkedin, PartyPopper, Shield, Sparkles, Users } from "lucide-react";
+import { Briefcase, Code2, Facebook, Instagram, Linkedin, Shield, Sparkles } from "lucide-react";
 
 const TikTokIcon = (props: SVGProps<SVGSVGElement>) =>
   createElement(
@@ -12,7 +12,7 @@ const TikTokIcon = (props: SVGProps<SVGSVGElement>) =>
     },
     createElement("path", {
       d: "M16.6 5.82a4.27 4.27 0 0 1-1.06-2.82h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.5 2.54 2.54 0 0 1 1 .2v-3.23a5.72 5.72 0 0 0-.98-.09 5.83 5.83 0 1 0 5.83 5.83V8.69a7.35 7.35 0 0 0 4.29 1.31V6.9a4.29 4.29 0 0 1-3.39-1.08Z",
-    })
+    }),
   );
 
 const LINKS = [
@@ -40,42 +40,46 @@ const LINKS = [
 
 const PARAMETER = {
   logo: "/parameter/Logoicone orange blanc_CMJN.svg",
-  title: "Synca Cyber",
-  slogan: "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
-  date: "16–18 Mars 2027",
-  lieu: "Dakar, Sénégal",
+  title: "Synca Conf & ACYBIA Forum",
+  shortTitle: "Synca Conf",
+  year: 2027,
+  slogan:
+    "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
+  date: "15–17 Mars 2027",
+  startDate: "2027-03-15",
+  endDate: "2027-03-17",
+  lieu: "Noom Hôtel Sea Plaza, Dakar",
+  city: "Dakar, Sénégal",
   participants: "+2 000 participants",
+  // TODO : lien vers le programme officiel ACYBIA Forum (15-16 Mars) — à fournir.
+  acybiaProgrammeUrl: "#",
+  // Inscription des participants : gérée par ACYBIA.
+  registrationUrl: "https://www.acybia.com/inscription",
+};
+
+// Demandes partenaire / exposant / université : mail direct à l'équipe
+// partenariats, copie à l'adresse générale.
+const MAIL_TO = "astou.diakhate@sync-africa.com";
+const MAIL_CC = "contact@sync-africa.com";
+
+function contactMailto(subject: string): string {
+  return `mailto:${MAIL_TO}?cc=${MAIL_CC}&subject=${encodeURIComponent(subject)}`;
+}
+
+const MAILTO = {
+  partner: contactMailto("Devenir partenaire — Synca Conf 2027"),
+  exhibitor: contactMailto("Devenir exposant — Synca Conf 2027"),
+  speaker: contactMailto("Devenir speaker — Synca Conf 2027"),
+  university: contactMailto("Inscription université — Hackathon Synca Conf 2027"),
 };
 
 const FEATURES = [
   { i: Sparkles, t: "Conférence principale" },
   { i: Code2, t: "Panels, Keynotes" },
-  { i: Code2, t: "Ateliers, Masterclass " },
-  { i: Code2, t: "Expositions, Job Fair" },
+  { i: Code2, t: "Masterclass" },
+  { i: Code2, t: "Expositions" },
   { i: Shield, t: "Hackathon interuniversitaire" },
-  { i: Briefcase, t: "Side Event, Entreprises Tours" },
+  { i: Briefcase, t: "Networking" },
 ];
 
-
-{/*const TICKETS = [
-  { name: "VIP", price: "40 000", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
-  { name: "PRO", price: "25 000", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
-  { name: "Executif", price: "35 000", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
-  { name: "Premium", price: "100 000", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
-  { name: "En ligne", price: "10 000", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-  { name: "Etudiant", price: "Gratuit(limité)", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-
-];*/}
-const TICKETS = [
-  { name: "VIP", price: "** ***", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
-  { name: "PRO", price: "** ***", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
-  { name: "Executif", price: " ** ***", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
-  { name: "Premium", price: "** ***", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
-  { name: "En ligne", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-  { name: "Etudiant", price: "** ***", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-
-];
-
-
-
-export { LINKS, PARAMETER, FEATURES, TICKETS };
+export { LINKS, PARAMETER, FEATURES, MAILTO };

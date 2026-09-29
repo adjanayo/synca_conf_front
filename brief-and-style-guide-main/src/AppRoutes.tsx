@@ -1,17 +1,22 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import { Footer } from "./components/site/Footer";
 import { Nav } from "./components/site/Nav";
-import { AmbassadeurPage } from "./pages/ambassadeur";
+import { useBrandedPageMeta } from "./hooks/usePageMeta";
 import { ContactView } from "./pages/contacts/ContactView";
 import { FAQView } from "./pages/Faq/FAQView";
-import { InscriptionPage } from "./pages/inscriptions/inscription";
 import { PartenairesPage } from "./pages/partenaires";
+import { ExposantsPage } from "./pages/exposants";
 import { ProgrammeView } from "./pages/programmes/ProgrammeView";
 import { SpeakersView } from "./pages/speakers/SpeakersView";
-import { SpeakerPage } from "./pages/candidature-speaker";
+import { SpeakerDetailView } from "./pages/speakers/SpeakerDetailView";
+import { HackathonView } from "./pages/hackathon/HackathonView";
 import { IndexView } from "./pages/index/IndexView";
 
 function AppLayout() {
+  // Le titre/meta par route vit désormais dans chaque page (useBrandedPageMeta,
+  // ROADMAP_PUBLIC_SEO.md S1.2) -- rien à faire ici. index.html porte un
+  // <title>/meta statiques en dur, seul ce qu'un crawler qui n'exécute pas le
+  // JS verra (pas de pré-rendu/SSR sur ce site, S1.6).
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Nav />
@@ -24,6 +29,7 @@ function AppLayout() {
 }
 
 function NotFoundPage() {
+  useBrandedPageMeta("Page introuvable");
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -52,12 +58,12 @@ export default function AppRoutes() {
         <Route index element={<IndexView />} />
         <Route path="programme" element={<ProgrammeView />} />
         <Route path="speakers" element={<SpeakersView />} />
+        <Route path="speakers/:id" element={<SpeakerDetailView />} />
         <Route path="partenaires" element={<PartenairesPage />} />
-        <Route path="ambassadeur" element={<AmbassadeurPage />} />
+        <Route path="exposants" element={<ExposantsPage />} />
+        <Route path="hackathon-universitaire" element={<HackathonView />} />
         <Route path="faq" element={<FAQView />} />
         <Route path="contact" element={<ContactView />} />
-        <Route path="inscription" element={<InscriptionPage />} />
-        <Route path="candidature-speaker" element={<SpeakerPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
