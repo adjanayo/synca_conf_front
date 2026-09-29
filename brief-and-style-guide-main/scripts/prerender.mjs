@@ -56,9 +56,17 @@ async function startPreviewServer() {
   return proc;
 }
 
+// Sortie en fichier plat : dist/programme.html, et non dist/programme/index.html.
+//
+// Pourquoi : avec un dossier, Apache/LiteSpeed (mod_dir, DirectorySlash) répond
+// par un 301 vers /programme/ AVANT que mod_rewrite ne puisse l'intercepter
+// depuis un .htaccess. Or les <link rel="canonical"> et le sitemap annoncent
+// /programme sans slash final : chaque page coûtait un aller-retour et le
+// canonical pointait vers une URL qui redirige. En fichier, l'URL canonique
+// est servie directement en 200, et le .htaccess fait le routage.
 function outputPathFor(route) {
   if (route === "/") return join(rootDir, "dist", "index.html");
-  return join(rootDir, "dist", route.replace(/^\//, ""), "index.html");
+  return join(rootDir, "dist", `${route.replace(/^\//, "")}.html`);
 }
 
 async function main() {

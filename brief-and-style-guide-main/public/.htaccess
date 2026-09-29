@@ -1,0 +1,117 @@
+# Synca Conf & ACYBIA Forum — configuration serveur (Hostinger / LiteSpeed)
+#
+# Ce fichier est versionné dans public/ et copié tel quel dans dist/ par Vite
+# (public/ est le dossier des assets statiques). Il est donc déployé en même
+# temps que le site par .github/workflows/deploy-hostinger.yml (rsync vers
+# public_html) et ne doit PAS être créé à la main côté hPanel : toute
+# modification se fait ici, puis redéploiement.
+#
+# Rappel : le build est 100 % statique (React + Vite, contenu dans src/data/).
+# Ces règles servent (1) à servir les routes pré-rendues par le pré-rendu
+# post-build, (2) à garder un routage SPA de secours, (3) à mettre en cache.
+#
+# ⚠️ Le déploiement utilise `rsync --delete` : public_html ne doit contenir
+# QUE ce site. Ne jamais pointer la variable HOSTINGER_REMOTE_DIR vers un
+# dossier qui héberge autre chose.
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ── 1. Fichier statique réel : servi tel quel ───────────────────
+  # Évite de réécrire /robots.txt, /sitemap.xml, /assets/... et les images.
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # ── 2. Route pré-rendue : /programme -> /programme.html ──────────
+  # Le pré-rendu écrit un fichier par route (dist/programme.html, voir
+  # outputPathFor() dans scripts/prerender.mjs). Servi en interne : l'URL
+  # reste /programme, sans redirection, exactement comme le canonical et
+  # le <loc> du sitemap. Le /?$ final tolère une URL saisie avec un slash.
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+
+  # ── 3. Requêtes d'asset : ne jamais renvoyer du HTML à la place ───
+  # /speakers/christian-kpolo.jpg est un vrai fichier (règle 1). Mais un
+  # asset MANQUANT ne doit pas non plus recevoir la page HTML : sinon un
+  # crawler y lit du texte et une boucle est possible avec le repli SPA.
+  RewriteRule \.(?:js|mjs|css|map|jpg|jpeg|png|gif|webp|avif|svg|ico|woff2?|ttf|eot|mp4|webm|xml|txt|json)$ - [L]
+
+  # ── 3 bis. Cas particulier : /speakers et /partenaires ───────────
+  # Ces deux routes sont aussi des dossiers réels (les photos de speakers et
+  # les logos des partenaires y sont stockés). mod_dir sert ces dossiers en
+  # 301 vers /speakers/ et /partenaires/ AVANT que la règle 2 ne s'applique,
+  # et la page arrive bien (200 sur le slash). Le prix : un aller-retour sur
+  # ces deux routes seulement, et un canonical sans slash final sur une URL
+  # qui redirige. Pour supprimer ce 301 il faudrait déplacer les images hors
+  # de public/speakers/ et public/partenaires/ (ex. public/media/) et mettre
+  # à jour src/data/speaker.ts + src/data/sponsor.ts -- donc du contenu
+  # validé, à faire valider avant.
+  #
+
+  # ── 4. Racine du site ───────────────────────────────────────────
+  # index.html existe déjà (règle 1 la couvre), mais DirectoryIndex doit
+  # pouvoir servir la racine sans passer par le repli 404 ci-dessous.
+  RewriteRule ^$ - [L]
+
+  # ── 5. Repli SPA : route inconnue → index.html, en 404 ───────────
+  # React Router affiche lui-même la page 404 (route "*" de AppRoutes.tsx).
+  # R=404 sert le contenu de index.html tout en renvoyant un vrai statut
+  # 404 et en laissant l'URL intacte : sans ce statut, les moteurs
+  # indexeraient des pages inexistantes comme du contenu dupliqué.
+  RewriteRule ^ /index.html [R=404,L]
+</IfModule>
+
+# Si le domaine final n'est pas le domaine principal, décommenter et adapter :
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+# ── Cache navigateur ───────────────────────────────────────────────
+# Les fichiers de /assets/ portent un hash de contenu dans leur nom
+# (dist/assets/index-XXXXXXXX.js) : cache long et immuable, un redéploiement
+# change le nom du fichier donc le navigateur prend automatiquement le nouveau.
+# Les images de public/ (photos de speakers, logos) ne sont pas hashées :
+# cache court, pour qu'un visuel remplacé apparaisse sans purge manuelle.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 7 days"
+  ExpiresByType image/webp "access plus 7 days"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresDefault "access plus 7 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  SetEnvIf Request_URI "^/assets/" ASSETS_HASHED
+
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "\.(?:js|mjs|css|jpg|jpeg|png|gif|webp|avif|svg|ico|woff2?|ttf|eot|mp4|webm)$">
+    Header set Cache-Control "public, max-age=31536000, immutable" env=ASSETS_HASHED
+    Header set Cache-Control "public, max-age=604800" env=!ASSETS_HASHED
+  </FilesMatch>
+
+  # ── En-têtes de sécurité ─────────────────────────────────────────
+  # Volontairement sans CSP stricte : le site n'embarque ni script ni police
+  # tiers, mais une règle trop stricte casserait le rendu sans qu'on le voie.
+  # À durcir ici le jour où un formulaire ou un widget externe est ajouté.
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ── Compression ────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
