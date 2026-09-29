@@ -1,9 +1,8 @@
-import { FEATURES } from "@/data/parameter";
+import { FEATURES, PARAMETER } from "@/data/parameter";
 import { Sparkles } from "lucide-react";
-import { useEventWindow } from "@/hooks/useEventWindow";
 
 function About() {
-  const { year } = useEventWindow();
+  const { year } = PARAMETER;
   const themes = [
     "Cybersécurité, Data et IA",
     "Cloud, infrastructures et souveraineté numérique",
@@ -30,7 +29,9 @@ function About() {
               <p>
                 La <strong className="text-foreground">Synca Conf</strong> est la conférence
                 annuelle organisée par Synca pour rendre la tech africaine accessible, inclusive et
-                ambitieuse.
+                ambitieuse. En {year}, elle se tient aux côtés de l'
+                <strong className="text-foreground">ACYBIA Forum</strong>, du {PARAMETER.date} au{" "}
+                {PARAMETER.lieu}.
               </p>
             </div>
           </div>
@@ -64,12 +65,12 @@ function About() {
               </div>
 
               <h3 className="mt-3 font-display font-bold text-3xl md:text-4xl leading-tight">
-                Thématiques <span className="text-primary">Synca Conf{year != null ? ` ${year}` : ""}</span>
+                Thématiques <span className="text-primary">Synca Conf {year}</span>
               </h3>
 
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
                 Découvrez les grandes thématiques qui seront au cœur de la Synca
-                Conf{year != null ? ` ${year}` : ""} et qui réuniront experts, entrepreneurs,
+                Conf {year} et qui réuniront experts, entrepreneurs,
                 innovateurs et acteurs de la transformation numérique africaine.
               </p>
             </div>

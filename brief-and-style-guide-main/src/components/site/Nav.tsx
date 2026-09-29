@@ -1,15 +1,13 @@
 import { Link, NavLink } from "react-router-dom";
-import { ArrowRight, Menu, User, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../../lib/auth/useAuth";
-import { useEventWindow } from "@/hooks/useEventWindow";
+import { PARAMETER } from "@/data/parameter";
 
 const links = [
   { to: "/", label: "Accueil" },
   { to: "/programme", label: "Programme" },
   { to: "/speakers", label: "Speakers" },
   { to: "/partenaires", label: "Partenaires" },
-  { to: "/ambassadeurs", label: "Ambassadeurs" },
   { to: "/hackathon-universitaire", label: "Hackathon" },
   { to: "/faq", label: "FAQ" },
   { to: "/contact", label: "Contact" },
@@ -17,15 +15,14 @@ const links = [
 
 export function Nav() {
   const [open, setOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
-  const { year } = useEventWindow();
+  const { year } = PARAMETER;
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[oklch(0.18_0_0_/_0.75)] border-b border-white/5">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between text-white">
         <Link to="/" className="flex items-center gap-2 font-display font-bold tracking-tight">
           <img src="/parameter/Logoicone orange blanc_CMJN.svg" alt="Logo CMJN" className="h-12 w-12"/>
           <span>
-            Synca Conf {year != null && <span className="text-primary">'{String(year).slice(-2)}</span>}
+            Synca Conf <span className="text-primary">'{String(year).slice(-2)}</span>
           </span>
         </Link>
 
@@ -45,16 +42,10 @@ export function Nav() {
 
         <div className="flex items-center gap-3">
           <Link
-            to={isAuthenticated ? "/espace" : "/connexion"}
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition"
-          >
-            <User className="w-4 h-4" /> {isAuthenticated ? "Mon espace" : "Connexion"}
-          </Link>
-          <Link
-            to="/inscription"
+            to="/contact"
             className="hidden sm:inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold text-sm px-4 py-2 hover:brightness-110 transition"
           >
-            S'inscrire <ArrowRight className="w-4 h-4" />
+            Participer <ArrowRight className="w-4 h-4" />
           </Link>
           <button
             type="button"
@@ -83,18 +74,11 @@ export function Nav() {
               </NavLink>
             ))}
             <Link
-              to={isAuthenticated ? "/espace" : "/connexion"}
-              onClick={() => setOpen(false)}
-              className="py-1.5 inline-flex items-center gap-1.5 text-white/80 hover:text-white transition"
-            >
-              <User className="w-4 h-4" /> {isAuthenticated ? "Mon espace" : "Connexion"}
-            </Link>
-            <Link
-              to="/inscription"
+              to="/contact"
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-primary text-ink font-semibold text-sm px-4 py-2"
             >
-              S'inscrire <ArrowRight className="w-4 h-4" />
+              Participer <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

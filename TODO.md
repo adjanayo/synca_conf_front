@@ -1,12 +1,23 @@
 # TODO — synca_conf_front
 
-Travail restant, hors périmètre admin (`ROADMAP_ADMIN.md`, déjà terminé — voir tableau de statut dans `DEVLOG.md`). Rien ici ne s'exécute sans instruction explicite de l'utilisateur (voir skill `devlog` pour la procédure de suivi : cocher ici, détailler dans `DEVLOG.md`).
+Site 100 % statique (plus de backend depuis le 2026-09-29). Contenu dans `brief-and-style-guide-main/src/data/`. Détails dans `DEVLOG.md`.
 
-## Partie 1 — SEO du site public
-- [ ] S2. SEO au fil de l'eau (title/description/OG à jour à chaque nouvelle section) — pas de tracking/analytics sans accord explicite
-- Voir `SEO_A_CONFIGURER.md` (racine du repo) pour tout ce que l'utilisateur doit renseigner à la main (domaine, image OG, favicons, Search Console, données DB à vérifier avant mise en ligne) — pas du code, pas dans ce TODO.
+## Formulaires — à définir avec le porteur de projet
+Tous les formulaires ont été retirés avec le backend ; en attendant, les CTAs renvoient vers `/contact`.
+- [ ] Inscription / billetterie (lien externe ? prix des pass ?)
+- [ ] Candidature speaker
+- [ ] Candidature partenaire
+- [ ] Candidature exposant
+- [ ] Formulaire de contact (actuellement : emails/téléphones cliquables seulement)
+- [ ] Inscription des universités au Hackathon
 
-## Partie 5 — Paiement / billetterie
-- [ ] `POST /api/payments` + `/api/promo/validate` — **ne pas consommer avant que le backend soit testé en conditions réelles**
-- [ ] Workflow inscription → paiement → webhook → ticket PDF+QR
+## Contenus à recevoir
+- [ ] Lien vers le programme officiel ACYBIA Forum (15–16 mars) → `PARAMETER.acybiaProgrammeUrl` (`src/data/parameter.ts`, actuellement `#`)
+- [ ] Intitulés, intervenants et horaires des 3 masterclasses du 17 mars → `src/data/programme.ts`
+- [ ] Horaire de la remise des prix du Hackathon (17 mars)
+- [ ] Autres speakers (photo + intitulé + bio) → `public/speakers/` + `src/data/speaker.ts` + `scripts/public-routes.mjs`
+- [ ] Autres logos partenaires → `public/partenaires/` + `src/data/sponsor.ts`
+- [ ] Vérifier la FAQ (`src/data/faq.ts`) : chiffres, budget, universités, sponsoring encore issus de l'ancienne édition
 
+## SEO
+- [ ] Voir `SEO_A_CONFIGURER.md` (domaine, image OG, favicons, Search Console)

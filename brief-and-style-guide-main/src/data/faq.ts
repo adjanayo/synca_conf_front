@@ -1,15 +1,12 @@
-export type FaqVars = { name: string; year: number | null; dateLabel: string; venue: string };
-
-export function buildFaqCategories(v: FaqVars) {
-  const yearSuffix = v.year != null ? ` ${v.year}` : "";
-  return [
+// FAQ statique (plus de back-office) -- à éditer directement ici.
+export const FAQ_CATEGORIES: { id: string; label: string; items: { q: string; a: string }[] }[] = [
   {
     id: "general",
     label: "Général",
     items: [
       {
-        q: `Qu'est-ce que ${v.name} Dakar${yearSuffix} ?`,
-        a: `${v.name}${yearSuffix} est l'une des principales conférences technologiques d'Afrique, organisée par Synca. Elle réunit décideurs institutionnels, dirigeants d'entreprises, investisseurs, chercheurs, formateurs et jeunes talents autour de la Cybersécurité, du Cloud, de la Fintech et de l'Edtech.`,
+        q: "Qu'est-ce que Synca Conf Dakar 2027 ?",
+        a: "Synca Conf 2027 est l'une des principales conférences technologiques d'Afrique, organisée par Synca. Elle réunit décideurs institutionnels, dirigeants d'entreprises, investisseurs, chercheurs, formateurs et jeunes talents autour de la Cybersécurité, du Cloud, de la Fintech et de l'Edtech. Cette édition se tient aux côtés de l'ACYBIA Forum.",
       },
       {
         q: "Quel est le thème de cette édition ?",
@@ -17,11 +14,11 @@ export function buildFaqCategories(v: FaqVars) {
       },
       {
         q: "Quand et où se déroule l'événement ?",
-        a: `Du ${v.dateLabel}, à ${v.venue}.`,
+        a: "Du 15 au 17 Mars 2027, au Noom Hôtel Sea Plaza, à Dakar (Sénégal). Le programme Synca Conf est intégré à celui de l'ACYBIA Forum ; le 17 Mars est une journée parallèle dédiée à Synca Conf.",
       },
       {
         q: "Qui organise Synca Conf ?",
-        a: `Synca Conf est organisée par Synca, un écosystème panafricain dédié à la technologie, aux compétences numériques et à l'innovation, mis en place par des jeunes convaincus que l'Afrique doit construire elle-même les solutions à ses propres défis. L'édition${yearSuffix} est co-organisée avec Women In Tech Sénégal.`,
+        a: "Synca Conf est organisée par Synca, un écosystème panafricain dédié à la technologie, aux compétences numériques et à l'innovation, mis en place par des jeunes convaincus que l'Afrique doit construire elle-même les solutions à ses propres défis. L'édition 2027 se déroule conjointement avec l'ACYBIA Forum.",
       },
       {
         q: "Quels sont les objectifs chiffrés de cette édition ?",
@@ -48,7 +45,7 @@ export function buildFaqCategories(v: FaqVars) {
       },
       {
         q: "Quels formats sont proposés pendant les 3 jours ?",
-        a: "Keynotes, panels & tables rondes, conférences, masterclasses, stands d'exposition, visites d'entreprises, Executive Roundtable, Synca Conf Entreprises Tours, et le Hackathon Interuniversitaire.",
+        a: "Les 15 et 16 Mars suivent le programme de l'ACYBIA Forum. Le 17 Mars, journée parallèle Synca Conf : 3 masterclasses et la remise des prix du Hackathon interuniversitaire. Le Hackathon se déroule sur 48h du 15 au 17 Mars.",
       },
       {
         q: "Qu'est-ce que l'Executive Roundtable ?",
@@ -70,47 +67,12 @@ export function buildFaqCategories(v: FaqVars) {
   },
 
   {
-    id: "billetterie",
-    label: "Billetterie",
-    items: [
-      {
-        q: "Quels types de billets sont disponibles ?",
-        a: "Un billet gratuit (réservé aux étudiants et invités), le Pass Pro, le Pass Premium, le Pass Executive, ainsi qu'un billet en ligne pour suivre l'événement à distance.",
-      },
-      {
-        q: "Quels sont les avantages de chaque billet ?",
-        a: "Le Pro donne accès aux 3 jours, conférences, panels et à l'espace exposition. Le Premium ajoute le déjeuner, une masterclass au choix et le Networking Lounge. L'Executive ajoute l'Executive Lounge, le dîner de clôture, le Synca Conf Entreprises Tours et une session de négociation de partenariats.",
-      },
-      {
-        q: "Existe-t-il des billets gratuits ?",
-        a: "Oui, un quota de billets gratuits est réservé aux étudiants ainsi qu'aux speakers, bénévoles, partenaires institutionnels, invités, communautés Tech, médias et partenaires universitaires.",
-      },
-      {
-        q: "Comment fonctionne le tarif Early Bird ?",
-        a: "Un nombre limité de billets Pro, Premium et Executive est proposé à tarif réduit. Le tarif Early Bird s'applique jusqu'à épuisement du quota dédié ou jusqu'à une date limite, selon la première des deux conditions atteintes.",
-      },
-      {
-        q: "Existe-t-il un billet en ligne pour suivre l'événement à distance ?",
-        a: "Oui, un billet en ligne donne accès à la diffusion en streaming des keynotes, panels et conférences, avec replay disponible, pour les personnes ne pouvant se déplacer à Dakar.",
-      },
-      {
-        q: "Comment fonctionne le quota ambassadeurs ?",
-        a: "Les ambassadeurs Synca disposent d'un quota de billets à distribuer via un code dédié, prélevé sur les quotas existants (Pro, Premium, Executive) et non ajouté en supplément.",
-      },
-      {
-        q: "Le billet inclut-il l'hébergement ou le transport ?",
-        a: "Non, sauf dispositif spécifique — comme pour les leads de communautés Tech sélectionnés au programme Synca Community Certified, ou les équipes universitaires du Hackathon, qui bénéficient d'une prise en charge logistique partielle.",
-      },
-    ],
-  },
-
-  {
     id: "hackathon",
     label: "Hackathon",
     items: [
       {
         q: "En quoi consiste le Hackathon ?",
-        a: "Le Synca Cyber Challenge réunit des équipes d'étudiants autour de la conception de solutions de cybersécurité accessibles aux TPE, PME et MPME africaines, lors d'une compétition de 48h en présentiel pendant la conférence.",
+        a: "Une compétition de 48h en présentiel, du 15 au 17 Mars 2027, autour du thème : « Comment protéger efficacement les PME africaines face aux cybermenaces avec des solutions accessibles, adaptées et réellement déployables ? ». La remise des prix a lieu le 17 Mars.",
       },
       {
         q: "Qui peut y participer ?",
@@ -126,7 +88,7 @@ export function buildFaqCategories(v: FaqVars) {
       },
       {
         q: "Comment se déroule la préparation avant le Hackathon ?",
-        a: "Les équipes bénéficient d'un mois de préparation encadrée avant le début du Hackathon, qui se tient ensuite sur 48h pendant les 3 jours de la conférence.",
+        a: "Les équipes bénéficient d'un mois de préparation encadrée avant le début du Hackathon, qui se tient ensuite sur 48h, du 15 au 17 Mars 2027.",
       },
       {
         q: "Quelles sont les récompenses ?",
@@ -203,7 +165,7 @@ export function buildFaqCategories(v: FaqVars) {
     items: [
       {
         q: "Comment inscrire mon entreprise à l'espace exposition ?",
-        a: "Via le formulaire d'inscription exposants, qui couvre l'entreprise, le contact référent, le type de stand souhaité et les besoins logistiques.",
+        a: "En contactant l'équipe organisatrice (page Contact) en précisant l'entreprise, le contact référent, le type de stand souhaité et les besoins logistiques.",
       },
       {
         q: "Quels types de stands sont proposés ?",
@@ -212,29 +174,6 @@ export function buildFaqCategories(v: FaqVars) {
       {
         q: "L'exposition est-elle réservée aux sponsors ?",
         a: "Non — un stand peut être associé à un palier de sponsoring ou souscrit indépendamment, selon les disponibilités.",
-      },
-    ],
-  },
-
-  {
-    id: "ambassadeurs",
-    label: "Ambassadeurs",
-    items: [
-      {
-        q: "Qu'est-ce que le programme Ambassadeurs Synca Conf ?",
-        a: "Un programme bénévole permettant à des passionnés de tech de relayer l'événement, mobiliser leur réseau et représenter Synca Conf localement.",
-      },
-      {
-        q: "Qui peut devenir ambassadeur ?",
-        a: "Toute personne passionnée de technologie ou d'innovation, active sur les réseaux sociaux ou dans une communauté, basée en Afrique ou dans la diaspora.",
-      },
-      {
-        q: "Quels sont les avantages du statut d'ambassadeur ?",
-        a: "Badge d'accès à l'événement, certificat officiel, accès privilégié au réseau des partenaires, kit ambassadeur, et opportunité de devenir référent local pour les prochaines éditions.",
-      },
-      {
-        q: "Comment candidater ?",
-        a: "Via le formulaire de candidature Ambassadeurs, disponible sur les canaux officiels de Synca Conf.",
       },
     ],
   },
@@ -281,4 +220,3 @@ export function buildFaqCategories(v: FaqVars) {
     ],
   },
   ];
-}

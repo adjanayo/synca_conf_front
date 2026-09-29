@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useEventWindow } from "./useEventWindow";
+import { PARAMETER } from "@/data/parameter";
 
 function setMetaContent(selector: string, content: string) {
   const el = document.querySelector<HTMLMetaElement>(selector);
@@ -36,12 +36,11 @@ export function usePageMeta(title: string, description?: string) {
 
 /**
  * Same as usePageMeta, but prefixes the page label with the brand name/year
- * (same "Synca Conf <année>" pattern used across Nav/Hero/Footer) instead of
+ * ("Synca Conf <année>", from PARAMETER) instead of
  * each page reconstructing it by hand.
  */
 export function useBrandedPageMeta(pageLabel: string | null, description?: string) {
-  const { name, year } = useEventWindow();
-  const brand = year != null ? `${name} ${year}` : name;
+  const brand = `${PARAMETER.shortTitle} ${PARAMETER.year}`;
   const title = pageLabel ? `${pageLabel} — ${brand}` : brand;
   usePageMeta(title, description);
 }

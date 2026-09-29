@@ -1,18 +1,16 @@
-// Liste partagée des routes publiques statiques (id dynamique exclu :
-// /speakers/:id, /ambassadeurs/:id -- non énumérables sans appeler l'API,
-// et routes participant /connexion, /espace -- aucune valeur SEO/pré-rendu).
-// Utilisée par generate-seo-files.mjs (sitemap.xml) et prerender.mjs.
+// Liste partagée des routes publiques statiques, utilisée par
+// generate-seo-files.mjs (sitemap.xml) et prerender.mjs. Les pages speakers
+// sont en dur (src/data/speaker.ts) : garder SPEAKER_IDS synchronisé.
+const SPEAKER_IDS = ["christian-kpolo", "leonel-ngoya", "marylin-marchal"];
+
 export const PUBLIC_ROUTES = [
   "/",
   "/programme",
   "/speakers",
+  ...SPEAKER_IDS.map((id) => `/speakers/${id}`),
   "/partenaires",
   "/exposants",
-  "/ambassadeur",
-  "/ambassadeurs",
   "/hackathon-universitaire",
   "/faq",
   "/contact",
-  "/inscription",
-  "/candidature-speaker",
 ];

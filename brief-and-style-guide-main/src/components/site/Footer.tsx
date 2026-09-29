@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import { LINKS } from "@/data/parameter";
-import { useEventWindow } from "@/hooks/useEventWindow";
+import { LINKS, PARAMETER } from "@/data/parameter";
 
 export function Footer() {
-  const { name, year } = useEventWindow();
+  const { shortTitle: name, year } = PARAMETER;
 
   return (
     <footer className="bg-ink text-white/70 border-t border-white/5">
@@ -18,10 +17,10 @@ export function Footer() {
               alt="Logo CMJN"
               className="h-12 w-12"
             />
-            {name} {year != null && <span className="text-primary">{year}</span>}
+            {name} <span className="text-primary">{year}</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm">
-            La conférence tech panafricaine. Organisée par la communauté Synca à Dakar, Sénégal.
+            La conférence tech panafricaine, aux côtés de l'ACYBIA Forum. {PARAMETER.date} · {PARAMETER.lieu}.
           </p>
           <div className="mt-5 flex gap-3">
             {LINKS.map((link, i) => (
@@ -51,8 +50,8 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/inscription" className="hover:text-white">
-                Billetterie
+              <Link to="/hackathon-universitaire" className="hover:text-white">
+                Hackathon
               </Link>
             </li>
             <li>
@@ -67,16 +66,6 @@ export function Footer() {
             Participer
           </div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li>
-              <Link to="/candidature-speaker" className="hover:text-white">
-                Candidater speaker
-              </Link>
-            </li>
-            <li>
-              <Link to="/ambassadeur" className="hover:text-white">
-                Devenir ambassadeur
-              </Link>
-            </li>
             <li>
               <Link to="/partenaires" className="hover:text-white">
                 Devenir partenaire
@@ -97,7 +86,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/5">
         <div className="mx-auto max-w-7xl px-6 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <span>© {year != null ? `${year} ` : ""}Synca · Tous droits réservés</span>
+          <span>© {year} Synca · Tous droits réservés</span>
           {/* <div className="flex gap-5">
             <a href="#" className="hover:text-white">Mentions légales</a>
             <a href="#" className="hover:text-white">Confidentialité</a>

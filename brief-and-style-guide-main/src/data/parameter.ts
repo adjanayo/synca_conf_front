@@ -40,92 +40,28 @@ const LINKS = [
 
 const PARAMETER = {
   logo: "/parameter/Logoicone orange blanc_CMJN.svg",
-  title: "Synca Conf",
+  title: "Synca Conf & ACYBIA Forum",
+  shortTitle: "Synca Conf",
+  year: 2027,
   slogan:
     "+2000 fondateurs, décideurs, professionnels et étudiants autour de l'économie numérique, des nouvelles technologies et de l'industrie de la formation Tech en Afrique.",
-  date: "18–20 Août 2027",
-  lieu: "Dakar, Sénégal",
+  date: "15–17 Mars 2027",
+  startDate: "2027-03-15",
+  endDate: "2027-03-17",
+  lieu: "Noom Hôtel Sea Plaza, Dakar",
+  city: "Dakar, Sénégal",
   participants: "+2 000 participants",
+  // TODO : lien vers le programme officiel ACYBIA Forum (15-16 Mars) — à fournir.
+  acybiaProgrammeUrl: "#",
 };
 
 const FEATURES = [
   { i: Sparkles, t: "Conférence principale" },
   { i: Code2, t: "Panels, Keynotes" },
-  { i: Code2, t: "Ateliers, Masterclass " },
-  { i: Code2, t: "Expositions, Job Fair" },
+  { i: Code2, t: "Masterclass" },
+  { i: Code2, t: "Expositions" },
   { i: Shield, t: "Hackathon interuniversitaire" },
-  { i: Briefcase, t: "Side Event, Entreprises Tours" },
+  { i: Briefcase, t: "Networking" },
 ];
 
-{
-  /*const TICKETS = [
-  { name: "VIP", price: "40 000", target: "VIP", perks: ["Déjeuner 3 jours", "1 masterclass au choix", "Networking Lounge", "Accès prioritaire à certaines activités", "Kit participant", "Certificat de participation à la Masterclass"], badge: "" },
-  { name: "PRO", price: "25 000", target: "PRO", perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"], badge: "Populaire" },
-  { name: "Executif", price: "35 000", target: "Executif", perks: ["Pitching B2B", "Networking VIP", "Accès complet"], badge: "" },
-  { name: "Premium", price: "100 000", target: "Décideurs & partenaires", perks: ["Tout inclus 3 jours", "Dîner gala", "After party"], badge: "Premium" },
-  { name: "En ligne", price: "10 000", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-  { name: "Etudiant", price: "Gratuit(limité)", target: "En ligne", perks: ["Diffusion en streaming des keynotes", "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)", "Replay disponible pendant une durée à définir." ], badge: "" },
-
-];*/
-}
-const TICKETS = [
-  {
-    name: "VIP",
-    price: "** ***",
-    target: "VIP",
-    perks: [
-      "Déjeuner 3 jours",
-      "1 masterclass au choix",
-      "Networking Lounge",
-      "Accès prioritaire à certaines activités",
-      "Kit participant",
-      "Certificat de participation à la Masterclass",
-    ],
-    badge: "",
-  },
-  {
-    name: "PRO",
-    price: "** ***",
-    target: "PRO",
-    perks: ["Conf + Expo", "Networking", "1 déjeuner inclus"],
-    badge: "Populaire",
-  },
-  {
-    name: "Executif",
-    price: " ** ***",
-    target: "Executif",
-    perks: ["Pitching B2B", "Networking VIP", "Accès complet"],
-    badge: "",
-  },
-  {
-    name: "Premium",
-    price: "** ***",
-    target: "Décideurs & partenaires",
-    perks: ["Tout inclus 3 jours", "Dîner gala", "After party"],
-    badge: "Premium",
-  },
-  {
-    name: "En ligne",
-    price: "** ***",
-    target: "En ligne",
-    perks: [
-      "Diffusion en streaming des keynotes",
-      "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)",
-      "Replay disponible pendant une durée à définir.",
-    ],
-    badge: "",
-  },
-  {
-    name: "Etudiant",
-    price: "** ***",
-    target: "En ligne",
-    perks: [
-      "Diffusion en streaming des keynotes",
-      "Panels et conférences (hors ateliers en présentiel, Executive Lounge, dîner, Enterprise Tours)",
-      "Replay disponible pendant une durée à définir.",
-    ],
-    badge: "",
-  },
-];
-
-export { LINKS, PARAMETER, FEATURES, TICKETS };
+export { LINKS, PARAMETER, FEATURES };

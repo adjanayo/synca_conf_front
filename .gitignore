@@ -1,2 +1,8 @@
 # Local-only files, never committed
 TEST_CREDENTIALS.local.md
+
+# Sources brutes (photos speakers, logos partenaires) -- jamais commitées,
+# les versions optimisées vivent dans brief-and-style-guide-main/public/
+/Speakers/
+/Logo Partenaire */
+.DS_Store

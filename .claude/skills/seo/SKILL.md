@@ -5,12 +5,12 @@ description: Use quand on construit ou relit tout ce qui affecte la façon dont 
 
 # SEO (synca_conf_front)
 
-SPA React 19 + Vite + react-router (voir `AppRoutes.tsx`) — le SEO de ce projet est celui d'un **site vitrine multi-pages public**, plus éventuellement des routes d'admin/back-office à garder hors indices. Ce skill est une combinaison de mécaniques et d'état entretenu : les pages publiques doivent être découvrables, les pages internes doivent être exclues.
+SPA React 19 + Vite + react-router (voir `AppRoutes.tsx`) — le SEO de ce projet est celui d'un **site vitrine multi-pages public, 100 % statique**. Ce skill est une combinaison de mécaniques et d'état entretenu : toutes les pages doivent être découvrables et à jour.
 
 ## Mécanique : comment c'est fait techniquement
 
-- **SPA + Vite** : le vrai HTML servi est un seul `index.html`. Le contenu par page est rendu côté client, donc le levier SEO principal est ① les **balises `<title>`/`meta`/OG mises à jour par route** (via un hook de gestion document ou la lib `react-helmet-async`/`use-document-title` si on en ajoute une) et ② un **sitemap** et un **robots.txt** livrés comme fichiers statiques dans `public/`.
-- **Par page publique** (`/`, `/programme`, `/speakers`, `/partenaires`, `/faq`, `/contact`, `/inscription`, `/candidature-speaker`) : un `<title>` unique et une `meta description` propre, en français. Pas de titre générique "Accueil" partagé partout.
+- **SPA + Vite + pré-rendu** : `useBrandedPageMeta` (`src/hooks/usePageMeta.ts`) met à jour `<title>`/meta/OG par route ; `scripts/prerender.mjs` (après `npm run build`, dans Docker) fige le HTML de chaque route de `scripts/public-routes.mjs` ; `scripts/generate-seo-files.mjs` génère `robots.txt` et `sitemap.xml`.
+- **Par page publique** (`/`, `/programme`, `/speakers`, `/speakers/:id`, `/partenaires`, `/exposants`, `/hackathon-universitaire`, `/faq`, `/contact` — liste de référence : `scripts/public-routes.mjs`) : un `<title>` unique et une `meta description` propre, en français. Pas de titre générique "Accueil" partagé partout.
 - **Open Graph** (titre, description, image) sur les pages clés (index surtout) pour des partages réseau corrects — prévoir une `og:image` dans `public/`.
 - **Canonical** si les routes ont des variantes de trailing slash/query.
 
@@ -18,14 +18,10 @@ SPA React 19 + Vite + react-router (voir `AppRoutes.tsx`) — le SEO de ce proje
 
 La page index d'un événement est un bon candidat pour un bloc JSON-LD `Event` (nom, dates, lieu, admission) en `<script type="application/ld+json">` — c'est ce qui permet à Google d'afficher un rich result. Garder le JSON-LD **synchronisé avec ce qui est réellement rendu** sur la page ; des données structurées incohérentes (ex. annoncer une date qui n'apparaît pas) sont traitées comme du spam, pas comme une imprécision.
 
-## Ce qui ne reçoit jamais de traitement SEO
-
-Les routes internes de gestion (back-office/admin, brouillons) — pas d'effort de metadata, et explicitement désactivés dans `robots.txt`. Si on se surprend à ajouter des balises Open Graph à une page d'admin, c'est le signe qu'une frontière de route a été franchie.
-
 ## robots.txt et sitemap
 
-- `public/robots.txt` : permettre l'exploration des routes publiques, disallow des routes internes (`/admin/*` et équivalent). Une règle d'exclusion par préfixe, pas une liste par page.
-- `public/sitemap.xml` : énumérer les pages publiques réelles, **par rapport aux routes qui existent dans `AppRoutes.tsx`**, et tenir à jour quand une route est ajoutée/renommée/retirée. Un sitemap qui référence une route supprimée est pire que pas de sitemap.
+- `public/robots.txt` : tout le site est public (`Allow: /`), généré au build.
+- `public/sitemap.xml` : énumérer les pages publiques réelles, **par rapport aux routes qui existent dans `AppRoutes.tsx`** (source : `scripts/public-routes.mjs`, à tenir synchronisé), et tenir à jour quand une route est ajoutée/renommée/retirée. Un sitemap qui référence une route supprimée est pire que pas de sitemap.
 
 ## Le SEO est un état entretenu, pas un livrable ponctuel
 

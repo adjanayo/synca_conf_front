@@ -19,10 +19,8 @@ function readSiteUrl() {
 
 const siteUrl = readSiteUrl();
 
-// robots.txt : le chemin admin est un chemin aléatoire tiré d'une variable
-// d'env au build (VITE_ADMIN_PATH, jamais "/admin") -- volontairement jamais
-// mentionné ici (ni Allow ni Disallow), discrétion par obscurité + noindex +
-// auth (ROADMAP_ADMIN.md A3). Écrit même sans domaine connu (Sitemap: omis).
+// robots.txt : tout le site est public. Écrit même sans domaine connu
+// (Sitemap: omis).
 const robotsLines = ["User-agent: *", "Allow: /"];
 if (siteUrl) robotsLines.push("", `Sitemap: ${siteUrl}/sitemap.xml`);
 writeFileSync(join(rootDir, "public", "robots.txt"), robotsLines.join("\n") + "\n");

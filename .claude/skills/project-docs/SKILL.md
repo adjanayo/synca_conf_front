@@ -1,6 +1,6 @@
 ---
 name: project-docs
-description: Use pour générer ou mettre à jour la documentation du projet sous docs/ — au fur et à mesure que les pages/features sont construites et validées, pas comme un gros effort à la fin. Trigger quand l'utilisateur demande de "documenter ceci", "générer la doc", "écrire la doc pour la section X", après qu'une fonctionnalité est en production visible, ou quand on demande des docs de setup/architecture/API/déploiement. À terme, docs/ doit se lire comme une documentation de projet complète et autonome — quelqu'un sans aucun historique de conversation doit pouvoir embarquer à partir d'elle seule.
+description: Use pour générer ou mettre à jour la documentation du projet sous docs/ — au fur et à mesure que les pages/features sont construites et validées, pas comme un gros effort à la fin. Trigger quand l'utilisateur demande de "documenter ceci", "générer la doc", "écrire la doc pour la section X", après qu'une fonctionnalité est en production visible, ou quand on demande des docs de setup/architecture/contenu/déploiement. À terme, docs/ doit se lire comme une documentation de projet complète et autonome — quelqu'un sans aucun historique de conversation doit pouvoir embarquer à partir d'elle seule.
 ---
 
 # Project Documentation (synca_conf_front)
@@ -18,7 +18,7 @@ docs/
 ├── README.md          — index ; une ligne de description + lien par page ci-dessous
 ├── getting-started.md — setup dev local : prérequis, install, lancement dev, pièges courants
 ├── architecture.md    — design système : stack React/Vite, routage, structure src/, flux de données
-├── api.md             — référence des endpoints appelés (complément du code, URLs/config)
+├── content.md         — où modifier le contenu en dur (src/data/, public/)
 └── security.md        — court résumé + lien vers la politique de sécurité (ne pas dupliquer)
 ```
 

@@ -2,15 +2,13 @@
 // package.json) : SPA pur (aucun SSR), donc un crawler qui n'exécute pas le
 // JS ne voit que le HTML générique d'index.html -- ce script sert le build
 // localement, visite chaque route publique statique avec un Chromium headless
-// (Puppeteer, attend que TanStack Query ait fini ses requêtes), et écrase
+// (Puppeteer), et écrase
 // dist/<route>/index.html par le HTML réellement rendu. Le bundle JS reste
 // chargé normalement ensuite pour un vrai visiteur (hydratation React
 // classique, pas de SSR) -- ce n'est qu'un instantané pour les crawlers/
 // aperçus de partage qui n'exécutent pas de JS.
 //
-// Le backend (VITE_API_URL) doit être joignable pendant `npm run build` :
-// sans données réelles en base, ce script capture des pages "pas encore
-// disponible" au lieu du vrai contenu.
+// Contenu 100 % statique (src/data/) : aucun backend requis pendant le build.
 import { spawn } from "node:child_process";
 import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -69,24 +67,29 @@ async function main() {
     return;
   }
 
+  // Tourne dans le conteneur Docker (root, Chromium système via
+  // PUPPETEER_EXECUTABLE_PATH) -- d'où --no-sandbox. Sur un hébergeur sans
+  // Chromium, on garde le build SPA tel quel plutôt que de faire échouer
+  // le déploiement (seul le HTML pré-rendu pour les crawlers manque).
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      args: ["--no-sandbox", "--disable-dev-shm-usage"],
+    });
+  } catch (err) {
+    console.warn(`[prerender] Chromium indisponible (${err.message}) -- pré-rendu ignoré, build SPA conservé.`);
+    return;
+  }
   const preview = await startPreviewServer();
-  const browser = await puppeteer.launch({ headless: true });
 
   try {
     for (const route of PUBLIC_ROUTES) {
       const page = await browser.newPage();
       try {
         await page.goto(`${BASE_URL}${route}`, { waitUntil: "networkidle0", timeout: 30000 });
-        // `networkidle0` only means requests finished, not that React has
-        // committed the resulting render -- every page here shows the same
-        // "Chargement…" text while its query is pending, so wait for that to
-        // clear rather than racing the next paint. Best-effort: falls back
-        // to whatever's on screen if a page is still empty after 10s.
-        await page
-          .waitForFunction(() => !document.body.innerText.includes("Chargement"), {
-            timeout: 10000,
-          })
-          .catch(() => {});
+        await page.waitForSelector("h1", { timeout: 10000 }).catch(() => {});
         const html = await page.evaluate(() => "<!doctype html>\n" + document.documentElement.outerHTML);
 
         const outPath = outputPathFor(route);

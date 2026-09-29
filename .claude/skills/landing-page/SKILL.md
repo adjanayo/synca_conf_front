@@ -16,7 +16,7 @@ Au fur et à mesure que le site accueille du contenu réel (un programme rempli,
 - **Partenaires** (`/partenaires`) — les logos/niveaux de partenariat.
 - **Inscription / candidature speaker** — l'appel à l'action principal.
 
-Tout n'est pas une section d'index (un détail interne d'appel API n'en est pas un) — le filtre est "un visiteur décidant de s'inscrire s'en soucierait-il", pas "une fonctionnalité a-t-elle été livrée".
+Tout n'est pas une section d'index (un détail technique interne n'en est pas un) — le filtre est "un visiteur décidant de s'inscrire s'en soucierait-il", pas "une fonctionnalité a-t-elle été livrée".
 
 ## Ne promouvoir que ce qui est réel
 

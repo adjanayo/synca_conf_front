@@ -1,5 +1,11 @@
 FROM node:22-alpine
 
+# Chromium système pour le pré-rendu (scripts/prerender.mjs, lancé par
+# `npm run build`) -- puppeteer ne télécharge pas son propre navigateur.
+RUN apk add --no-cache chromium nss freetype harfbuzz ttf-freefont
+ENV PUPPETEER_SKIP_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./

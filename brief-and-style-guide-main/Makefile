@@ -1,4 +1,4 @@
-.PHONY: help up down restart build logs shell lint format typecheck backup restore migrate-export migrate-import
+.PHONY: help up down restart build logs shell lint format typecheck prod-build backup restore migrate-export migrate-import
 
 DOCKER      := docker compose
 WEB         := $(DOCKER) exec web
@@ -42,13 +42,16 @@ format: ## Formatter avec Prettier
 typecheck: ## Vérifier les types TypeScript
 	$(WEB) npx tsc --noEmit
 
+prod-build: ## Build de production + pré-rendu (dans le conteneur) -> dist/
+	$(WEB) npm run build
+
 # ── Backup & migration ────────────────────────────────────
-# Pas de base de données côté frontend : ce qui compte est .env
-# (config non versionnée) et le build de production (dist/).
+# Site statique : ce qui compte est .env (config non versionnée) et le
+# build de production (dist/). Tout tourne dans Docker, rien sur l'hôte.
 
 backup: ## Sauvegarder .env + build de prod dans backups/ (horodaté)
 	@mkdir -p $(BACKUP_DIR)
-	@npm run build --silent
+	@$(WEB) npm run build --silent
 	@tar -czf $(BACKUP_DIR)/front-$(STAMP).tar.gz .env dist
 	@echo "\n  ✅ Backup : $(BACKUP_DIR)/front-$(STAMP).tar.gz\n"
 
