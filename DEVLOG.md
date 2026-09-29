@@ -10,3 +10,6 @@ Site vitrine 100 % statique (plus de backend depuis le 2026-09-29). L'historique
 - Fait : tout passe par Docker, rien sur l'hôte — Chromium dans l'image pour le pré-rendu, cible `make prod-build`, `bun.lock`/`bunfig.toml` supprimés (npm seul gestionnaire), sources brutes `Speakers/` et `Logo Partenaire /` ignorées par git.
 - Vérifié : `make typecheck`, `make lint`, `make prod-build` (11 routes pré-rendues) OK dans le conteneur ; aucune requête réseau vers un backend.
 - Fait : préparation mise en ligne Lovable — `.env.production` committé (VITE_SITE_URL public, lu par Vite et `generate-seo-files.mjs` sans `.env` local), pré-rendu non bloquant si l'hébergeur n'a pas Chromium, fix canonical/og:url/JSON-LD qui figeaient `localhost:4666` dans les pages pré-rendues. Étapes manuelles listées dans `TODO.md`.
+
+### 2026-09-29 (suite)
+- Fait : inscription participants → ACYBIA (`PARAMETER.registrationUrl`) sur le menu, l'accueil et en tête de la page Contact ; demandes partenaire / exposant / université → mail direct (Astou, cc contact@) depuis les pages Partenaires, Exposants, Hackathon et Contact ; LinkedIn sur les pages speakers ; FAQ ajustée.

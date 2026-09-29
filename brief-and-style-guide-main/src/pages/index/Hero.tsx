@@ -54,9 +54,9 @@ function Hero() {
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-white/70">{PARAMETER.slogan}</p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3.5 hover:brightness-110 transition shadow-glow">
+          <a href={PARAMETER.registrationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3.5 hover:brightness-110 transition shadow-glow">
             Participer <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
           <Link to="/partenaires" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3.5 font-medium hover:bg-white/5 transition">
             Devenir partenaire
           </Link>

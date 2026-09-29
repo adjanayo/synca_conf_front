@@ -18,7 +18,7 @@ function PartnersTeaser() {
             recrutement, visibilité, B2B, impact.
           </p>
           <Link to="/partenaires" className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink text-white px-6 py-3 font-semibold text-sm hover:bg-ink/90 transition">
-            Nos partenaires <ArrowRight className="w-4 h-4" />
+            Devenir partenaire <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
         <div className="md:col-span-6 grid sm:grid-cols-2 gap-4">

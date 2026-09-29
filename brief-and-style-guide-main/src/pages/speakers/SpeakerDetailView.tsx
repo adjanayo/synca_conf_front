@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Linkedin } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { SPEAKERS } from "../../data/speaker";
 import { useBrandedPageMeta } from "../../hooks/usePageMeta";
@@ -31,12 +31,24 @@ export function SpeakerDetailView() {
 
       <section className="py-16 bg-background">
         <div className="mx-auto max-w-5xl px-6 grid md:grid-cols-[280px_1fr] gap-10">
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-ink/20">
-            <img
-              src={speaker.photo}
-              alt={speaker.name}
-              className="absolute inset-0 h-full w-full object-cover object-top"
-            />
+          <div>
+            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-ink/20">
+              <img
+                src={speaker.photo}
+                alt={speaker.name}
+                className="absolute inset-0 h-full w-full object-cover object-top"
+              />
+            </div>
+            {speaker.linkedin && (
+              <a
+                href={speaker.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <Linkedin className="w-4 h-4" /> LinkedIn
+              </a>
+            )}
           </div>
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-primary font-semibold">Biographie</div>

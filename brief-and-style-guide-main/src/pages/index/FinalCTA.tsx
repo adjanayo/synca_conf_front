@@ -18,9 +18,9 @@ function FinalCTA() {
           Trois jours pour rencontrer, apprendre, recruter, pitcher, et célébrer la tech africaine.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-4 hover:brightness-110 transition shadow-glow">
-            Nous contacter <ArrowRight className="w-4 h-4" />
-          </Link>
+          <a href={PARAMETER.registrationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-7 py-4 hover:brightness-110 transition shadow-glow">
+            Je m'inscris <ArrowRight className="w-4 h-4" />
+          </a>
           <Link to="/hackathon-universitaire" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-4 font-medium hover:bg-white/5 transition">
             Découvrir le Hackathon
           </Link>

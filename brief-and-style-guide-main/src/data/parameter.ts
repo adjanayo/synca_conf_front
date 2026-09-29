@@ -53,6 +53,23 @@ const PARAMETER = {
   participants: "+2 000 participants",
   // TODO : lien vers le programme officiel ACYBIA Forum (15-16 Mars) — à fournir.
   acybiaProgrammeUrl: "#",
+  // Inscription des participants : gérée par ACYBIA.
+  registrationUrl: "https://www.acybia.com/inscription",
+};
+
+// Demandes partenaire / exposant / université : mail direct à l'équipe
+// partenariats, copie à l'adresse générale.
+const MAIL_TO = "astou.diakhate@sync-africa.com";
+const MAIL_CC = "contact@sync-africa.com";
+
+function contactMailto(subject: string): string {
+  return `mailto:${MAIL_TO}?cc=${MAIL_CC}&subject=${encodeURIComponent(subject)}`;
+}
+
+const MAILTO = {
+  partner: contactMailto("Devenir partenaire — Synca Conf 2027"),
+  exhibitor: contactMailto("Devenir exposant — Synca Conf 2027"),
+  university: contactMailto("Inscription université — Hackathon Synca Conf 2027"),
 };
 
 const FEATURES = [
@@ -64,4 +81,4 @@ const FEATURES = [
   { i: Briefcase, t: "Networking" },
 ];
 
-export { LINKS, PARAMETER, FEATURES };
+export { LINKS, PARAMETER, FEATURES, MAILTO };

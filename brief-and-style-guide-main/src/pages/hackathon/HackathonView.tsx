@@ -1,8 +1,7 @@
-import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, MapPin, Trophy } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { HACKATHON } from "../../data/hackathon";
-import { PARAMETER } from "../../data/parameter";
+import { MAILTO, PARAMETER } from "../../data/parameter";
 import { useBrandedPageMeta } from "../../hooks/usePageMeta";
 
 export function HackathonView() {
@@ -116,12 +115,12 @@ export function HackathonView() {
                 </p>
               </div>
             </div>
-            <Link
-              to="/contact"
+            <a
+              href={MAILTO.university}
               className="shrink-0 inline-flex items-center gap-2 rounded-full bg-ink text-white font-semibold px-6 py-3 hover:bg-ink/90 transition"
             >
               Inscrire mon université <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </section>

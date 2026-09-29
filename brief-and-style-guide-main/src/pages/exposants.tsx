@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "../components/site/PageHeader";
 import { useBrandedPageMeta } from "@/hooks/usePageMeta";
+import { MAILTO } from "@/data/parameter";
 
 const STAND_TYPES = [
   { name: "Standard", description: "Un espace clé en main pour présenter vos produits et services." },
@@ -54,15 +54,15 @@ export function ExposantsPage() {
             <div>
               <div className="font-display font-bold text-2xl">Réservez votre stand.</div>
               <p className="mt-2 text-white/70 max-w-2xl">
-                Contactez notre équipe pour connaître les disponibilités et finaliser votre présence.
+                Écrivez directement à notre équipe pour connaître les disponibilités et finaliser votre présence.
               </p>
             </div>
-            <Link
-              to="/contact"
+            <a
+              href={MAILTO.exhibitor}
               className="shrink-0 inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3 hover:brightness-110 transition"
             >
               Nous contacter <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </section>

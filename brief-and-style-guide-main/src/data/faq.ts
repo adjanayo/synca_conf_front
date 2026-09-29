@@ -32,6 +32,10 @@ export const FAQ_CATEGORIES: { id: string; label: string; items: { q: string; a:
         q: "Qui peut participer à Synca Conf ?",
         a: "L'événement s'adresse aux décideurs institutionnels, dirigeants d'entreprises, investisseurs, chercheurs, formateurs, startups, étudiants et jeunes talents tech — sénégalais et panafricains.",
       },
+      {
+        q: "Comment m'inscrire en tant que participant ?",
+        a: "Les inscriptions des participants se font sur la plateforme de l'ACYBIA Forum : https://www.acybia.com/inscription.",
+      },
     ],
   },
 
@@ -80,7 +84,7 @@ export const FAQ_CATEGORIES: { id: string; label: string; items: { q: string; a:
       },
       {
         q: "Comment une université peut-elle inscrire ses équipes ?",
-        a: "En signant un partenariat universitaire avec Synca, puis en constituant ses équipes une fois les thématiques transmises par l'équipe Synca.",
+        a: "Par email à astou.diakhate@sync-africa.com (copie contact@sync-africa.com) — bouton « Inscrire mon université » de la page Hackathon — pour signer un partenariat universitaire avec Synca, puis en constituant ses équipes une fois les thématiques transmises par l'équipe Synca.",
       },
       {
         q: "Combien d'équipes une université peut-elle inscrire ?",
@@ -165,7 +169,7 @@ export const FAQ_CATEGORIES: { id: string; label: string; items: { q: string; a:
     items: [
       {
         q: "Comment inscrire mon entreprise à l'espace exposition ?",
-        a: "En contactant l'équipe organisatrice (page Contact) en précisant l'entreprise, le contact référent, le type de stand souhaité et les besoins logistiques.",
+        a: "Par email à astou.diakhate@sync-africa.com (copie contact@sync-africa.com), via le bouton « Devenir exposant » des pages Exposants ou Contact, en précisant l'entreprise, le contact référent, le type de stand souhaité et les besoins logistiques.",
       },
       {
         q: "Quels types de stands sont proposés ?",

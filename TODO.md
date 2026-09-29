@@ -11,14 +11,11 @@ Site 100 % statique (plus de backend depuis le 2026-09-29). Contenu dans `brief-
 - Note : Lovable n'a probablement pas Chromium → le pré-rendu SEO est sauté (le build ne casse pas, le site fonctionne ; seul le HTML figé pour les crawlers manque). Pour l'avoir quand même : `make prod-build` dans Docker et héberger `dist/` ailleurs.
 - [ ] SEO restant (image OG 1200×630, favicon iOS, Search Console) : voir `SEO_A_CONFIGURER.md`.
 
-## Formulaires — à définir avec le porteur de projet
-Tous les formulaires ont été retirés avec le backend ; en attendant, les CTAs renvoient vers `/contact`.
-- [ ] Inscription / billetterie (lien externe ? prix des pass ?)
-- [ ] Candidature speaker
-- [ ] Candidature partenaire
-- [ ] Candidature exposant
-- [ ] Formulaire de contact (actuellement : emails/téléphones cliquables seulement)
-- [ ] Inscription des universités au Hackathon
+## Inscriptions / demandes
+Participants → https://www.acybia.com/inscription ; partenaire, exposant, université (hackathon) → mail direct à astou.diakhate@sync-africa.com (cc contact@sync-africa.com).
+- [ ] **Inscription payante aux masterclasses** (17 mars) — mode d'inscription et de paiement à définir
+- [ ] Candidature speaker (aujourd'hui : bouton vers `/contact`)
+- [ ] Formulaire de contact (aujourd'hui : emails/téléphones cliquables seulement)
 
 ## Contenus à recevoir
 - [ ] Lien vers le programme officiel ACYBIA Forum (15–16 mars) → `PARAMETER.acybiaProgrammeUrl` (`src/data/parameter.ts`, actuellement `#`)

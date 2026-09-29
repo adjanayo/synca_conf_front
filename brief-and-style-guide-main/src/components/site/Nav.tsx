@@ -41,12 +41,14 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/contact"
+          <a
+            href={PARAMETER.registrationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold text-sm px-4 py-2 hover:brightness-110 transition"
           >
             Participer <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -73,13 +75,15 @@ export function Nav() {
                 {l.label}
               </NavLink>
             ))}
-            <Link
-              to="/contact"
+            <a
+              href={PARAMETER.registrationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-primary text-ink font-semibold text-sm px-4 py-2"
             >
               Participer <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       )}

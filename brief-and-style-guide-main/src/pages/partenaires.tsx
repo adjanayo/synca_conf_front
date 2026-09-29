@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PageHeader } from "../components/site/PageHeader";
 import { useBrandedPageMeta } from "@/hooks/usePageMeta";
 import { PARTNERS } from "@/data/sponsor";
+import { MAILTO } from "@/data/parameter";
 
 const WHY_PARTNER = [
   {
@@ -113,12 +114,12 @@ export function PartenairesPage() {
               </p>
             </div>
 
-            <Link
-              to="/contact"
+            <a
+              href={MAILTO.partner}
               className="shrink-0 inline-flex items-center justify-center rounded-full bg-primary text-ink font-semibold px-6 py-3 hover:brightness-110 transition"
             >
               Devenir partenaire
-            </Link>
+            </a>
           </div>
         </div>
       </section>
