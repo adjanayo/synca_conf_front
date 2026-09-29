@@ -11,6 +11,9 @@ Site 100 % statique (plus de backend depuis le 2026-09-29). Contenu dans `brief-
 - Note : Lovable n'a probablement pas Chromium → le pré-rendu SEO est sauté (le build ne casse pas, le site fonctionne ; seul le HTML figé pour les crawlers manque). Pour l'avoir quand même : `make prod-build` dans Docker et héberger `dist/` ailleurs.
 - [ ] SEO restant (image OG 1200×630, favicon iOS, Search Console) : voir `SEO_A_CONFIGURER.md`.
 
+## Hébergement Hostinger
+- [ ] À chaque mise en ligne : `make prod-build` (dans `brief-and-style-guide-main/`) puis envoyer **tout le contenu de `dist/`** dans `public_html`, y compris le fichier caché `.htaccess` (sans lui, les URL inconnues affichent la page 404 d'Hostinger au lieu de celle du site).
+
 ## Inscriptions / demandes
 Participants → https://www.acybia.com/inscription ; partenaire, exposant, speaker, université (hackathon) → mail direct à astou.diakhate@sync-africa.com (cc contact@sync-africa.com).
 - [ ] **Inscription payante aux masterclasses** (17 mars) — mode d'inscription et de paiement à définir

@@ -1,0 +1,23 @@
+# Hébergement Apache/LiteSpeed (Hostinger). Copié tel quel dans dist/ par
+# Vite : il doit être envoyé avec le reste du build (fichier caché).
+#
+# Toute URL qui ne correspond ni à un fichier ni à un dossier du build est
+# servie par index.html : React Router affiche alors la page 404 du site
+# au lieu de la page 404 de l'hébergeur.
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Filet de sécurité si mod_rewrite est indisponible.
+ErrorDocument 404 /index.html
