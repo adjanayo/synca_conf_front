@@ -2,6 +2,14 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { PARAMETER } from "@/data/parameter";
 
+// Domaine de production (VITE_SITE_URL) plutôt que window.location.origin :
+// le pré-rendu tourne sur http://localhost:4666 et figerait cette origine
+// dans le canonical/og:url de chaque page.
+export function siteOrigin(): string {
+  const url = import.meta.env.VITE_SITE_URL as string | undefined;
+  return url ? url.replace(/\/$/, "") : window.location.origin;
+}
+
 function setMetaContent(selector: string, content: string) {
   const el = document.querySelector<HTMLMetaElement>(selector);
   if (el) el.content = content;
@@ -28,7 +36,7 @@ export function usePageMeta(title: string, description?: string) {
 
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
-    const url = `${window.location.origin}${pathname}`;
+    const url = `${siteOrigin()}${pathname}`;
     if (canonical) canonical.href = url;
     if (ogUrl) ogUrl.content = url;
   }, [title, description, pathname]);

@@ -1,11 +1,12 @@
 import { PARAMETER } from "../../data/parameter";
+import { siteOrigin } from "../../hooks/usePageMeta";
 
 /**
  * JSON-LD `Event` sur l'index (ROADMAP_PUBLIC_SEO.md S1.5) -- valeurs en dur
  * depuis PARAMETER (plus de back-office).
  */
 export function EventJsonLd() {
-  const siteUrl = window.location.origin;
+  const siteUrl = siteOrigin();
   const eventName = `${PARAMETER.title} ${PARAMETER.year}`;
 
   const data = {

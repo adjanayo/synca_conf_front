@@ -8,7 +8,7 @@ Site 100 % statique depuis le 2026-09-29 : nom, dates, lieu utilisés par les me
 
 ## 1. Domaine de production (bloquant)
 
-- [ ] Renseigner `VITE_SITE_URL` dans le `.env` de production (ex. `VITE_SITE_URL=https://syncaconf.com`, sans slash final).
+- [ ] Renseigner `VITE_SITE_URL` dans `brief-and-style-guide-main/.env.production` (committé, valeur publique ; ex. `VITE_SITE_URL=https://syncaconf.com`, sans slash final). Un `.env` local le surcharge en dev.
 - Tant que ce n'est pas fait, `canonical`, `og:url`, `og:image`, `twitter:image`, `public/robots.txt` (ligne `Sitemap:`) et `public/sitemap.xml` (toutes les `<loc>`) pointent vers le placeholder `https://TODO-DOMAINE-PRODUCTION-A-DEFINIR.example` — cassé pour de vrai en prod.
 - `public/robots.txt`/`public/sitemap.xml` sont régénérés automatiquement à chaque `npm run build` (script `generate-seo-files.mjs`) — il suffit que la variable soit correcte dans l'environnement où tourne le build de prod, rien d'autre à faire à la main sur ces deux fichiers.
 
