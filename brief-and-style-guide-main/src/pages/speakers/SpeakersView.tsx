@@ -3,6 +3,7 @@ import { Mic } from "lucide-react";
 import { PageHeader } from "../../components/site/PageHeader";
 import { SPEAKERS } from "../../data/speaker";
 import { useBrandedPageMeta } from "../../hooks/usePageMeta";
+import { MAILTO } from "../../data/parameter";
 
 export function SpeakersView() {
   useBrandedPageMeta(
@@ -18,9 +19,9 @@ export function SpeakersView() {
         description="Les profils confirmés sont dévoilés progressivement. D'autres speakers seront annoncés prochainement."
       >
         <div className="mt-8">
-          <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3 hover:brightness-110 transition">
+          <a href={MAILTO.speaker} className="inline-flex items-center gap-2 rounded-full bg-primary text-ink font-semibold px-6 py-3 hover:brightness-110 transition">
             <Mic className="w-4 h-4" /> Devenir speaker
-          </Link>
+          </a>
         </div>
       </PageHeader>
 

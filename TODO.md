@@ -12,9 +12,8 @@ Site 100 % statique (plus de backend depuis le 2026-09-29). Contenu dans `brief-
 - [ ] SEO restant (image OG 1200×630, favicon iOS, Search Console) : voir `SEO_A_CONFIGURER.md`.
 
 ## Inscriptions / demandes
-Participants → https://www.acybia.com/inscription ; partenaire, exposant, université (hackathon) → mail direct à astou.diakhate@sync-africa.com (cc contact@sync-africa.com).
+Participants → https://www.acybia.com/inscription ; partenaire, exposant, speaker, université (hackathon) → mail direct à astou.diakhate@sync-africa.com (cc contact@sync-africa.com).
 - [ ] **Inscription payante aux masterclasses** (17 mars) — mode d'inscription et de paiement à définir
-- [ ] Candidature speaker (aujourd'hui : bouton vers `/contact`)
 - [ ] Formulaire de contact (aujourd'hui : emails/téléphones cliquables seulement)
 
 ## Contenus à recevoir

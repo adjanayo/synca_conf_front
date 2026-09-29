@@ -61,7 +61,7 @@ export const FAQ_CATEGORIES: { id: string; label: string; items: { q: string; a:
       },
       {
         q: "Comment sont sélectionnés les intervenants et speakers ?",
-        a: "L'équipe Synca invite des profils reconnus dans chaque domaine (cybersécurité, cloud, fintech, edtech, marketing digital…), en cohérence avec les thématiques des Summits. Toute personne intéressée peut aussi se manifester auprès de l'équipe organisatrice.",
+        a: "L'équipe Synca invite des profils reconnus dans chaque domaine (cybersécurité, cloud, fintech, edtech, marketing digital…), en cohérence avec les thématiques des Summits. Toute personne intéressée peut aussi se proposer par email à astou.diakhate@sync-africa.com (copie contact@sync-africa.com), via le bouton « Devenir speaker » de la page Speakers.",
       },
       {
         q: "Les masterclasses donnent-elles lieu à un contenu à emporter ?",

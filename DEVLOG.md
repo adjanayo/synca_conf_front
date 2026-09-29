@@ -13,3 +13,4 @@ Site vitrine 100 % statique (plus de backend depuis le 2026-09-29). L'historique
 
 ### 2026-09-29 (suite)
 - Fait : inscription participants → ACYBIA (`PARAMETER.registrationUrl`) sur le menu, l'accueil et en tête de la page Contact ; demandes partenaire / exposant / université → mail direct (Astou, cc contact@) depuis les pages Partenaires, Exposants, Hackathon et Contact ; LinkedIn sur les pages speakers ; FAQ ajustée.
+- Fait : candidature speaker → mail direct (bouton « Devenir speaker ») ; lien LinkedIn déplacé sous la bio sur les pages speakers.

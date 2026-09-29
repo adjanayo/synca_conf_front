@@ -69,6 +69,7 @@ function contactMailto(subject: string): string {
 const MAILTO = {
   partner: contactMailto("Devenir partenaire — Synca Conf 2027"),
   exhibitor: contactMailto("Devenir exposant — Synca Conf 2027"),
+  speaker: contactMailto("Devenir speaker — Synca Conf 2027"),
   university: contactMailto("Inscription université — Hackathon Synca Conf 2027"),
 };
 
