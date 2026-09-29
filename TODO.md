@@ -2,14 +2,23 @@
 
 Site 100 % statique (plus de backend depuis le 2026-09-29). Contenu dans `brief-and-style-guide-main/src/data/`. Détails dans `DEVLOG.md`.
 
-## Mise en ligne sur Lovable — actions manuelles (toi)
-- [ ] **Vérifier que Lovable peut builder ce repo** : l'app vit dans le sous-dossier `brief-and-style-guide-main/` (pas de `package.json` à la racine). Lovable attend normalement l'app à la racine du repo connecté — dans les réglages Lovable (GitHub), vérifier quel repo/branche est connecté. Si le build Lovable échoue, me demander de remonter l'app à la racine du repo.
-- [ ] **Promouvoir `dev-boaz` → `main`** : Lovable synchronise la branche par défaut (`main`). Me dire « push to main » (ou merger la PR `dev-boaz` → `main` sur GitHub).
-- [ ] **Choisir le domaine** : sous-domaine `*.lovable.app` ou domaine perso (Lovable → Project settings → Domains, puis enregistrements DNS chez ton registrar).
-- [ ] **Renseigner le domaine** dans `brief-and-style-guide-main/.env.production` (`VITE_SITE_URL=https://…`, sans slash final) — ou me le donner, je fais le commit. Sans ça, canonical / Open Graph / sitemap pointent vers un placeholder cassé.
-- [ ] **Publier** dans Lovable (bouton Publish) puis tester : accueil, `/speakers/leonel-ngoya`, `/hackathon-universitaire`, une URL inconnue (doit afficher la 404 du site).
-- Note : Lovable n'a probablement pas Chromium → le pré-rendu SEO est sauté (le build ne casse pas, le site fonctionne ; seul le HTML figé pour les crawlers manque). Pour l'avoir quand même : `make prod-build` dans Docker et héberger `dist/` ailleurs.
+## Mise en ligne — hébergement Hostinger (le site n'est plus hébergé par Lovable)
+
+Le déploiement est **automatisé** : un push sur `main` construit le site et le met en ligne sur Hostinger. Procédure complète dans `docs/deploiement-hostinger.md`.
+
+- [ ] **Choisir le domaine** et le faire pointer chez Hostinger (DNS).
+- [ ] **Renseigner le domaine** dans `brief-and-style-guide-main/.env.production` (`VITE_SITE_URL=https://…`, sans slash final) — ou me le donner, je fais le commit. Le workflow refuse de builder tant que le placeholder est là.
+- [ ] **Vérifier le plan d'hébergement** : le déploiement utilise SFTP/rsync, disponible à partir de **Premium**. En dessous, il faut upgrader ou passer par un déploiement FTP manuel.
+- [ ] Activer SSH Access dans hPanel, créer une clé SSH dédiée, ajouter la clé publique dans hPanel.
+- [ ] Créer dans GitHub → Settings → Secrets and variables → Actions :
+  - **Variables** : `VITE_SITE_URL`, `HOSTINGER_HOST`, `HOSTINGER_SSH_PORT` (`65002`), `HOSTINGER_REMOTE_DIR` (`public_html`)
+  - **Secrets** : `HOSTINGER_SSH_KEY` (clé privée complète), `HOSTINGER_SSH_USER`
+- [ ] Vérifier que `public_html` ne contient rien d'autre que ce site (le déploiement supprime ce qui n'est pas dans le build).
+- [ ] Tester : `gh workflow run deploy-hostinger.yml` (premier déploiement manuel, sans attendre un push sur `main`).
 - [ ] SEO restant (image OG 1200×630, favicon iOS, Search Console) : voir `SEO_A_CONFIGURER.md`.
+
+## Ancienne mise en ligne via Lovable — sans objet
+L'hébergement cible est Hostinger, plus Lovable. Conservé pour trace : le pré-rendu SEO n'aurait pas fonctionné sur Lovable (pas de Chromium), alors qu'il fonctionne ici puisque le build tourne dans le conteneur Docker du projet.
 
 ## Inscriptions / demandes
 Participants → https://www.acybia.com/inscription ; partenaire, exposant, speaker, université (hackathon) → mail direct à astou.diakhate@sync-africa.com (cc contact@sync-africa.com).
