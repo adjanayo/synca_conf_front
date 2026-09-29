@@ -32,12 +32,7 @@ Site 100 % statique depuis le 2026-09-29 : nom, dates, lieu utilisés par les me
 
 ## 5. Pré-rendu (fait)
 
-Implémenté (`scripts/prerender.mjs`, lancé automatiquement après `npm run build` via `postbuild`) : sert le build localement (`vite preview`, port fixe `4666`), visite chaque route publique statique avec Chromium headless (Puppeteer), et écrit le HTML réellement rendu (title/meta/JSON-LD/contenu réel inclus) dans `dist/<route>.html`. Un vrai visiteur charge ensuite le JS normalement par-dessus (pas de SSR, juste un instantané pour les crawlers/aperçus qui n'exécutent pas de JS).
+Implémenté (`scripts/prerender.mjs`, lancé automatiquement après `npm run build` via `postbuild`) : sert le build localement (`vite preview`, port fixe `4666`), visite chaque route publique statique avec Chromium headless (Puppeteer), et remplace `dist/<route>/index.html` par le HTML réellement rendu (title/meta/JSON-LD/contenu réel inclus). Un vrai visiteur charge ensuite le JS normalement par-dessus (pas de SSR, juste un instantané pour les crawlers/aperçus qui n'exécutent pas de JS).
 
-- Fichiers **plats** (`dist/programme.html`) et non dossiers (`dist/programme/index.html`) : avec un dossier, le serveur (Apache/LiteSpeed) répond par un 301 vers `/programme/` avant toute règle de réécriture, donc le `canonical` pointait vers une URL qui redirige. En fichier, l'URL canonique est servie directement en 200. Le routage est fait par `public/.htaccess` (versionné, déployé avec le site).
 - Contenu statique : aucun backend requis pendant le build. Nouvelle page publique ou nouveau speaker → l'ajouter dans `scripts/public-routes.mjs`.
 - Coût : `puppeteer` (~300 Mo de Chromium téléchargé) en devDependency, et le build prend quelques secondes de plus (une page headless par route). Accepté par toi le 2026-09-04.
-
-## 6. Mise en ligne
-
-Le déploiement automatique vers Hostinger (build GitHub Actions + `rsync` SFTP, `.htaccess` inclus) est configuré dans `docs/deploiement-hostinger.md`. Reste à faire avant le premier déploiement : le domaine (§1), l'image OG (§2) et l'icône iOS (§3).
